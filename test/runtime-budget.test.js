@@ -1199,3 +1199,94 @@ test('a whole 6% used label translates', () => {
   assert.equal(visibleText(label), '已使用 6%');
   assert.equal(visibleText(worked), '工作了 6 秒');
 });
+
+function wordTip(h, sentence, chipWord) {
+  const tip = h.makeElement('SPAN', { classes: ['ui-text'] });
+  const parts = sentence.split(/(\s+)/);
+  for (let i = 0; i < parts.length; i += 1) {
+    const part = parts[i];
+    if (!part) continue;
+    if (part === chipWord) {
+      const kbd = h.makeElement('KBD', { classes: ['ui-kbd'] });
+      kbd.appendChild(h.makeText(part));
+      tip.appendChild(kbd);
+    } else {
+      const span = h.makeElement('SPAN');
+      span.appendChild(h.makeText(part));
+      tip.appendChild(span);
+    }
+  }
+  return tip;
+}
+
+test('a word-span home tip translates as one sentence and keeps the key chip', () => {
+  const { compiled } = loadDictionary();
+  const h = harness();
+  const english = 'Plan Mode improves agent outcomes and accuracy - hit shift+tab to get started';
+  const plain = 'Use /create-rule to control agent behavior through system-level instructions';
+  const tip = wordTip(h, english, 'shift+tab');
+  const rule = wordTip(h, plain, null);
+  const spacers = [];
+  for (let i = 0; i < 90; i += 1) spacers.push(h.makeText(' '));
+  for (const spacer of spacers) rule.appendChild(spacer);
+  assert.ok(rule.childNodes.length > 80);
+  const loose = h.makeElement('SPAN', { classes: ['ui-text'] });
+  for (const word of ['Please', 'New', 'leave', 'this', 'whole', 'sentence']) {
+    const span = h.makeElement('SPAN');
+    span.appendChild(h.makeText(word));
+    loose.appendChild(span);
+  }
+  translateTree([tip, rule, loose], compiled);
+  assert.equal(visibleText(tip), compiled.exact.get(english));
+  assert.equal(tip.childNodes.find((node) => node.tagName === 'KBD').childNodes[0].nodeValue, 'shift+tab');
+  assert.equal(visibleText(rule), compiled.exact.get(plain));
+  assert.equal(loose.childNodes[1].childNodes[0].nodeValue, 'New');
+  assert.equal(visibleText(loose), 'PleaseNewleavethiswholesentence');
+});
+
+test('report skips css-covered composer placeholders and hidden nodes', () => {
+  const { compiled } = loadDictionary();
+  const h = harness();
+  const editor = h.makeElement('DIV', {
+    classes: ['tiptap', 'ProseMirror'],
+    editable: true,
+    attrs: {
+      'aria-label': 'Prompt',
+      'aria-placeholder': 'Plan, Build, / for skills, @ for context',
+    },
+  });
+  const hidden = h.makeElement('DIV');
+  hidden.style = { display: 'none' };
+  hidden.appendChild(h.makeText('Zzzz hidden english'));
+  const zero = h.makeElement('DIV');
+  zero.getBoundingClientRect = () => ({ width: 0, height: 0 });
+  zero.appendChild(h.makeText('Zzzz zero english'));
+  const shown = h.makeElement('SPAN');
+  shown.appendChild(h.makeText('Zzzz still english'));
+  const { root, body } = mount([editor, hidden, zero, shown], h);
+  const windowHost = {};
+  startDomTranslator({
+    translateText,
+    shouldSkipElement,
+    shouldSkipAttributeTarget,
+    skipReason,
+    dictionary: compiled,
+    version: 'budget',
+  }, {
+    document: { body, documentElement: root },
+    MutationObserver: h.MockObserver,
+    Element: class {},
+    window: windowHost,
+    now: () => 0,
+    budgetMs: 2000,
+  });
+  assert.equal(editor.attrs['aria-label'], '提示');
+  assert.equal(editor.attrs['aria-placeholder'], 'Plan, Build, / for skills, @ for context');
+  const all = windowHost.__cursorZhHans.report();
+  assert.equal(all.entries.some((entry) => entry.text.startsWith('Plan, Build')), false);
+  assert.equal(all.entries.some((entry) => entry.text === 'Zzzz hidden english'), true);
+  const visible = windowHost.__cursorZhHans.report({ visibleOnly: true });
+  assert.equal(visible.entries.some((entry) => entry.text === 'Zzzz hidden english'), false);
+  assert.equal(visible.entries.some((entry) => entry.text === 'Zzzz zero english'), false);
+  assert.equal(visible.entries.some((entry) => entry.text === 'Zzzz still english'), true);
+});

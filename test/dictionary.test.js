@@ -125,6 +125,17 @@ test('the shipped dictionary compiles and static rules agree with it', () => {
   assert.equal(translateText('Find critical bugs', compiled).text, '查找严重缺陷');
   assert.equal(translateText('6% used', compiled).text, '已使用 6%');
   assert.equal(translateText('Worked for 6s', compiled).text, '工作了 6 秒');
+  assert.equal(translateText('for 6s', compiled).text, '6 秒');
+  assert.equal(translateText('Prompt', compiled).text, '提示');
+  assert.equal(translateText('Skip step 3 of 3', compiled).text, '跳过第 3 步，共 3 步');
+  assert.equal(translateText('Context 11%', compiled).text, '上下文 11%');
+  assert.equal(translateText('Start with Find critical bugs', compiled).text, '从「查找严重缺陷」开始');
+  assert.equal(translateText('Grok 4.7 enabled', compiled).text, 'Grok 4.7 已启用');
+  assert.equal(translateText('Configure gmail', compiled).text, '配置 gmail');
+  assert.equal(
+    translateText('Drag and drop agent chats to split your view into tiled panes', compiled).text,
+    '拖放智能体聊天，把视图拆成平铺窗格',
+  );
   assert.equal(translateText('Use Cloud Agents inside a longer sentence', compiled).changed, false);
 });
 

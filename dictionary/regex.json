@@ -2140,5 +2140,107 @@
     "pattern": "^Included usage with your subscription\\. Resets (.+)\\. Used before your credits\\.$",
     "replacement": "订阅包含的用量。将于 $1 重置。会在额度之前消耗。",
     "flags": ""
+  },
+  {
+    "id": "for-seconds",
+    "pattern": "^for (\\d+)s$",
+    "replacement": "$1 秒",
+    "flags": ""
+  },
+  {
+    "id": "for-minutes",
+    "pattern": "^for (\\d+)m$",
+    "replacement": "$1 分钟",
+    "flags": ""
+  },
+  {
+    "id": "for-minutes-seconds",
+    "pattern": "^for (\\d+)m (\\d+)s$",
+    "replacement": "$1 分 $2 秒",
+    "flags": ""
+  },
+  {
+    "id": "for-hours",
+    "pattern": "^for (\\d+)h$",
+    "replacement": "$1 小时",
+    "flags": ""
+  },
+  {
+    "id": "for-hours-minutes",
+    "pattern": "^for (\\d+)h (\\d+)m$",
+    "replacement": "$1 小时 $2 分钟",
+    "flags": ""
+  },
+  {
+    "id": "context-percent",
+    "pattern": "^Context (\\d+(?:\\.\\d+)?)%$",
+    "replacement": "上下文 $1%",
+    "flags": ""
+  },
+  {
+    "id": "skip-step",
+    "pattern": "^Skip step (\\d+) of (\\d+)$",
+    "replacement": "跳过第 $1 步，共 $2 步",
+    "flags": ""
+  },
+  {
+    "id": "message-sent-worked-s",
+    "pattern": "^Message sent (.+)\\. Worked for (\\d+)s$",
+    "replacement": "消息发送于 $1。工作了 $2 秒",
+    "flags": ""
+  },
+  {
+    "id": "message-sent-worked-m",
+    "pattern": "^Message sent (.+)\\. Worked for (\\d+)m$",
+    "replacement": "消息发送于 $1。工作了 $2 分钟",
+    "flags": ""
+  },
+  {
+    "id": "message-sent-worked-ms",
+    "pattern": "^Message sent (.+)\\. Worked for (\\d+)m (\\d+)s$",
+    "replacement": "消息发送于 $1。工作了 $2 分 $3 秒",
+    "flags": ""
+  },
+  {
+    "id": "message-sent-worked-h",
+    "pattern": "^Message sent (.+)\\. Worked for (\\d+)h$",
+    "replacement": "消息发送于 $1。工作了 $2 小时",
+    "flags": ""
+  },
+  {
+    "id": "message-sent-worked-hm",
+    "pattern": "^Message sent (.+)\\. Worked for (\\d+)h (\\d+)m$",
+    "replacement": "消息发送于 $1。工作了 $2 小时 $3 分钟",
+    "flags": ""
+  },
+  {
+    "id": "branch-click-copy",
+    "pattern": "^Branch (.+), click to copy$",
+    "replacement": "分支 $1，点击复制",
+    "flags": ""
+  },
+  {
+    "id": "switch-branch",
+    "pattern": "^([^\\n,]{1,80}), switch branch$",
+    "replacement": "$1，切换分支",
+    "flags": ""
+  },
+  {
+    "id": "close-named",
+    "pattern": "^Close ([A-Za-z0-9 ._+-]{1,40})$",
+    "replacement": "关闭 $1",
+    "flags": ""
+  },
+  {
+    "id": "model-enabled",
+    "pattern": "^([A-Za-z0-9 .+_-]{2,48}) enabled$",
+    "replacement": "$1 已启用",
+    "flags": ""
+  },
+  {
+    "id": "configure-named",
+    "pattern": "^Configure ([A-Za-z0-9 ._+-]{1,40})$",
+    "replacement": "配置 $1",
+    "flags": ""
   }
 ]

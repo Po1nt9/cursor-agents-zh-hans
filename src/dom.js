@@ -25,6 +25,7 @@ const CHUNK_MS = 12;
 const TEXT_LIMIT = 600;
 const CORE_LIMIT = 500;
 const SENTENCE_CHILDREN = 80;
+const WORD_SPAN_CAP = 200;
 const SYNC_NODE_LIMIT = 1500;
 const SYNC_MS = 8;
 const REPORT_LIMIT = 800;
@@ -366,12 +367,207 @@ export function startDomTranslator(api, env) {
     return '新';
   }
 
+  function isCodeEl(el) {
+    if (!el || el.nodeType !== 1) return false;
+    const tag = String(el.tagName || '').toUpperCase();
+    if (tag === 'CODE') return true;
+    const list = el.classList;
+    return Boolean(list && typeof list.contains === 'function' && list.contains('ui-markdown__inline-code'));
+  }
+
+  function isPreservedChip(el) {
+    return isKeyChip(el) || isCodeEl(el);
+  }
+
+  function isSingleToken(text) {
+    const core = normalized(text);
+    if (!core) return true;
+    if (core.length > 48) return false;
+    return core.indexOf(' ') === -1;
+  }
+
+  // A word span is one token. Nested widgets are not.
+  function tokenText(el, depth) {
+    if (!el || el.nodeType !== 1) return null;
+    if (depth > 4) return null;
+    const children = el.childNodes || [];
+    if (children.length > 8) return null;
+    let out = '';
+    for (let i = 0; i < children.length; i += 1) {
+      const child = children[i];
+      if (child.nodeType === 3) out += child.nodeValue || '';
+      else if (child.nodeType === 1 && isPreservedChip(child)) {
+        const piece = tokenText(child, depth + 1);
+        if (piece == null) return null;
+        out += piece;
+      } else if (child.nodeType === 1 && isPhrasePart(child)) {
+        const piece = tokenText(child, depth + 1);
+        if (piece == null) return null;
+        out += piece;
+      } else if (child.nodeType === 1) return null;
+    }
+    return out;
+  }
+
+  // The home tip carousel renders every word as its own span. That shape is a
+  // sentence even when it has more children than the normal row cap.
+  function isWordSpanSentence(el) {
+    if (!el || el.nodeType !== 1) return false;
+    if (shouldSkipElement(el) && !isInlinePhrase(el)) return false;
+    const children = el.childNodes || [];
+    if (children.length < 4 || children.length > WORD_SPAN_CAP) return false;
+    let tokens = 0;
+    let elements = 0;
+    for (let i = 0; i < children.length; i += 1) {
+      const child = children[i];
+      if (child.nodeType === 3) {
+        if (!isSingleToken(child.nodeValue || '')) return false;
+        if (normalized(child.nodeValue)) tokens += 1;
+        continue;
+      }
+      if (child.nodeType !== 1) continue;
+      if (isPreservedChip(child)) {
+        tokens += 1;
+        elements += 1;
+        continue;
+      }
+      if (!isPhrasePart(child)) return false;
+      const piece = tokenText(child, 0);
+      if (piece == null || !isSingleToken(piece)) return false;
+      elements += 1;
+      if (normalized(piece)) tokens += 1;
+    }
+    // A run of raw text nodes is a normal row. The carousel wraps each word.
+    return tokens >= 6 && elements >= 4;
+  }
+
+  function sentenceFromWordSpans(el) {
+    const children = el.childNodes || [];
+    const parts = [];
+    for (let i = 0; i < children.length; i += 1) {
+      const child = children[i];
+      let piece = '';
+      if (child.nodeType === 3) piece = child.nodeValue || '';
+      else if (child.nodeType === 1) piece = tokenText(child, 0) || '';
+      if (piece) parts.push(piece);
+    }
+    const raw = parts.join('');
+    if (/\s/.test(raw)) return normalized(raw);
+    return normalized(parts.join(' '));
+  }
+
+  function flattenWordSpan(el, into) {
+    const children = el.childNodes || [];
+    for (let i = 0; i < children.length; i += 1) {
+      const child = children[i];
+      if (child.nodeType === 3) into.push({ type: 'text', node: child });
+      else if (child.nodeType === 1 && isPreservedChip(child)) into.push({ type: 'chip', node: child });
+      else if (child.nodeType === 1 && !shouldSkipElement(child)) flattenWordSpan(child, into);
+    }
+  }
+
+  function latchWordSpan(el) {
+    const flat = [];
+    flattenWordSpan(el, flat);
+    for (let i = 0; i < flat.length; i += 1) {
+      if (flat[i].type !== 'text') continue;
+      const node = flat[i].node;
+      if (textMemo.get(node) !== node.nodeValue) textMemo.set(node, node.nodeValue);
+    }
+  }
+
+  // The whole sentence goes in the first text span. Code and kbd stay put,
+  // and the other word spans are cleared.
+  function applyWordSpanSentence(el, translated) {
+    const flat = [];
+    flattenWordSpan(el, flat);
+    const chips = [];
+    for (let i = 0; i < flat.length; i += 1) {
+      if (flat[i].type === 'chip') chips.push(flat[i].node);
+    }
+    let pos = 0;
+    const cuts = [];
+    let split = chips.length > 0;
+    for (let i = 0; i < chips.length; i += 1) {
+      const token = normalized(tokenText(chips[i], 0) || '');
+      if (!token) {
+        split = false;
+        break;
+      }
+      const at = translated.indexOf(token, pos);
+      if (at < 0) {
+        split = false;
+        break;
+      }
+      cuts.push({ at, end: at + token.length });
+      pos = at + token.length;
+    }
+    const writes = [];
+    if (!split) {
+      let first = null;
+      for (let i = 0; i < flat.length; i += 1) {
+        if (flat[i].type !== 'text') continue;
+        if (!first) first = flat[i].node;
+        writes.push({ node: flat[i].node, text: first === flat[i].node ? translated : '' });
+      }
+    } else {
+      let cursor = 0;
+      let ci = 0;
+      let gap = [];
+      function takeGap(upTo) {
+        const slice = translated.slice(cursor, upTo);
+        cursor = upTo;
+        const nodes = gap;
+        gap = [];
+        if (!nodes.length) return slice.trim().length === 0;
+        writes.push({ node: nodes[0], text: slice });
+        for (let i = 1; i < nodes.length; i += 1) writes.push({ node: nodes[i], text: '' });
+        return true;
+      }
+      for (let i = 0; i < flat.length; i += 1) {
+        if (flat[i].type === 'text') gap.push(flat[i].node);
+        else if (!takeGap(cuts[ci].at)) return false;
+        else {
+          cursor = cuts[ci].end;
+          ci += 1;
+        }
+      }
+      if (!takeGap(translated.length)) return false;
+    }
+    if (!writes.length) return false;
+    for (let i = 0; i < writes.length; i += 1) {
+      if (cooled(writes[i].node) && writes[i].node.nodeValue !== writes[i].text) return false;
+    }
+    for (let i = 0; i < writes.length; i += 1) writeText(writes[i].node, writes[i].text);
+    return true;
+  }
+
+  function wordSpanHost(start) {
+    let host = start;
+    for (let depth = 0; depth < ANCESTOR_DEPTH && host; depth += 1) {
+      if (isWordSpanSentence(host)) return host;
+      host = host.parentElement || null;
+    }
+    return null;
+  }
+
   function translateTextNode(node) {
     if (!node || node.nodeType !== 3) return;
     if (cooled(node)) return;
     const parent = node.parentElement;
     if (!parent || shouldSkipElement(parent)) return;
     if (textMemo.get(node) === node.nodeValue) return;
+
+    const sentenceHost = wordSpanHost(parent);
+    if (sentenceHost) {
+      nodeCalls = 0;
+      const sentence = sentenceFromWordSpans(sentenceHost);
+      const whole = sentence ? budgetedTranslate(sentence) : { changed: false };
+      if (whole.changed && whole.tier === 'exact' && applyWordSpanSentence(sentenceHost, whole.text)) return;
+      // A single word such as New, Plan, or Use must not translate inside the carousel.
+      latchWordSpan(sentenceHost);
+      return;
+    }
 
     nodeCalls = 0;
     let best = null;
@@ -447,14 +643,33 @@ export function startDomTranslator(api, env) {
     return memo;
   }
 
+  function isComposerSurface(el) {
+    if (!el || el.nodeType !== 1) return false;
+    const list = el.classList;
+    if (list && typeof list.contains === 'function') {
+      if (list.contains('ProseMirror') || list.contains('tiptap')) return true;
+    }
+    if (el.isContentEditable) return true;
+    const editable = el.getAttribute?.('contenteditable');
+    return editable != null && editable !== 'false';
+  }
+
+  function placeholderAttr(name) {
+    return name === 'placeholder' || name === 'data-placeholder' || name === 'aria-placeholder';
+  }
+
   function translateAttrs(el) {
     if (!el || el.nodeType !== 1 || typeof el.getAttribute !== 'function') return;
-    if (shouldSkipAttributeTarget(el)) return;
+    const skip = shouldSkipAttributeTarget(el);
+    // Placeholder text inside the composer is drawn by the injected CSS.
+    // Other labels on that editor, such as aria-label Prompt, still translate.
+    if (skip && !isComposerSurface(el)) return;
     if (cooled(el)) return;
     nodeCalls = 0;
     const memo = attrMemoOf(el);
     for (let i = 0; i < TRANSLATABLE_ATTRS.length; i += 1) {
       const attr = TRANSLATABLE_ATTRS[i];
+      if (skip && placeholderAttr(attr)) continue;
       if (typeof el.hasAttribute === 'function' && !el.hasAttribute(attr)) continue;
       const raw = el.getAttribute(attr);
       if (raw == null || memo[attr] === raw) continue;
@@ -522,7 +737,9 @@ export function startDomTranslator(api, env) {
       return;
     }
     if (node.nodeType !== 1) return;
-    if (!shouldSkipAttributeTarget(node)) translateAttrs(node);
+    // The composer is skipped as an editor, except labels such as aria-label Prompt.
+    // Placeholder attributes stay untouched so the injected CSS can draw them.
+    if (!shouldSkipAttributeTarget(node) || isComposerSurface(node)) translateAttrs(node);
     // Chat markdown and editors stop here. A model-picker label is markdown too,
     // but its text is a control name and still needs a walk.
     if (shouldSkipElement(node) && !isInlinePhrase(node)) return;
@@ -836,7 +1053,47 @@ export function startDomTranslator(api, env) {
     entries.push(entry);
   }
 
-  function report() {
+  function styleHidden(el) {
+    if (!el || el.nodeType !== 1) return false;
+    if (el.getAttribute?.('hidden') != null) return true;
+    const style = el.style;
+    if (style && (style.display === 'none' || style.visibility === 'hidden')) return true;
+    if (typeof getComputedStyle === 'function') {
+      try {
+        const computed = getComputedStyle(el);
+        if (computed && (computed.display === 'none' || computed.visibility === 'hidden')) return true;
+      } catch {
+        // A detached node may refuse computed style.
+      }
+    }
+    return false;
+  }
+
+  function boxHidden(el) {
+    if (!el || el.nodeType !== 1 || typeof el.getBoundingClientRect !== 'function') return false;
+    const box = el.getBoundingClientRect();
+    return Boolean(box && box.width === 0 && box.height === 0);
+  }
+
+  function coveredByPlaceholderCss(text) {
+    const sources = dictionary && dictionary.placeholders;
+    if (!sources || !sources.length) return false;
+    const core = normalized(text);
+    for (let i = 0; i < sources.length; i += 1) {
+      if (normalized(sources[i]) !== core) continue;
+      let result = null;
+      try {
+        result = translateText(core, dictionary);
+      } catch {
+        return false;
+      }
+      return Boolean(result && result.changed && result.text !== core);
+    }
+    return false;
+  }
+
+  function report(options) {
+    const visibleOnly = Boolean(options && options.visibleOnly);
     const entries = [];
     const root = document.body || document.documentElement;
     const stack = root ? [root] : [];
@@ -849,6 +1106,7 @@ export function startDomTranslator(api, env) {
         const value = node.nodeValue || '';
         if (!mostlyEnglish(value)) continue;
         const parent = node.parentElement;
+        if (visibleOnly && parent && (styleHidden(parent) || boxHidden(parent))) continue;
         const skipped = parent ? skipReason(parent) : 'skipped';
         const why = explainEnglish(value, skipped, cooled(node), textMemo.has(node));
         pushReport(entries, {
@@ -861,12 +1119,14 @@ export function startDomTranslator(api, env) {
         continue;
       }
       if (node.nodeType !== 1) continue;
+      if (visibleOnly && (styleHidden(node) || boxHidden(node))) continue;
       const tag = String(node.tagName || '').toUpperCase();
       if (tag === 'SCRIPT' || tag === 'STYLE' || tag === 'NOSCRIPT') continue;
       for (let i = 0; i < TRANSLATABLE_ATTRS.length; i += 1) {
         const name = TRANSLATABLE_ATTRS[i];
         const value = node.getAttribute?.(name);
         if (!value || !mostlyEnglish(value)) continue;
+        if (placeholderAttr(name) && coveredByPlaceholderCss(value)) continue;
         const skipped = shouldSkipAttributeTarget(node) ? (skipReason(node) || 'attribute target') : null;
         const why = explainEnglish(value, skipped, suppressedAttrs.has(node), suppressedAttrs.has(node) || false);
         pushReport(entries, {
