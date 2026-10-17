@@ -120,6 +120,11 @@ test('the shipped dictionary compiles and static rules agree with it', () => {
   );
   assert.equal(compiled.placeholders.length > 10, true);
   assert.equal(translateText('Explored 2 searches', compiled).text, '探索了 2 次搜索');
+  assert.equal(translateText('Loading chat', compiled).text, '正在加载聊天');
+  assert.equal(translateText('New Automation', compiled).text, '新建自动化');
+  assert.equal(translateText('Find critical bugs', compiled).text, '查找严重缺陷');
+  assert.equal(translateText('6% used', compiled).text, '已使用 6%');
+  assert.equal(translateText('Worked for 6s', compiled).text, '工作了 6 秒');
   assert.equal(translateText('Use Cloud Agents inside a longer sentence', compiled).changed, false);
 });
 
@@ -136,6 +141,7 @@ test('generated runtime is plain script and passes node --check', () => {
   assert.match(script, /scheduleIdle/);
   assert.match(script, /budgetMs:\s*2000/);
   assert.match(script, /__cursorZhHans\.disconnect/);
+  assert.match(script, /__cursorZhHans\.report/);
   assert.match(script, /is-editor-mention-only/);
   assert.doesNotMatch(script, /textContent/);
   assertJavaScriptSyntax(script, 'cursor-zh-hans.js');

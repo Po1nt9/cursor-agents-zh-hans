@@ -6,6 +6,7 @@ import {
   compileDictionary,
   shouldSkipAttributeTarget,
   shouldSkipElement,
+  skipReason,
   translateText,
 } from '../src/engine.js';
 
@@ -17,7 +18,12 @@ function harness(options = {}) {
     const el = {
       nodeType: 1,
       tagName: tag,
-      classList: { contains: (name) => classes.includes(name) },
+      classList: {
+        contains: (name) => classes.includes(name),
+        *[Symbol.iterator]() {
+          for (const name of classes) yield name;
+        },
+      },
       parentElement: null,
       childNodes: [],
       attrs: { ...(extra.attrs || {}) },
@@ -854,6 +860,9 @@ test('every rotating tip renders with its slash token kept', () => {
     'Use /review to have Cursor find bugs, regressions, security issues, and missing tests',
     'Use /create-subagent to set up specialized agents that Cursor can use to parallelize work',
     'Use /plan to improve agent execution with Plan Mode',
+    'Use /create-skill to customize Cursor for your workflows',
+    'Plugins help you customize Cursor for your workflows - use /add-plugin to get started',
+    'Ask Mode uses read-only agents to research your codebase - hit shift+tab to get started',
     'Use /shell to run commands in the terminal',
     'Use /canvas to get interactive visualizations like dashboards from Cursor',
     'Use @browser to inspect page elements, view console logs, and analyze network traffic',
@@ -866,9 +875,9 @@ test('every rotating tip renders with its slash token kept', () => {
   for (let i = 0; i < tips.length; i += 1) {
     const expected = compiled.exact.get(tips[i]);
     assert.ok(expected, tips[i]);
-    const token = tips[i].match(/\/[a-z-]+|@[a-z-]+/)[0];
+    const token = tips[i].match(/\/[a-z-]+|@[a-z-]+|shift\+tab/);
     assert.equal(visibleText(rendered[i]), expected, tips[i]);
-    assert.ok(visibleText(rendered[i]).includes(token), tips[i]);
+    if (token) assert.ok(visibleText(rendered[i]).includes(token[0]), tips[i]);
   }
 });
 
@@ -962,6 +971,12 @@ test('a New badge is 新 and a New button stays 新建', () => {
   assert.equal(visibleText(badge), '新');
   assert.equal(visibleText(chip), '新');
   assert.equal(visibleText(button), '新建');
+  const row = h.makeElement('SPAN');
+  const rowBadge = h.makeElement('SPAN', { attrs: { 'data-testid': 'model-picker-badge' } });
+  rowBadge.appendChild(h.makeText('New'));
+  row.appendChild(rowBadge);
+  translateTree([row], compiled);
+  assert.equal(visibleText(rowBadge), '新');
   assert.equal(visibleText(picker), '继承自父级');
   assert.equal(visibleText(chat), 'Inherit from parent');
 });
@@ -997,7 +1012,7 @@ test('a large mutation stays on the soon scheduler', () => {
   });
   const added = h.makeElement('DIV');
   const texts = [];
-  for (let i = 0; i < 250; i += 1) {
+  for (let i = 0; i < 1600; i += 1) {
     const node = h.makeText('Cancel');
     texts.push(node);
     added.appendChild(node);
@@ -1070,4 +1085,117 @@ test('a mutation that exceeds the sync time budget defers the rest', () => {
     if (guard > 20) throw new Error('timed batch did not settle');
   }
   for (const node of texts) assert.equal(node.nodeValue, '保存');
+});
+
+test('a home-sized remount finishes inside the synchronous batch', () => {
+  const dictionary = {
+    exact: new Map([['Start from scratch', '从零开始']]),
+    fragments: [],
+    regex: [],
+  };
+  const h = harness();
+  const { root, body } = mount([], h);
+  const soon = [];
+  startDomTranslator({
+    translateText,
+    shouldSkipElement,
+    shouldSkipAttributeTarget,
+    dictionary,
+    version: 'budget',
+  }, {
+    document: { body, documentElement: root },
+    MutationObserver: h.MockObserver,
+    Element: class {},
+    window: {},
+    now: () => 0,
+    budgetMs: 2000,
+    scheduleSoon(fn) {
+      soon.push(fn);
+    },
+    scheduleIdle(fn) {
+      soon.push(fn);
+    },
+  });
+  const added = h.makeElement('DIV');
+  const texts = [];
+  for (let i = 0; i < 400; i += 1) {
+    const node = h.makeText('Start from scratch');
+    texts.push(node);
+    added.appendChild(node);
+  }
+  body.appendChild(added);
+  h.observerRef.current.emit([{ type: 'childList', addedNodes: [added] }]);
+  for (const node of texts) assert.equal(node.nodeValue, '从零开始');
+  for (const fn of soon) fn();
+});
+
+test('a key chip stays inside the translated home tip', () => {
+  const { compiled } = loadDictionary();
+  const h = harness();
+  const tip = h.makeElement('P');
+  tip.appendChild(h.makeText('Ask Mode uses read-only agents to research your codebase - hit '));
+  const kbd = h.makeElement('KBD', { classes: ['ui-kbd'] });
+  kbd.appendChild(h.makeText('shift+tab'));
+  tip.appendChild(kbd);
+  tip.appendChild(h.makeText(' to get started'));
+  translateTree([tip], compiled);
+  assert.equal(
+    visibleText(tip),
+    'Ask 模式使用只读智能体研究你的代码库。按 shift+tab 开始。',
+  );
+  assert.equal(kbd.childNodes[0].nodeValue, 'shift+tab');
+});
+
+test('report lists English leftovers with a reason', () => {
+  const { compiled } = loadDictionary();
+  const h = harness();
+  const menu = h.makeElement('DIV');
+  menu.appendChild(h.makeText('Mark All as Read'));
+  const chat = h.makeElement('DIV', { classes: ['markdown-root'] });
+  chat.appendChild(h.makeText('Worked for 6s'));
+  const unknown = h.makeElement('SPAN');
+  unknown.appendChild(h.makeText('Zzzz unlisted phrase'));
+  const field = h.makeElement('INPUT');
+  field.setAttribute('placeholder', 'Search or enter URL...');
+  const { root, body } = mount([menu, chat, unknown, field], h);
+  const windowHost = {};
+  startDomTranslator({
+    translateText,
+    shouldSkipElement,
+    shouldSkipAttributeTarget,
+    skipReason,
+    dictionary: compiled,
+    version: 'budget',
+  }, {
+    document: { body, documentElement: root },
+    MutationObserver: h.MockObserver,
+    Element: class {},
+    window: windowHost,
+    now: () => 0,
+    budgetMs: 2000,
+  });
+  assert.equal(menu.childNodes[0].nodeValue, '全部标为已读');
+  assert.equal(field.attrs.placeholder, '搜索或输入 URL...');
+  const report = windowHost.__cursorZhHans.report();
+  const texts = report.entries.filter((entry) => entry.kind === 'text');
+  const skipped = texts.find((entry) => entry.text === 'Worked for 6s');
+  const missed = texts.find((entry) => entry.text === 'Zzzz unlisted phrase');
+  assert.equal(skipped.reason, 'skipped');
+  assert.equal(skipped.detail, 'class:markdown-root');
+  assert.match(skipped.path, /markdown-root/);
+  assert.equal(missed.reason, 'no dictionary match');
+  assert.equal(texts.some((entry) => entry.text === '全部标为已读'), false);
+  assert.equal(texts.some((entry) => entry.text === 'Mark All as Read'), false);
+});
+
+test('a whole 6% used label translates', () => {
+  const { compiled } = loadDictionary();
+  const h = harness();
+  const label = h.makeElement('SPAN');
+  label.appendChild(h.makeText('6% used'));
+  const worked = h.makeElement('SPAN');
+  worked.appendChild(h.makeText('Worked for 6s'));
+  translateTree([label, worked], compiled);
+  assert.equal(visibleText(label), '已使用 6%');
+  assert.equal(visibleText(worked), '工作了 6 秒');
 });

@@ -49,6 +49,7 @@ startDomTranslator({
   translateText: translateText,
   shouldSkipElement: shouldSkipElement,
   shouldSkipAttributeTarget: shouldSkipAttributeTarget,
+  skipReason: skipReason,
   dictionary: compileDictionary(${payload}),
   version: ${JSON.stringify(version)}
 }, {

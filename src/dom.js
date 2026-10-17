@@ -25,8 +25,9 @@ const CHUNK_MS = 12;
 const TEXT_LIMIT = 600;
 const CORE_LIMIT = 500;
 const SENTENCE_CHILDREN = 80;
-const SYNC_NODE_LIMIT = 200;
-const SYNC_MS = 4;
+const SYNC_NODE_LIMIT = 1500;
+const SYNC_MS = 8;
+const REPORT_LIMIT = 800;
 const ANCESTOR_DEPTH = 6;
 const NODE_TRANSLATE_BUDGET = 12;
 const BURST_STEP_CAP = 2000000;
@@ -36,6 +37,7 @@ const BUDGET_WINDOW_MS = 2000;
 
 export function startDomTranslator(api, env) {
   const { translateText, shouldSkipElement, dictionary, version } = api;
+  const skipReason = api.skipReason || (() => null);
   const shouldSkipAttributeTarget = api.shouldSkipAttributeTarget || shouldSkipElement;
   const document = env.document;
   const MutationObserver = env.MutationObserver;
@@ -149,6 +151,25 @@ export function startDomTranslator(api, env) {
     return true;
   }
 
+  // Key chips stay untranslated, but they are part of the sentence around them.
+  function isKeyChip(el) {
+    if (!el || el.nodeType !== 1) return false;
+    const tag = String(el.tagName || '').toUpperCase();
+    if (tag === 'KBD') return true;
+    const list = el.classList;
+    if (list && typeof list.contains === 'function') {
+      return list.contains('ui-kbd')
+        || list.contains('monaco-keybinding')
+        || list.contains('keybinding-key')
+        || list.contains('keybinding-label');
+    }
+    return false;
+  }
+
+  function isPhrasePart(el) {
+    return isInlinePhrase(el) || isKeyChip(el);
+  }
+
   function elementText(el, cap) {
     const limit = cap || TEXT_LIMIT;
     if (!el || el.nodeType !== 1) return '';
@@ -158,7 +179,7 @@ export function startDomTranslator(api, env) {
     for (let i = 0; i < children.length; i += 1) {
       const child = children[i];
       if (child.nodeType === 3) out += child.nodeValue || '';
-      else if (child.nodeType === 1 && isInlinePhrase(child)) {
+      else if (child.nodeType === 1 && isPhrasePart(child)) {
         const piece = elementText(child, limit - out.length);
         if (piece == null) return null;
         out += piece;
@@ -178,7 +199,7 @@ export function startDomTranslator(api, env) {
       const child = children[i];
       if (child.nodeType !== 1) continue;
       elements += 1;
-      if (!isInlinePhrase(child) || hostShape(child) === 'mixed') return 'mixed';
+      if (!isPhrasePart(child) || hostShape(child) === 'mixed') return 'mixed';
     }
     return elements ? 'inline' : 'text';
   }
@@ -253,7 +274,7 @@ export function startDomTranslator(api, env) {
     let pos = 0;
     for (let i = 0; i < kids.length; i += 1) {
       const child = kids[i];
-      if (child.nodeType !== 1 || !isInlinePhrase(child)) continue;
+      if (child.nodeType !== 1 || !isPhrasePart(child)) continue;
       const token = inlineToken(child);
       if (!token) return false;
       const at = translated.indexOf(token, pos);
@@ -279,7 +300,7 @@ export function startDomTranslator(api, env) {
     for (let i = 0; i < kids.length; i += 1) {
       const child = kids[i];
       if (child.nodeType === 3) gap.push(child);
-      else if (child.nodeType === 1 && isInlinePhrase(child)) {
+      else if (child.nodeType === 1 && isPhrasePart(child)) {
         if (!takeGap(cuts[ti].at)) return false;
         cursor = cuts[ti].end;
         ti += 1;
@@ -366,8 +387,8 @@ export function startDomTranslator(api, env) {
       const compact = normalized(raw);
       const badge = badgeLabel(host, compact);
       if (badge) {
-        best = { host, text: badge, inline: false, tier: 'exact' };
-      } else if (compact) {
+        best = { host, text: badge, inline: false, tier: 'exact', badge: true };
+      } else if (compact && !(best && best.badge && (compact === 'New' || compact === 'NEW'))) {
         const whole = budgetedTranslate(compact);
         const inlineExact = shape === 'inline' && whole.tier === 'exact';
         // Open patterns such as "Included in (.+)" stay off inline parents.
@@ -761,6 +782,113 @@ export function startDomTranslator(api, env) {
     placeholderStyle = style;
   }
 
+  function selectorOf(el) {
+    const tag = String(el.tagName || 'node').toLowerCase();
+    const testid = el.getAttribute?.('data-testid');
+    if (testid) return `${tag}[data-testid="${String(testid).slice(0, 48)}"]`;
+    const kind = el.getAttribute?.('data-message-kind');
+    if (kind) return `${tag}[data-message-kind="${kind}"]`;
+    const id = el.getAttribute?.('id');
+    if (id) return `${tag}#${String(id).slice(0, 40)}`;
+    const raw = typeof el.className === 'string' ? el.className.trim() : '';
+    const fromName = raw ? raw.split(/\s+/).slice(0, 2) : [];
+    const cls = (fromName.length ? fromName : classTokens(el).slice(0, 2)).join('.');
+    return cls ? `${tag}.${cls}` : tag;
+  }
+
+  function ancestorPath(el) {
+    const parts = [];
+    let cur = el;
+    for (let i = 0; i < 6 && cur && cur.nodeType === 1; i += 1) {
+      parts.push(selectorOf(cur));
+      cur = cur.parentElement || null;
+    }
+    return parts.reverse().join(' > ');
+  }
+
+  function mostlyEnglish(text) {
+    const core = normalized(text);
+    if (!core) return false;
+    const letters = core.match(/[A-Za-z]/g);
+    if (!letters || letters.length < 2) return false;
+    const cjk = core.match(/[\u4e00-\u9fff]/g);
+    return letters.length > (cjk ? cjk.length : 0);
+  }
+
+  function explainEnglish(text, skipped, latched, visited) {
+    if (skipped) return { reason: 'skipped', detail: skipped };
+    if (killed) return { reason: 'budget', detail: 'translator stopped' };
+    if (latched) return { reason: 'latched', detail: 'write cooldown' };
+    let result = null;
+    try {
+      result = translateText(text, dictionary);
+    } catch {
+      result = null;
+    }
+    if (result && result.changed) {
+      return { reason: 'budget', detail: visited ? 'visited but still English' : 'not yet applied' };
+    }
+    return { reason: 'no dictionary match', detail: visited ? 'visited' : 'not yet applied' };
+  }
+
+  function pushReport(entries, entry) {
+    if (entries.length >= REPORT_LIMIT) return;
+    entries.push(entry);
+  }
+
+  function report() {
+    const entries = [];
+    const root = document.body || document.documentElement;
+    const stack = root ? [root] : [];
+    let seen = 0;
+    while (stack.length && entries.length < REPORT_LIMIT && seen < 20000) {
+      const node = stack.pop();
+      if (!node) continue;
+      seen += 1;
+      if (node.nodeType === 3) {
+        const value = node.nodeValue || '';
+        if (!mostlyEnglish(value)) continue;
+        const parent = node.parentElement;
+        const skipped = parent ? skipReason(parent) : 'skipped';
+        const why = explainEnglish(value, skipped, cooled(node), textMemo.has(node));
+        pushReport(entries, {
+          kind: 'text',
+          text: normalized(value).slice(0, 240),
+          path: parent ? ancestorPath(parent) : '',
+          reason: why.reason,
+          detail: why.detail,
+        });
+        continue;
+      }
+      if (node.nodeType !== 1) continue;
+      const tag = String(node.tagName || '').toUpperCase();
+      if (tag === 'SCRIPT' || tag === 'STYLE' || tag === 'NOSCRIPT') continue;
+      for (let i = 0; i < TRANSLATABLE_ATTRS.length; i += 1) {
+        const name = TRANSLATABLE_ATTRS[i];
+        const value = node.getAttribute?.(name);
+        if (!value || !mostlyEnglish(value)) continue;
+        const skipped = shouldSkipAttributeTarget(node) ? (skipReason(node) || 'attribute target') : null;
+        const why = explainEnglish(value, skipped, suppressedAttrs.has(node), suppressedAttrs.has(node) || false);
+        pushReport(entries, {
+          kind: name,
+          text: normalized(value).slice(0, 240),
+          path: ancestorPath(node),
+          reason: why.reason,
+          detail: why.detail,
+        });
+      }
+      const children = node.childNodes || [];
+      for (let i = children.length - 1; i >= 0; i -= 1) stack.push(children[i]);
+    }
+    return {
+      version: version || '0.1.0',
+      killed,
+      count: entries.length,
+      truncated: entries.length >= REPORT_LIMIT,
+      entries,
+    };
+  }
+
   function disconnect() {
     killed = true;
     queue.length = 0;
@@ -784,6 +912,7 @@ export function startDomTranslator(api, env) {
   }
 
   host.__cursorZhHans.disconnect = disconnect;
+  host.__cursorZhHans.report = report;
   installPlaceholderStyle();
 
   const target = document.documentElement || document.body;

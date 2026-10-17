@@ -358,25 +358,84 @@ const MODEL_PICKER_LABEL_CLASSES = [
   'vscode-model-picker__trigger-markdown',
   'vscode-model-picker__trigger-text',
   'vscode-model-picker__trigger-variant-suffix',
+  'vscode-model-picker__trigger',
   'ui-model-picker__item-content-name',
   'ui-model-picker__item-content',
+  'ui-model-picker__menu',
+  'ui-model-picker__trigger',
 ];
 
 function isModelPickerLabel(el) {
   for (let i = 0; i < MODEL_PICKER_LABEL_CLASSES.length; i += 1) {
     if (hasClass(el, MODEL_PICKER_LABEL_CLASSES[i])) return true;
   }
-  return false;
+  const raw = typeof el.className === 'string' ? el.className : '';
+  return /(?:^|\s)[\w-]*model-picker[\w-]*(?:\s|$)/i.test(raw);
+}
+
+function markdownInModelPicker(node) {
+  return hasClass(node, 'markdown-root') && walkAncestors(node, isModelPickerLabel);
 }
 
 export function shouldSkipElement(el) {
   return walkAncestors(el, (node) => {
     if (isEditableControl(node)) return true;
     if (!isProtectedSurface(node)) return false;
-    // Model names are rendered as markdown. That is a label, not a chat message.
-    if (hasClass(node, 'markdown-root') && walkAncestors(node, isModelPickerLabel)) return false;
+    // Model names and the Auto row are markdown. That is a label, not a chat message.
+    if (markdownInModelPicker(node)) return false;
     return true;
   });
+}
+
+function surfaceReason(el) {
+  const tag = tagNameOf(el);
+  if (tag && PROTECTED_TAGS.has(tag)) return `tag:${tag}`;
+  if (el.getAttribute?.('data-cursor-zh-skip') != null) return 'attr:data-cursor-zh-skip';
+  const kind = el.getAttribute?.('data-message-kind');
+  if (kind && PROTECTED_MESSAGE_KINDS.has(String(kind))) return `message-kind:${kind}`;
+  for (const name of PROTECTED_CLASSES) {
+    if (hasClass(el, name)) return `class:${name}`;
+  }
+  if (tag && EDITABLE_TAGS.has(tag)) return `tag:${tag}`;
+  if (el.isContentEditable) return 'editable:contenteditable';
+  const editable = el.getAttribute?.('contenteditable');
+  if (editable != null && editable !== 'false') return 'editable:contenteditable';
+  for (const name of EDITABLE_CLASSES) {
+    if (hasClass(el, name)) return `class:${name}`;
+  }
+  return null;
+}
+
+// Why this node is left alone. Null means the translator may rewrite it.
+export function skipReason(el) {
+  let cur = el;
+  const seen = new Set();
+  while (cur && !seen.has(cur)) {
+    seen.add(cur);
+    if (cur.nodeType === 3) {
+      cur = cur.parentElement || null;
+      continue;
+    }
+    const reason = surfaceReason(cur);
+    if (reason) {
+      if (reason === 'class:markdown-root' && markdownInModelPicker(cur)) {
+        cur = cur.parentElement || null;
+        continue;
+      }
+      return reason;
+    }
+    if (cur.parentElement) {
+      cur = cur.parentElement;
+      continue;
+    }
+    const root = cur.getRootNode?.();
+    if (root && root.host) {
+      cur = root.host;
+      continue;
+    }
+    break;
+  }
+  return null;
 }
 
 export function shouldSkipAttributeTarget(el) {

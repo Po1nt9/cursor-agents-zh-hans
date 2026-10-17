@@ -6,6 +6,7 @@ import {
   compileDictionary,
   shouldSkipAttributeTarget,
   shouldSkipElement,
+  skipReason,
   translateText,
 } from '../src/engine.js';
 
@@ -126,6 +127,12 @@ test('skips editor, terminal, diff, chat, and inputs, and translates other label
   const pickerMarkdown = element({ classes: ['markdown-root'], parent: pickerName });
   assert.equal(shouldSkipElement(pickerMarkdown), false);
   assert.equal(shouldSkipElement({ nodeType: 3, parentElement: pickerMarkdown }), false);
+  const menu = element({ classes: ['ui-model-picker__menu'] });
+  const autoMarkdown = element({ classes: ['markdown-root'], parent: menu });
+  assert.equal(shouldSkipElement(autoMarkdown), false);
+  assert.equal(skipReason(autoMarkdown), null);
+  assert.equal(skipReason(element({ classes: ['markdown-root'] })), 'class:markdown-root');
+  assert.equal(skipReason(element({ attrs: { 'data-message-kind': 'assistant' } })), 'message-kind:assistant');
   assert.equal(
     shouldSkipElement(element({ classes: ['markdown-root', 'vscode-model-picker__trigger-markdown'] })),
     false,
