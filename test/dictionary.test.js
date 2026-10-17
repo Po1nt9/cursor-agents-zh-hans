@@ -51,6 +51,27 @@ test('the shipped dictionary compiles and static rules agree with it', () => {
   assert.equal(raw.exact.Account, '账户');
   assert.equal(raw.exact['Log Out'], '退出登录');
   assert.equal(raw.exact['Sign out'], '退出登录');
+  assert.equal(raw.exact['Set Up Origin'], '设置 Origin');
+  assert.equal(
+    raw.exact['Create an Origin namespace to save and publish your work easily'],
+    '创建一个 Origin 命名空间，方便保存和发布你的工作',
+  );
+  assert.equal(raw.exact['Get Started'], '开始使用');
+  assert.equal(raw.exact.Update, '更新');
+  assert.equal(raw.exact.Later, '稍后');
+  assert.equal(
+    translateText('A newer Cursor package (3.25.9) is available via apt.', compiled).text,
+    '有新的 Cursor 安装包（3.25.9）可通过 apt 获取。',
+  );
+  assert.equal(
+    translateText('A newer Cursor package (1.0) is available via download.', compiled).text,
+    '有新的 Cursor 安装包（1.0）可通过 download 获取。',
+  );
+  assert.equal(
+    raw.exact['A newer version of Cursor is available. We recommend updating for the best experience.'],
+    '有新版本的 Cursor 可用。建议更新以获得最佳体验。',
+  );
+  assert.equal(compiled.placeholders.length > 10, true);
   assert.equal(translateText('Explored 2 searches', compiled).text, '探索了 2 次搜索');
   assert.equal(translateText('Use Cloud Agents inside a longer sentence', compiled).changed, false);
 });
@@ -63,6 +84,8 @@ test('generated runtime is plain script and passes node --check', () => {
   assert.match(script, /MutationObserver/);
   assert.match(script, /requestIdleCallback/);
   assert.match(script, /budgetMs:\s*2000/);
+  assert.match(script, /__cursorZhHans\.disconnect/);
+  assert.match(script, /is-editor-mention-only/);
   assert.doesNotMatch(script, /textContent/);
   assertJavaScriptSyntax(script, 'cursor-zh-hans.js');
 });

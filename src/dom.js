@@ -1,11 +1,13 @@
 /**
  * DOM half of the runtime. Observes mutations and translates only touched nodes.
- * No imports, so the patcher can inline this file into the workbench page.
+ * The import below is stripped when this file is inlined after engine.js.
  *
  * Do not read an element's full rendered text. That copies the whole subtree,
  * and doing it once per sibling made startup quadratic: a few thousand labels
  * blocked the renderer for minutes.
  */
+
+import { buildPlaceholderCss } from './engine.js';
 
 export const TRANSLATABLE_ATTRS = [
   'title',
@@ -26,6 +28,9 @@ const WIDE_CHILDREN = 24;
 const ANCESTOR_DEPTH = 6;
 const NODE_TRANSLATE_BUDGET = 12;
 const BURST_STEP_CAP = 2000000;
+const LOOP_WINDOW_MS = 1000;
+const LOOP_LIMIT = 8;
+const BUDGET_WINDOW_MS = 2000;
 
 export function startDomTranslator(api, env) {
   const { translateText, shouldSkipElement, dictionary, version } = api;
@@ -49,15 +54,21 @@ export function startDomTranslator(api, env) {
   const queue = [];
   const budgetMs = Number.isFinite(env.budgetMs) ? env.budgetMs : 2000;
   const clock = typeof env.now === 'function' ? env.now : () => Date.now();
+  const attrWrites = new Map();
+  const suppressedAttrs = new Set();
+  const charges = [];
 
   let observer = null;
   let killed = false;
   let pumping = false;
+  let scheduled = false;
   let spent = 0;
   let burst = 0;
   let burstSteps = 0;
   let nodeCalls = 0;
   let scheduleMode = null;
+  let placeholderStyle = null;
+  let restoreAttach;
 
   function now() {
     return clock();
@@ -65,17 +76,7 @@ export function startDomTranslator(api, env) {
 
   function kill() {
     if (killed) return;
-    killed = true;
-    queue.length = 0;
-    host.__cursorZhHansKilled = true;
-    if (host.__cursorZhHans) host.__cursorZhHans.killed = true;
-    if (observer) {
-      try {
-        observer.disconnect();
-      } catch {
-        // The host may already have torn the observer down.
-      }
-    }
+    disconnect();
   }
 
   function stateOf(node) {
@@ -263,10 +264,32 @@ export function startDomTranslator(api, env) {
         continue;
       }
       if (cooled(el)) return;
+      if (attributeLooping(attr, raw)) return;
       memo[attr] = result.text;
       noteWrite(el);
       el.setAttribute(attr, result.text);
     }
+  }
+
+  function attributeLooping(name, source) {
+    const key = `${name}\n${source}`;
+    if (suppressedAttrs.has(key)) return true;
+    const t = now();
+    const prev = attrWrites.get(key);
+    const fresh = [];
+    if (prev) {
+      for (let i = 0; i < prev.length; i += 1) {
+        if (t - prev[i] < LOOP_WINDOW_MS) fresh.push(prev[i]);
+      }
+    }
+    if (fresh.length >= LOOP_LIMIT) {
+      suppressedAttrs.add(key);
+      attrWrites.set(key, fresh);
+      return true;
+    }
+    fresh.push(t);
+    attrWrites.set(key, fresh);
+    return false;
   }
 
   function enqueue(item) {
@@ -309,19 +332,45 @@ export function startDomTranslator(api, env) {
     for (let i = children.length - 1; i >= 0; i -= 1) enqueue(children[i]);
   }
 
-  function yieldToHost(continuation) {
+  function usesAsyncSchedule() {
     if (typeof env.schedule !== 'function') return false;
+    if (scheduleMode === 'async') return true;
     if (scheduleMode === 'sync') return false;
-    if (scheduleMode == null) {
-      let ran = false;
-      env.schedule(() => {
-        ran = true;
-      });
-      scheduleMode = ran ? 'sync' : 'async';
-      if (ran) return false;
-    }
-    env.schedule(continuation);
+    let ran = false;
+    env.schedule(() => {
+      ran = true;
+    });
+    scheduleMode = ran ? 'sync' : 'async';
+    return scheduleMode === 'async';
+  }
+
+  function yieldToHost(continuation) {
+    if (!usesAsyncSchedule()) return false;
+    scheduled = true;
+    env.schedule(() => {
+      scheduled = false;
+      continuation();
+    });
     return true;
+  }
+
+  function charge(dt) {
+    const amount = Math.max(0, dt);
+    if (!amount) return;
+    const t = now();
+    charges.push({ t, dt: amount });
+    const horizon = t - BUDGET_WINDOW_MS;
+    while (charges.length && charges[0].t < horizon) charges.shift();
+    let total = 0;
+    for (let i = 0; i < charges.length; i += 1) total += charges[i].dt;
+    spent = total;
+    if (spent > budgetMs) kill();
+  }
+
+  function overBudget(start) {
+    if (budgetMs <= 0) return true;
+    if (burstSteps > BURST_STEP_CAP) return true;
+    return spent + Math.max(0, now() - start) > budgetMs;
   }
 
   function runChunk() {
@@ -334,19 +383,15 @@ export function startDomTranslator(api, env) {
     let steps = 0;
     while (queue.length) {
       const elapsed = now() - windowStart;
-      if (budgetMs <= 0 || spent + Math.max(0, now() - start0) > budgetMs || burstSteps > BURST_STEP_CAP) {
-        spent += Math.max(0, now() - start0);
+      if (overBudget(start0)) {
+        charge(now() - start0);
         kill();
         pumping = false;
         return;
       }
       if (steps > 0 && (steps >= CHUNK_STEPS || elapsed >= CHUNK_MS)) {
         if (yieldToHost(runChunk)) {
-          spent += Math.max(0, now() - start0);
-          if (spent > budgetMs) {
-            kill();
-            pumping = false;
-          }
+          charge(now() - start0);
           return;
         }
         steps = 0;
@@ -366,9 +411,7 @@ export function startDomTranslator(api, env) {
         return;
       }
     }
-    spent += Math.max(0, now() - start0);
-    if (spent > budgetMs) kill();
-    else spent = 0;
+    charge(now() - start0);
     burstSteps = 0;
     pumping = false;
   }
@@ -377,6 +420,21 @@ export function startDomTranslator(api, env) {
     if (pumping || killed) return;
     pumping = true;
     runChunk();
+  }
+
+  // Never translate inside the observer callback. A macrotask lets ProseMirror's
+  // own observer return to the event loop; a synchronous reply livelocks both.
+  function schedulePump() {
+    if (killed || scheduled || pumping) return;
+    if (!usesAsyncSchedule()) {
+      pump();
+      return;
+    }
+    scheduled = true;
+    env.schedule(() => {
+      scheduled = false;
+      if (!killed && queue.length) pump();
+    });
   }
 
   observer = new MutationObserver((records) => {
@@ -393,7 +451,7 @@ export function startDomTranslator(api, env) {
       }
       enqueue(record);
     }
-    if (!pumping) pump();
+    schedulePump();
   });
 
   const options = {
@@ -411,7 +469,6 @@ export function startDomTranslator(api, env) {
   }
 
   const Element = env.Element;
-  let restoreAttach;
   if (Element && Element.prototype && typeof Element.prototype.attachShadow === 'function') {
     const original = Element.prototype.attachShadow;
     if (!original.__cursorZhHans) {
@@ -419,7 +476,7 @@ export function startDomTranslator(api, env) {
         const shadow = original.call(this, init);
         observe(shadow);
         enqueue(shadow);
-        if (!pumping) pump();
+        schedulePump();
         return shadow;
       }
       wrapped.__cursorZhHans = true;
@@ -436,20 +493,52 @@ export function startDomTranslator(api, env) {
     }
   }
 
+  function installPlaceholderStyle() {
+    if (typeof document.createElement !== 'function' || typeof document.createTextNode !== 'function') return;
+    const css = buildPlaceholderCss(dictionary);
+    if (!css) return;
+    const style = document.createElement('style');
+    if (!style || typeof style.appendChild !== 'function') return;
+    if (typeof style.setAttribute === 'function') style.setAttribute('data-cursor-zh-placeholders', 'true');
+    style.appendChild(document.createTextNode(css));
+    const parent = document.head || document.documentElement;
+    if (parent && typeof parent.appendChild === 'function') parent.appendChild(style);
+    placeholderStyle = style;
+  }
+
+  function disconnect() {
+    killed = true;
+    queue.length = 0;
+    scheduled = false;
+    host.__cursorZhHansKilled = true;
+    if (host.__cursorZhHans) host.__cursorZhHans.killed = true;
+    if (observer) {
+      try {
+        observer.disconnect();
+      } catch {
+        // The host may already have torn the observer down.
+      }
+    }
+    if (restoreAttach) restoreAttach();
+    const styleNode = placeholderStyle;
+    placeholderStyle = null;
+    if (styleNode && styleNode.parentNode && typeof styleNode.parentNode.removeChild === 'function') {
+      styleNode.parentNode.removeChild(styleNode);
+    }
+    host.__cursorZhHansInstalled = false;
+  }
+
+  host.__cursorZhHans.disconnect = disconnect;
+  installPlaceholderStyle();
+
   const target = document.documentElement || document.body;
   if (target) observe(target);
   if (document.body) enqueue(document.body);
-  if (queue.length) pump();
+  if (queue.length) schedulePump();
 
   return {
     already: false,
     observer,
-    disconnect() {
-      killed = true;
-      queue.length = 0;
-      if (observer) observer.disconnect();
-      if (restoreAttach) restoreAttach();
-      host.__cursorZhHansInstalled = false;
-    },
+    disconnect,
   };
 }

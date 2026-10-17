@@ -131,7 +131,13 @@ test('skips editor, terminal, diff, chat, and inputs, and translates other label
   assert.equal(shouldSkipElement(element({ attrs: { 'data-message-kind': 'assistant' } })), true);
   assert.equal(shouldSkipElement(element({ attrs: { 'data-message-kind': 'tool' } })), false);
   assert.equal(shouldSkipAttributeTarget(element({ tag: 'INPUT' })), false);
-  assert.equal(shouldSkipAttributeTarget(element({ editable: true })), false);
+  assert.equal(shouldSkipAttributeTarget(element({ tag: 'TEXTAREA' })), false);
+  assert.equal(shouldSkipAttributeTarget(element({ editable: true })), true);
+  assert.equal(shouldSkipAttributeTarget(element({ attrs: { contenteditable: 'true' } })), true);
+  assert.equal(shouldSkipAttributeTarget(element({ classes: ['ProseMirror'] })), true);
+  assert.equal(shouldSkipAttributeTarget(element({ classes: ['tiptap'] })), true);
+  const prose = element({ classes: ['ProseMirror'], editable: true });
+  assert.equal(shouldSkipAttributeTarget(element({ parent: prose })), true);
   assert.equal(shouldSkipAttributeTarget(element({ classes: ['markdown-root'] })), true);
   assert.equal(shouldSkipAttributeTarget(element({ classes: ['ui-kbd'] })), true);
 });
@@ -358,9 +364,11 @@ test('placeholders inside editors translate, and chat chrome does too, while mes
     disconnect() {}
   }
 
+  const plan = 'Plan, Build, / for skills, @ for context';
+  const planZh = '计划、构建，/ 调用技能，@ 添加上下文';
   const compiled = compileDictionary({
     exact: {
-      'Plan, Build, / for skills, @ for context': '计划、构建，/ 调用技能，@ 添加上下文',
+      [plan]: planZh,
       'Send follow-up': '发送后续消息',
       'Search Settings': '搜索设置',
       Tab: '补全',
@@ -372,10 +380,13 @@ test('placeholders inside editors translate, and chat chrome does too, while mes
       { id: 'worked', pattern: '^Worked for (\\d+)s$', flags: '', replacement: '工作了 $1 秒' },
       { id: 'ago', pattern: '^(\\d+)h ago$', flags: '', replacement: '$1 小时前' },
     ],
+    placeholders: [plan, 'Send follow-up'],
   });
 
   const body = makeElement('BODY');
   const root = makeElement('HTML');
+  const head = makeElement('HEAD');
+  root.appendChild(head);
   root.appendChild(body);
 
   const box = makeElement('DIV', { classes: ['ai-input-full-input-box'] });
@@ -428,6 +439,7 @@ test('placeholders inside editors translate, and chat chrome does too, while mes
   option.appendChild(language);
   body.appendChild(option);
 
+  const host = {};
   startDomTranslator({
     translateText,
     shouldSkipElement,
@@ -435,15 +447,26 @@ test('placeholders inside editors translate, and chat chrome does too, while mes
     dictionary: compiled,
     version: 'test',
   }, {
-    document: { body, documentElement: root },
+    document: {
+      body,
+      head,
+      documentElement: root,
+      createElement: (tag) => makeElement(tag),
+      createTextNode: (value) => makeText(value),
+    },
     MutationObserver: MockObserver,
     Element: class {},
-    window: {},
+    window: host,
   });
 
-  assert.equal(empty.attrs['data-placeholder'], '计划、构建，/ 调用技能，@ 添加上下文');
+  assert.equal(empty.attrs['data-placeholder'], plan);
   assert.equal(typed.nodeValue, 'Keep this reply');
-  assert.equal(followLine.attrs['data-placeholder'], '发送后续消息');
+  assert.equal(followLine.attrs['data-placeholder'], 'Send follow-up');
+  const css = head.childNodes.map((node) => (node.childNodes || []).map((child) => child.nodeValue || '').join('')).join('\n');
+  assert.match(css, /计划、构建，\/ 调用技能，@ 添加上下文/);
+  assert.match(css, /is-editor-mention-only/);
+  assert.match(css, /::before/);
+  assert.equal(typeof host.__cursorZhHans.disconnect, 'function');
   assert.equal(search.attrs.placeholder, '搜索设置');
   assert.equal(searchTyped.nodeValue, 'Keep this reply');
   assert.equal(worked.nodeValue, '工作了 6 秒');

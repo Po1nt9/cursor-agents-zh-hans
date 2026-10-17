@@ -13,7 +13,7 @@ Cursor 3 的智能体窗口和经典窗口加载**同一份** `workbench.html`�
 `apply` 默认做两件事：
 
 1. 在 `workbench.html` 里、`workbench.js` 之前插入一个本地脚本 `cursor-zh-hans.js`。
-2. 脚本在页面里用 `MutationObserver` 翻译**新出现或刚改过**的文本，不用定时器把整页重扫一遍。首屏和大批量变更切成短片段，用 `requestIdleCallback`（没有则用 `setTimeout`）让出主线程。查找表是 `Map`。正则按首字符分桶。会处理文本节点，以及 `title`、`placeholder`、`data-placeholder`、`aria-label`、`aria-description`、`aria-placeholder`。编写器占位符写在可编辑区域里的 `data-placeholder` 上，由 CSS `content: attr(data-placeholder)` 显示；输入框里的 `placeholder` 也会翻译，已经键入的文字不会。
+2. 脚本在页面里用 `MutationObserver` 只记录变更，翻译放到 `requestIdleCallback`（没有则用 `setTimeout`）里做，不会在观察者回调里改 DOM。查找表是 `Map`。正则按首字符分桶。会处理文本节点，以及普通控件上的 `title`、`placeholder`、`aria-label`、`aria-description`、`aria-placeholder`。编写器（`contenteditable`、`.ProseMirror`、`.tiptap`）里面不写入任何文字或属性。空编写器的占位符仍由 CSS `content: attr(data-placeholder)` 显示，补丁另注入样式，按原文精确覆盖 `::before` / `::after`。输入框自己的 `placeholder` 会翻译，已经键入的文字不会。`window.__cursorZhHans.disconnect()` 可以关掉观察者并撤掉这段样式。
 
 三层词典：
 

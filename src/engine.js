@@ -58,6 +58,8 @@ const EDITABLE_CLASSES = new Set([
   'inputarea',
   'agent-sidebar-cell-rename-input',
   'agent-tab-rename-input',
+  'ProseMirror',
+  'tiptap',
 ]);
 
 const PROTECTED_MESSAGE_KINDS = new Set(['assistant', 'human']);
@@ -148,7 +150,16 @@ export function compileDictionary(raw) {
     list.push(entry);
   }
 
-  return { exact, fragments, regex, regexBuckets };
+  const placeholders = [];
+  const seenPlaceholders = new Set();
+  const placeholderSource = Array.isArray(raw.placeholders) ? raw.placeholders : [];
+  for (const item of placeholderSource) {
+    if (typeof item !== 'string' || item.length === 0 || seenPlaceholders.has(item)) continue;
+    seenPlaceholders.add(item);
+    placeholders.push(item);
+  }
+
+  return { exact, fragments, regex, regexBuckets, placeholders };
 }
 
 function regexRoute(pattern) {
@@ -334,5 +345,37 @@ export function shouldSkipElement(el) {
 }
 
 export function shouldSkipAttributeTarget(el) {
-  return walkAncestors(el, isProtectedSurface);
+  return walkAncestors(el, (node) => {
+    if (!elementMatchesSkip(node)) return false;
+    // A native field's own placeholder is not rebuilt when the attribute changes.
+    // Anything inside a contenteditable, ProseMirror, or tiptap editor is.
+    const tag = tagNameOf(node);
+    if ((tag === 'INPUT' || tag === 'TEXTAREA') && node === el) return false;
+    return true;
+  });
+}
+
+function cssQuoted(value) {
+  return `"${String(value)
+    .replace(/\\/g, '\\\\')
+    .replace(/"/g, '\\"')
+    .replace(/\n/g, '\\A ')
+    .replace(/</g, '\\3C ')}"`;
+}
+
+export function buildPlaceholderCss(dictionary) {
+  const sources = dictionary && Array.isArray(dictionary.placeholders) ? dictionary.placeholders : [];
+  const rules = [];
+  for (let i = 0; i < sources.length; i += 1) {
+    const source = sources[i];
+    const result = translateText(source, dictionary);
+    if (!result.changed || result.text === source) continue;
+    const attr = cssQuoted(source);
+    const content = cssQuoted(result.text);
+    const empty = `.ProseMirror p.is-editor-empty[data-placeholder=${attr}]::before,.tiptap p.is-editor-empty[data-placeholder=${attr}]::before`;
+    const mention = `.ProseMirror p.is-editor-mention-only[data-placeholder=${attr}]::after,.tiptap p.is-editor-mention-only[data-placeholder=${attr}]::after`;
+    rules.push(`${empty}{content:${content} !important}`);
+    rules.push(`${mention}{content:${content} !important}`);
+  }
+  return rules.join('\n');
 }

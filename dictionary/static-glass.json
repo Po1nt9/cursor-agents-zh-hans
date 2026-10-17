@@ -369,6 +369,182 @@
       "expectedHits": {
         "3.25.6": 2
       }
+    },
+    {
+      "id": "you-re-out-of-usage",
+      "literal": "You're out of usage",
+      "translation": "用量已用完",
+      "expectedHits": {
+        "3.25.6": 3
+      }
+    },
+    {
+      "id": "add-more-optional-details",
+      "literal": "Add more optional details",
+      "translation": "补充更多可选细节",
+      "expectedHits": {
+        "3.25.6": 1
+      }
+    },
+    {
+      "id": "add-more-optional-details-ellipsis",
+      "literal": "Add more optional details...",
+      "translation": "补充更多可选细节...",
+      "expectedHits": {
+        "3.25.6": 2
+      }
+    },
+    {
+      "id": "issue-reproduced-please-proceed",
+      "literal": "Issue reproduced, please proceed",
+      "translation": "问题已复现，请继续",
+      "expectedHits": {
+        "3.25.6": 5
+      }
+    },
+    {
+      "id": "the-issue-has-been-fixed-please-clean-up-the-ins",
+      "literal": "The issue has been fixed. Please clean up the instrumentation.",
+      "translation": "问题已修复。请清理埋点。",
+      "expectedHits": {
+        "3.25.6": 4
+      }
+    },
+    {
+      "id": "enter-additional-context-about-the-issue",
+      "literal": "Enter additional context about the issue",
+      "translation": "补充关于该问题的上下文",
+      "expectedHits": {
+        "3.25.6": 1
+      }
+    },
+    {
+      "id": "build-research-debug-at-a-longer-horizon",
+      "literal": "Build, research, debug at a longer horizon",
+      "translation": "用更长的周期构建、研究和调试",
+      "expectedHits": {
+        "3.25.6": 1
+      }
+    },
+    {
+      "id": "let-s-kick-something-off",
+      "literal": "Let's kick something off",
+      "translation": "来做点什么吧",
+      "expectedHits": {
+        "3.25.6": 1
+      }
+    },
+    {
+      "id": "steer-without-interrupting",
+      "literal": "Steer without interrupting",
+      "translation": "引导而不打断",
+      "expectedHits": {
+        "3.25.6": 2
+      }
+    },
+    {
+      "id": "editing-queued-message",
+      "literal": "Editing queued message...",
+      "translation": "正在编辑排队的消息...",
+      "expectedHits": {
+        "3.25.6": 1
+      }
+    },
+    {
+      "id": "editing-goal",
+      "literal": "Editing goal...",
+      "translation": "正在编辑目标...",
+      "expectedHits": {
+        "3.25.6": 1
+      }
+    },
+    {
+      "id": "ask-follow-ups-to-the-cloud-agent",
+      "literal": "Ask follow-ups to the Cloud Agent...",
+      "translation": "向云端智能体继续追问...",
+      "expectedHits": {
+        "3.25.6": 1
+      }
+    },
+    {
+      "id": "start-writing-your-plan",
+      "literal": "Start writing your plan...",
+      "translation": "开始撰写你的计划...",
+      "expectedHits": {
+        "3.25.6": 1
+      }
+    },
+    {
+      "id": "plan-changes",
+      "literal": "Plan changes",
+      "translation": "计划改动",
+      "expectedHits": {
+        "3.25.6": 1
+      }
+    },
+    {
+      "id": "debug-issues",
+      "literal": "Debug issues",
+      "translation": "调试问题",
+      "expectedHits": {
+        "3.25.6": 1
+      }
+    },
+    {
+      "id": "ask-questions",
+      "literal": "Ask questions",
+      "translation": "提出问题",
+      "expectedHits": {
+        "3.25.6": 1
+      }
+    },
+    {
+      "id": "coordinate-tasks",
+      "literal": "Coordinate tasks",
+      "translation": "协调任务",
+      "expectedHits": {
+        "3.25.6": 1
+      }
+    },
+    {
+      "id": "set-up-origin",
+      "literal": "Set Up Origin",
+      "translation": "设置 Origin",
+      "expectedHits": {
+        "3.25.6": 1
+      }
+    },
+    {
+      "id": "create-an-origin-namespace-to-save-and-publish-y",
+      "literal": "Create an Origin namespace to save and publish your work easily",
+      "translation": "创建一个 Origin 命名空间，方便保存和发布你的工作",
+      "expectedHits": {
+        "3.25.6": 1
+      }
+    },
+    {
+      "id": "origin-is-set-up-you-can-start-a-new-project",
+      "literal": "Origin is set up. You can start a new project.",
+      "translation": "Origin 已设置。你可以开始一个新项目。",
+      "expectedHits": {
+        "3.25.6": 1
+      }
+    },
+    {
+      "id": "a-newer-version-of-cursor-is-available-we-recomm",
+      "literal": "A newer version of Cursor is available. We recommend updating for the best experience.",
+      "translation": "有新版本的 Cursor 可用。建议更新以获得最佳体验。",
+      "expectedHits": {
+        "3.25.6": 1
+      }
+    },
+    {
+      "id": "this-version-of-cursor-is-no-longer-supported-pl",
+      "literal": "This version of Cursor is no longer supported. Please update to continue.",
+      "translation": "此版本的 Cursor 已不再受支持。请更新后继续使用。",
+      "expectedHits": {
+        "3.25.6": 1
+      }
     }
   ]
 }

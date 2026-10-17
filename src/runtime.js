@@ -32,6 +32,7 @@ export function dictionaryPayload(raw) {
       flags: item.flags || '',
       replacement: item.replacement,
     })),
+    placeholders: raw.placeholders || [],
   };
 }
 

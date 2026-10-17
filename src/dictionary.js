@@ -16,12 +16,15 @@ export function loadDictionaryRaw(dir) {
   const exact = readJson(path.join(root, 'exact.json'));
   const fragments = readJson(path.join(root, 'fragments.json'));
   const regex = readJson(path.join(root, 'regex.json'));
+  const placeholderFile = path.join(root, 'placeholders.json');
+  const placeholders = fs.existsSync(placeholderFile) ? readJson(placeholderFile) : [];
   if (!exact || typeof exact !== 'object' || Array.isArray(exact)) {
     throw new Error('exact.json 必须是对象');
   }
   if (!Array.isArray(fragments)) throw new Error('fragments.json 必须是数组');
   if (!Array.isArray(regex)) throw new Error('regex.json 必须是数组');
-  return { exact, fragments, regex };
+  if (!Array.isArray(placeholders)) throw new Error('placeholders.json 必须是数组');
+  return { exact, fragments, regex, placeholders };
 }
 
 export function loadDictionary(dir = defaultDictionaryDir()) {

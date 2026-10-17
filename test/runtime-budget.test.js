@@ -3,6 +3,7 @@ import test from 'node:test';
 import { loadDictionary } from '../src/dictionary.js';
 import { startDomTranslator } from '../src/dom.js';
 import {
+  compileDictionary,
   shouldSkipAttributeTarget,
   shouldSkipElement,
   translateText,
@@ -34,7 +35,14 @@ function harness(options = {}) {
       },
       appendChild(child) {
         child.parentElement = this;
+        child.parentNode = this;
         this.childNodes.push(child);
+        return child;
+      },
+      removeChild(child) {
+        this.childNodes = this.childNodes.filter((node) => node !== child);
+        if (child.parentNode === this) child.parentNode = null;
+        if (child.parentElement === this) child.parentElement = null;
         return child;
       },
       getRootNode() {
@@ -378,6 +386,169 @@ function probe(pattern) {
   }
   return parseSeq('');
 }
+
+test('a ProseMirror placeholder that rebuilds on every attribute write settles', () => {
+  const english = 'Plan, Build, / for skills, @ for context';
+  const chinese = '计划、构建，/ 调用技能，@ 添加上下文';
+  const dictionary = compileDictionary({
+    exact: { [english]: chinese },
+    fragments: [],
+    regex: [],
+    placeholders: [english],
+  });
+  let writes = 0;
+  const h = harness({ emitCap: 50 });
+  const editor = h.makeElement('DIV', {
+    classes: ['tiptap', 'ProseMirror'],
+    editable: true,
+    attrs: { contenteditable: 'true' },
+  });
+  function makeParagraph() {
+    const paragraph = h.makeElement('P', {
+      classes: ['is-empty', 'is-editor-empty'],
+      attrs: { 'data-placeholder': english },
+    });
+    paragraph.setAttribute = (name, value) => {
+      writes += 1;
+      if (writes > 20) throw new Error(`placeholder loop kept writing (${writes})`);
+      paragraph.attrs[name] = String(value);
+      const fresh = makeParagraph();
+      const parent = paragraph.parentElement;
+      if (parent) {
+        parent.childNodes = parent.childNodes.filter((node) => node !== paragraph);
+        parent.appendChild(fresh);
+      }
+      const obs = h.observerRef.current;
+      if (obs && obs.connected) obs.emit([{ type: 'childList', addedNodes: [fresh] }]);
+    };
+    return paragraph;
+  }
+  const paragraph = makeParagraph();
+  editor.appendChild(paragraph);
+  const { root, body } = mount([editor], h);
+  const head = h.makeElement('HEAD');
+  const host = {};
+  startDomTranslator({
+    translateText,
+    shouldSkipElement,
+    shouldSkipAttributeTarget,
+    dictionary,
+    version: 'loop',
+  }, {
+    document: {
+      body,
+      head,
+      documentElement: root,
+      createElement: (tag) => h.makeElement(tag),
+      createTextNode: (value) => h.makeText(value),
+    },
+    MutationObserver: h.MockObserver,
+    Element: class {},
+    window: host,
+    budgetMs: 2000,
+  });
+  assert.equal(writes, 0);
+  assert.equal(paragraph.attrs['data-placeholder'], english);
+  assert.equal(h.reads.n, 0);
+  const css = head.childNodes
+    .map((node) => (node.childNodes || []).map((child) => child.nodeValue || '').join(''))
+    .join('\n');
+  assert.match(css, /计划、构建，\/ 调用技能，@ 添加上下文/);
+  assert.match(css, /is-editor-empty/);
+  assert.match(css, /is-editor-mention-only/);
+  assert.equal(typeof host.__cursorZhHans.disconnect, 'function');
+  host.__cursorZhHans.disconnect();
+  assert.equal(h.observerRef.current.disconnected, true);
+  assert.equal(head.childNodes.length, 0);
+});
+
+test('rebuilding the same data-placeholder outside an editor stops after the content window', () => {
+  const english = 'Plan changes';
+  const dictionary = compileDictionary({
+    exact: { [english]: '计划改动' },
+    fragments: [],
+    regex: [],
+  });
+  let writes = 0;
+  const h = harness({ emitCap: 500 });
+  const holder = h.makeElement('DIV');
+  function makeTarget() {
+    const el = h.makeElement('DIV', { attrs: { 'data-placeholder': english } });
+    el.setAttribute = (name, value) => {
+      writes += 1;
+      if (writes > 40) throw new Error(`attribute loop did not settle (${writes})`);
+      el.attrs[name] = String(value);
+      const fresh = makeTarget();
+      const parent = el.parentElement;
+      if (parent) {
+        parent.childNodes = parent.childNodes.filter((node) => node !== el);
+        parent.appendChild(fresh);
+      }
+      const obs = h.observerRef.current;
+      if (obs && obs.connected) obs.emit([{ type: 'childList', addedNodes: [fresh] }]);
+    };
+    return el;
+  }
+  holder.appendChild(makeTarget());
+  const { root, body } = mount([holder], h);
+  startDomTranslator({
+    translateText,
+    shouldSkipElement,
+    shouldSkipAttributeTarget,
+    dictionary,
+    version: 'loop',
+  }, {
+    document: { body, documentElement: root },
+    MutationObserver: h.MockObserver,
+    Element: class {},
+    window: {},
+    budgetMs: 2000,
+  });
+  assert.ok(writes > 0 && writes <= 8, `writes=${writes}`);
+  const settled = writes;
+  const latest = holder.childNodes[holder.childNodes.length - 1];
+  h.observerRef.current.emit([{ type: 'childList', addedNodes: [latest] }]);
+  assert.equal(writes, settled);
+});
+
+test('translation time stays charged after the queue drains', () => {
+  const dictionary = {
+    exact: new Map([['Cancel', '取消'], ['Save', '保存']]),
+    fragments: [],
+    regex: [],
+    placeholders: [],
+  };
+  const h = harness();
+  const first = h.makeText('Cancel');
+  const { root, body } = mount([first], h);
+  let clock = 0;
+  const host = {};
+  startDomTranslator({
+    translateText,
+    shouldSkipElement,
+    shouldSkipAttributeTarget,
+    dictionary,
+    version: 'budget',
+  }, {
+    document: { body, documentElement: root },
+    MutationObserver: h.MockObserver,
+    Element: class {},
+    window: host,
+    now() {
+      clock += 300;
+      return clock;
+    },
+    budgetMs: 2000,
+  });
+  assert.equal(first.nodeValue, '取消', `first pass clock=${clock} killed=${host.__cursorZhHansKilled}`);
+  const secondHost = h.makeElement('DIV');
+  const second = h.makeText('Save');
+  secondHost.appendChild(second);
+  body.appendChild(secondHost);
+  h.observerRef.current.emit([{ type: 'childList', addedNodes: [secondHost] }]);
+  assert.equal(host.__cursorZhHansKilled, true, `clock=${clock}`);
+  assert.equal(second.nodeValue, 'Save');
+});
 
 test('regex buckets keep the same translation as a full scan', () => {
   const { compiled } = loadDictionary();
