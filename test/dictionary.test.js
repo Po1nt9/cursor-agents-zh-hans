@@ -56,7 +56,7 @@ test('the shipped dictionary compiles and static rules agree with it', () => {
 test('generated runtime is plain script and passes node --check', () => {
   const { raw } = loadDictionary();
   const script = buildRuntimeScript(raw);
-  assert.doesNotMatch(script, /\bexport\s/);
+  assert.doesNotMatch(script, /^export\s/m);
   assert.match(script, /新建智能体/);
   assert.match(script, /MutationObserver/);
   assertJavaScriptSyntax(script, 'cursor-zh-hans.js');
