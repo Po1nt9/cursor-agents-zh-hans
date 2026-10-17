@@ -389,7 +389,7 @@
     {
       "id": "add-more-optional-details-ellipsis",
       "literal": "Add more optional details...",
-      "translation": "补充更多可选细节...",
+      "translation": "补充更多可选细节…",
       "expectedHits": {
         "3.25.6": 2
       }
@@ -437,7 +437,7 @@
     {
       "id": "steer-without-interrupting",
       "literal": "Steer without interrupting",
-      "translation": "转向，不打断",
+      "translation": "不打断智能体，直接补充说明",
       "expectedHits": {
         "3.25.6": 2
       }
@@ -445,7 +445,7 @@
     {
       "id": "editing-queued-message",
       "literal": "Editing queued message...",
-      "translation": "正在编辑排队的消息...",
+      "translation": "正在编辑排队的消息…",
       "expectedHits": {
         "3.25.6": 1
       }
@@ -453,7 +453,7 @@
     {
       "id": "editing-goal",
       "literal": "Editing goal...",
-      "translation": "正在编辑目标...",
+      "translation": "正在编辑目标…",
       "expectedHits": {
         "3.25.6": 1
       }
@@ -461,7 +461,7 @@
     {
       "id": "ask-follow-ups-to-the-cloud-agent",
       "literal": "Ask follow-ups to the Cloud Agent...",
-      "translation": "向云端智能体继续追问...",
+      "translation": "向云端智能体继续追问…",
       "expectedHits": {
         "3.25.6": 1
       }

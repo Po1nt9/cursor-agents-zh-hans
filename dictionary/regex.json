@@ -2227,19 +2227,19 @@
   },
   {
     "id": "close-named",
-    "pattern": "^Close ([A-Za-z0-9 ._+-]{1,40})$",
+    "pattern": "^Close ([A-Za-z0-9_+-]{1,40})$",
     "replacement": "关闭 $1",
     "flags": ""
   },
   {
     "id": "model-enabled",
-    "pattern": "^([A-Za-z0-9 .+_-]{2,48}) enabled$",
+    "pattern": "^([A-Z][A-Za-z0-9.+_-]*(?: [A-Za-z0-9.+_-]+){0,2}) enabled$",
     "replacement": "$1 已启用",
     "flags": ""
   },
   {
     "id": "configure-named",
-    "pattern": "^Configure ([A-Za-z0-9 ._+-]{1,40})$",
+    "pattern": "^Configure ([A-Za-z0-9_+-]{1,40})$",
     "replacement": "配置 $1",
     "flags": ""
   },

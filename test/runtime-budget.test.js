@@ -1175,7 +1175,7 @@ test('report lists English leftovers with a reason', () => {
     budgetMs: 2000,
   });
   assert.equal(menu.childNodes[0].nodeValue, '全部标为已读');
-  assert.equal(field.attrs.placeholder, '搜索或输入 URL...');
+  assert.equal(field.attrs.placeholder, '搜索或输入 URL…');
   const report = windowHost.__cursorZhHans.report();
   const texts = report.entries.filter((entry) => entry.kind === 'text');
   const skipped = texts.find((entry) => entry.text === 'Worked for 6s');

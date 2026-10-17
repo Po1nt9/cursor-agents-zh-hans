@@ -168,6 +168,11 @@ function readQuoted(source, index) {
         cursor += 6;
         continue;
       }
+      if (next === 'x' && /[0-9a-fA-F]{2}/.test(source.slice(cursor + 2, cursor + 4))) {
+        text += String.fromCharCode(parseInt(source.slice(cursor + 2, cursor + 4), 16));
+        cursor += 4;
+        continue;
+      }
       text += next === 'n' ? '\n' : next === 't' ? '\t' : next === 'r' ? '\r' : next;
       cursor += 2;
       continue;
@@ -447,6 +452,7 @@ export function extractSpecialLiterals(source) {
       .replace(/\\n/g, '\n')
       .replace(/\\t/g, '\t')
       .replace(/\\u([0-9a-fA-F]{4})/g, (_all, hex) => String.fromCharCode(parseInt(hex, 16)))
+      .replace(/\\x([0-9a-fA-F]{2})/g, (_all, hex) => String.fromCharCode(parseInt(hex, 16)))
       .replace(/\\(.)/g, '$1');
     value = value.trim();
     if (!value || value.length > 220) continue;

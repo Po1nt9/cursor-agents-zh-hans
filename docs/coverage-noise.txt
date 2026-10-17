@@ -1,0 +1,191 @@
+# Noise candidates excluded from the coverage denominator.
+# Columns: bucket, group, English.
+# One rule per bucket is in docs/coverage.md.
+
+debug-panel	errors-toasts	Async Action Dialog
+debug-panel	errors-toasts	Async Operation
+debug-panel	errors-toasts	Basic Dialog
+debug-panel	errors-toasts	Cache Keys:
+debug-panel	errors-toasts	Cached Payloads
+debug-panel	errors-toasts	Callout Dialog
+debug-panel	errors-toasts	Commit → present
+debug-panel	errors-toasts	Display Path:
+debug-panel	errors-toasts	Don't Ask Again Dialog
+debug-panel	errors-toasts	Duration
+debug-panel	errors-toasts	Error Dialog
+debug-panel	errors-toasts	Explorer Orchestrator Cache
+debug-panel	errors-toasts	Filter by cache key, remote authority, or path...
+debug-panel	errors-toasts	Glass Extensions
+debug-panel	errors-toasts	Glass Startup Performance
+debug-panel	errors-toasts	Glass present
+debug-panel	errors-toasts	Hydration is lazy: cache reads happen when an explorer provider is registered for a workspace, and writes happen after provider fetch succeeds.
+debug-panel	errors-toasts	Interval
+debug-panel	errors-toasts	Mark
+debug-panel	errors-toasts	Marks
+debug-panel	errors-toasts	Marks timeline
+debug-panel	errors-toasts	Multi-Button Loading
+debug-panel	errors-toasts	Multi-line Dialog
+debug-panel	errors-toasts	No Icon Dialog
+debug-panel	errors-toasts	No intervals for this section.
+debug-panel	errors-toasts	No path metadata.
+debug-panel	errors-toasts	No repositories in payload.
+debug-panel	errors-toasts	Offset
+debug-panel	errors-toasts	Offset is ms after
+debug-panel	errors-toasts	Pending Writes:
+debug-panel	errors-toasts	Present → usable
+debug-panel	errors-toasts	Pretty Dialog
+debug-panel	errors-toasts	Primary Action
+debug-panel	errors-toasts	React root → present
+debug-panel	errors-toasts	Remote Authority:
+debug-panel	errors-toasts	Repo URL:
+debug-panel	errors-toasts	Repo path:
+debug-panel	errors-toasts	Runs in a local web-worker extension host inside this renderer process.
+debug-panel	errors-toasts	Runs in a separate local OS process for extension-host work.
+debug-panel	errors-toasts	Runs in the remote extension host for this workspace.
+debug-panel	errors-toasts	Saved At:
+debug-panel	errors-toasts	Spans may nest; do not sum durations (e.g. require + pre-workbench can extend past didPresentShell).
+debug-panel	errors-toasts	Styled Messages
+debug-panel	errors-toasts	This combines deemphasized with custom style.
+debug-panel	errors-toasts	This dialog demonstrates partial updates without closing the dialog.
+debug-panel	errors-toasts	This is a callout without an icon.
+debug-panel	errors-toasts	Workbench
+debug-panel	glass-ui	Accept Notification Primary Action
+debug-panel	glass-ui	Best-effort active ChildProcess inventory requested when the renderer declared the extension host unresponsive. Missing if the extension host could not answer quickly.
+debug-panel	glass-ui	Best-effort event-loop delay history snapshot requested when the renderer declared the extension host unresponsive. Missing if the extension host could not answer quickly.
+debug-panel	glass-ui	Capture Performance Profile
+debug-panel	glass-ui	Capture and Upload Renderer Heap Snapshot
+debug-panel	glass-ui	Compare Pretty Dialog
+debug-panel	glass-ui	Configure: Debug Timeout Prevention
+debug-panel	glass-ui	Cursor Auth Debug
+debug-panel	glass-ui	Diff Source Registry Debug
+debug-panel	glass-ui	Display Explorer Orchestrator Cache
+debug-panel	glass-ui	Dogfood
+debug-panel	glass-ui	Enable Data Handle Debugging
+debug-panel	glass-ui	Enable logging of extension host RPC messages to JSON files viewable in Perfetto. Requires restart.
+debug-panel	glass-ui	Extension host CPU/resource/memory counters selected at T-1s, T+0, and T+5s around unresponsive detection. Missing target samples mean the extension host stopped sending updates.
+debug-panel	glass-ui	Force Renderer OOM Crash
+debug-panel	glass-ui	Hang Renderer Thread (30 s)
+debug-panel	glass-ui	Hide Performance Bar
+debug-panel	glass-ui	Hydration
+debug-panel	glass-ui	Inline Diff Service Debug
+debug-panel	glass-ui	Jank
+debug-panel	glass-ui	Log extension host RPC messages to JSON files viewable in Perfetto for performance analysis. Requires a restart to take effect.
+debug-panel	glass-ui	Most recent workbench search invocations (ripgrep-backed) recorded on the renderer before the storm threshold was crossed. No raw query text or paths are included.
+debug-panel	glass-ui	Plugin Tray Primary Action
+debug-panel	glass-ui	React Performance Tracks
+debug-panel	glass-ui	Renderer health at the moment the renderer declared the extension host unresponsive. Use this to distinguish extension-host stalls from renderer stalls.
+debug-panel	glass-ui	Renderer-side health snapshot captured by the process reporting the extension-host unresponsive Sentry event. Long-task, GC, and event-loop-lag arrays are ordered oldest to newest.
+debug-panel	glass-ui	Snapshot Tracked Disposables
+debug-panel	glass-ui	Start Tracking Disposables
+debug-panel	glass-ui	Startup Performance
+debug-panel	glass-ui	Stop Tracking Disposables
+debug-panel	glass-ui	This is a callout message.
+debug-panel	glass-ui	Toggle Workbench Lifecycle Metric (Performance Bar)
+dev-only	glass-ui	Debug: Check Terminal Execution Service Version
+dev-only	glass-ui	Debug: Open Skill Publishing Logs
+dev-only	glass-ui	Developer: Crash Browser Webview Renderer
+dev-only	glass-ui	Developer: Delete Old Chats…
+dev-only	glass-ui	Developer: Force Retokenize
+dev-only	glass-ui	Developer: Inspect Editor Tokens and Scopes
+dev-only	glass-ui	Developer: New Additional Agents Window
+dev-only	glass-ui	Developer: Open Logs Folder
+dev-only	glass-ui	Developer: Orphan Browser View Entry
+dev-only	glass-ui	Developer: Preview Staged Projects
+dev-only	glass-ui	Developer: Relaunch Active Terminal for Backport Verification
+dev-only	glass-ui	Developer: Reload and Start Glass FTUX
+dev-only	glass-ui	Developer: Reset Design Mode Quick Action Pill
+dev-only	glass-ui	Developer: Reset Max Mode Confirmation (model picker)
+dev-only	glass-ui	Developer: Reveal User Data Folder
+dev-only	glass-ui	Developer: Seed Staged Projects
+dev-only	glass-ui	Developer: Set Anyrun Cluster
+dev-only	glass-ui	Developer: Snapshot Tracked Disposables
+dev-only	glass-ui	Developer: Start Network & IPC Profiler
+dev-only	glass-ui	Developer: Start Tracking Disposables
+dev-only	glass-ui	Developer: Startup Performance
+dev-only	glass-ui	Developer: Stop Tracking Disposables and Copy Report
+dev-only	glass-ui	Developer: Storage
+dev-only	glass-ui	Developer: Test Chat Open with Prompt
+dev-only	glass-ui	Developer: Toggle Auth Debugging
+dev-only	glass-ui	Developer: Use Localhost Update Server
+dev-only	glass-ui	Developer: open an additional Agents window while running --glass.
+enum-key	glass-ui	Err
+enum-key	glass-ui	False
+enum-key	glass-ui	Mem
+enum-key	glass-ui	Obs
+enum-key	glass-ui	True
+internal-id	glass-ui	BigInt
+internal-id	glass-ui	BracketPairColorization
+internal-id	glass-ui	Composer file checkpoints (checkpointId:*)
+internal-id	glass-ui	GhostTextReplacement
+internal-id	glass-ui	IconButtons
+internal-id	glass-ui	InlayHint
+internal-id	glass-ui	Per-chat composerData payloads and optional composerConversationState sidecars
+internal-id	glass-ui	Promise
+log-only	errors-toasts	Can't add a queue to itself
+log-only	errors-toasts	Can't add same view twice
+log-only	errors-toasts	Can't call getNeighborViews before first layout
+log-only	errors-toasts	Can't compress empty sticky nodes
+log-only	errors-toasts	Can't expand to element without getParent method
+log-only	errors-toasts	Can't find variable: _AutofillCallbackHandler
+log-only	errors-toasts	Can't get element
+log-only	errors-toasts	Can't get tree view state without an identity provider
+log-only	errors-toasts	Can't remove element
+log-only	errors-toasts	Can't remove last view
+log-only	errors-toasts	Can't replace root node
+log-only	errors-toasts	Can't restore tree view state without an identity provider
+log-only	errors-toasts	Can't run recursive splices.
+log-only	errors-toasts	Can't set element
+log-only	errors-toasts	Cannot capture check-in. No client defined.
+log-only	errors-toasts	Cannot dispose a disposable on itself!
+log-only	errors-toasts	Cannot flush events and disable SDK. No client defined.
+log-only	errors-toasts	Cannot flush events. No client defined.
+log-only	errors-toasts	Cannot mix number and bigint in multiple_of check.
+log-only	errors-toasts	Cannot register a disposable on itself!
+log-only	errors-toasts	FAILED to destory notebook -
+log-only	errors-toasts	FAILED to post message to worker
+log-only	errors-toasts	FAILED to read storage after UPDATE
+log-only	errors-toasts	Failed to JSON.stringify user
+log-only	errors-toasts	Failed to capture xhr breadcrumb
+log-only	errors-toasts	Failed to fetch TXT records from DNS
+log-only	errors-toasts	Failed to flush events.
+log-only	errors-toasts	Failed to get xhr response body
+log-only	errors-toasts	Failed to get xhr response headers
+log-only	errors-toasts	Failed to hydrate conversation from checkpoint on retry resume
+log-only	errors-toasts	Failed to hydrate conversation step during conversation state hydration; returning error tool bubble
+log-only	errors-toasts	Failed to hydrate conversation step from conversation state.
+log-only	errors-toasts	Failed to hydrate conversation turn from conversation state.
+log-only	errors-toasts	Failed to hydrate user message from conversation state.
+log-only	errors-toasts	Failed to parse FallbackInfo
+log-only	errors-toasts	Failed to save SessionID
+log-only	errors-toasts	Failed to serialize body
+log-only	errors-toasts	Unable to extract extra data from the Error object:
+log-only	errors-toasts	Unable to make request without an SDK key
+log-only	glass-ui	Monaco atlas info uniform buffer
+log-only	glass-ui	Monaco atlas sampler
+log-only	glass-ui	Monaco atlas texture
+log-only	glass-ui	Monaco command encoder
+log-only	glass-ui	Monaco full file cell buffer
+log-only	glass-ui	Monaco glyph storage buffer
+log-only	glass-ui	Monaco rectangle renderer bind group
+log-only	glass-ui	Monaco rectangle renderer command encoder
+log-only	glass-ui	Monaco rectangle renderer render pass
+log-only	glass-ui	Monaco rectangle renderer render pipeline
+log-only	glass-ui	Monaco rectangle renderer scroll offset buffer
+log-only	glass-ui	Monaco rectangle renderer shader module
+log-only	glass-ui	Monaco rectangle renderer shape buffer
+log-only	glass-ui	Monaco rectangle renderer uniform buffer
+log-only	glass-ui	Monaco rectangle renderer vertex buffer
+log-only	glass-ui	Monaco render pipeline
+log-only	glass-ui	Monaco scroll offset buffer
+log-only	glass-ui	Monaco shader module
+log-only	glass-ui	Monaco uniform buffer
+log-only	glass-ui	Monaco vertex buffer
+telemetry	errors-toasts	An error occurred in a StatsigClientEvent listener. This is not an issue with Statsig.
+telemetry	errors-toasts	Failed to get git telemetry attributes:
+telemetry	glass-ui	Clear Statsig Cache
+telemetry	glass-ui	Open Statsig config
+telemetry	glass-ui	Open in Statsig
+telemetry	glass-ui	Refresh Statsig Config
+telemetry	glass-ui	Show Telemetry
+telemetry	glass-ui	Toggle Statsig Dummy Config Console Loop
+telemetry	glass-ui	Toggle simulate production mode (ignore dev/internal targeting in Statsig evaluations)

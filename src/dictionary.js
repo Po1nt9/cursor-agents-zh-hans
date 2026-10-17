@@ -27,6 +27,12 @@ export function loadDictionaryRaw(dir) {
   for (const from of Object.keys(nls)) {
     if (!Object.prototype.hasOwnProperty.call(exact, from)) exact[from] = nls[from];
   }
+  const uiFile = path.join(root, 'ui.json');
+  const ui = fs.existsSync(uiFile) ? readJson(uiFile) : {};
+  if (!ui || typeof ui !== 'object' || Array.isArray(ui)) throw new Error('ui.json 必须是对象');
+  for (const from of Object.keys(ui)) {
+    if (!Object.prototype.hasOwnProperty.call(exact, from)) exact[from] = ui[from];
+  }
   regex.push(...nlsRegex);
   if (!exact || typeof exact !== 'object' || Array.isArray(exact)) {
     throw new Error('exact.json 必须是对象');

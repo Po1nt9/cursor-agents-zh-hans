@@ -1,6 +1,35 @@
 # 译文质量改动
 
-对照 [dictionary/STYLE.md](../dictionary/STYLE.md)。下面是这一轮改过的旧译文。新加的错误提示和 VS Code 语言包条目另列。
+对照 [dictionary/STYLE.md](../dictionary/STYLE.md)。下面先写这一轮的用词，再保留上一轮的改动记录。新加的界面句在 `dictionary/ui.json`，和 VS Code 语言包对齐的核心句仍在 `dictionary/nls.json`。
+
+## 插话 / 排队 / 打断
+
+「转向」读起来不像这个按钮。智能体还在工作时，三条发送选项是插话、排队、打断。
+
+| 原文 | 旧译 | 新译 | 原因 |
+| --- | --- | --- | --- |
+| Steer | 转向 | 插话 | 插话是边做边补充，不必先停下来。 |
+| Queue | 队列 | 排队 | 和插话、打断一样，用动作，不用名词。名词「消息队列」仍用队列。 |
+| Steer the agent without stopping it | 转向智能体，无需停止 | 不打断智能体，直接补充说明 | 说明动作，不另造一个动词。 |
+| Steer without interrupting | 转向，不打断 | 不打断智能体，直接补充说明 | 输入框占位和菜单说明用同一句。 |
+| Send after Agent finishes | 等智能体完成后再发送 | 等智能体做完再发送 | 排队的说明。 |
+| Stop the agent and send the message | 停止智能体并发送消息 | 停下智能体并发送这条消息 | 打断的说明。 |
+| Messages sent while Cursor is working can steer it mid-run without interrupting - turn it on under New Messages in Agent settings | Cursor 工作时发来的消息可以中途转向，不必打断。在智能体设置的「新消息」里打开。 | Cursor 工作时发来的消息可以插话，不必打断。在智能体设置的「新消息」里打开。 | 首页提示改用插话。 |
+| Steer a running agent without stopping it - set New Messages to Send Immediately in your Agents settings | 转向正在运行的智能体，无需停止。在智能体设置里把「新消息」设为「立即发送」。 | 不打断智能体，直接补充说明。在智能体设置里把「新消息」设为「立即发送」。 | 同一套说明，并带上设置路径。 |
+
+## 第二遍：只改读起来别扭的地方
+
+整份词典又过了一遍，按界面中文改，不逐词对译。
+
+- 26 条 `exact.json` 和 4 条静态占位符的省略号从 `...` 改成 `…`。`另存为...`、`搜索...`、`正在提交...` 都在里面。
+- 比较、导航、查找不再套「进行」：`Compare with File` 是「与文件比较」，`Navigate Between Editor Groups` 是「在编辑器组之间导航」，三条 Toggle Find 是「切换区分大小写查找 / 切换正则表达式查找 / 切换全字匹配查找」。
+- `Open a browser for web interactions` 改为「打开浏览器，以便操作网页」。`You cannot summarize while the agent is still working.` 改为「智能体还在工作时无法总结。」
+- 单词标签：`Details` 详情，`Preview` 预览，`Keybindings` 快捷键，`Press` 按下，`Operations` 操作，`Messaging` 消息，`Squash` 压缩提交，`Sunday` 星期日。
+- 不必强调所有格的句子去掉「你的」：反馈、聊天同步、浏览器查看、每条消息的短划线、数据共享里的团队、处理请求时的错误。账户、密钥、个人资料、支出限额仍保留「你的」。
+- `Close …` / `Configure …` 两条正则只匹配一个名字（`Close bash`、`Configure gmail`）。「Close All Tabs」这类整句不再被收成「关闭 All Tabs」，改为完整中文。`Grok 4.7 enabled` 仍是「Grok 4.7 已启用」。
+- `Error:` 后面整句还是英文的提示，改成完整中文，例如「错误：必须提供路径」「错误：子智能体不能移动工作区根目录…」。
+
+上一节「转向，不再用引导」是上一轮的记录。那一轮先把「引导」换成「转向」，这一轮再用「插话」换掉「转向」。
 
 ## 转向，不再用「引导」
 

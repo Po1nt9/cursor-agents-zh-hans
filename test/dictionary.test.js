@@ -52,8 +52,13 @@ test('the shipped dictionary compiles and static rules agree with it', () => {
   assert.equal(raw.exact['New Output View'], '新建输出视图');
   assert.equal(raw.exact['This Computer'], '这台计算机');
   assert.equal(raw.exact['Remote Machine'], '远程计算机');
-  assert.equal(raw.exact.Steer, '转向');
-  assert.equal(raw.exact['Steer the agent without stopping it'], '转向智能体，无需停止');
+  assert.equal(raw.exact.Steer, '插话');
+  assert.equal(raw.exact.Queue, '排队');
+  assert.equal(raw.exact.Interrupt, '打断');
+  assert.equal(raw.exact['Steer the agent without stopping it'], '不打断智能体，直接补充说明');
+  assert.equal(raw.exact['Steer without interrupting'], '不打断智能体，直接补充说明');
+  assert.equal(raw.exact['Send after Agent finishes'], '等智能体做完再发送');
+  assert.equal(raw.exact['Stop the agent and send the message'], '停下智能体并发送这条消息');
   assert.equal(
     raw.exact['Use /simplify to have Cursor review all changed files for code quality and efficiency'],
     '使用 /simplify 让 Cursor 审查所有已更改文件的代码质量和效率',
@@ -76,7 +81,7 @@ test('the shipped dictionary compiles and static rules agree with it', () => {
   );
   assert.equal(
     raw.exact['Messages sent while Cursor is working can steer it mid-run without interrupting - turn it on under New Messages in Agent settings'],
-    'Cursor 工作时发来的消息可以中途转向，不必打断。在智能体设置的「新消息」里打开。',
+    'Cursor 工作时发来的消息可以插话，不必打断。在智能体设置的「新消息」里打开。',
   );
   assert.equal(raw.exact.Today, '今天');
   assert.equal(raw.exact.Yesterday, '昨天');

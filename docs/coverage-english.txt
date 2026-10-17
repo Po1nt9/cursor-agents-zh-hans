@@ -1,0 +1,76 @@
+# Intentionally English names. Not noise, and not in the coverage denominator.
+# Columns: bucket, group, English.
+# voice-name, model-name, product-name, shortcut.
+
+model-name	glass-ui	Claude 3.7 Sonnet
+model-name	glass-ui	Claude Code
+model-name	glass-ui	GPT-3.5 Turbo
+model-name	glass-ui	Gemini 2.5 Flash
+model-name	glass-ui	Gemini 2.5 Pro
+model-name	glass-ui	Grok 3
+model-name	glass-ui	Llama 3.2 3B
+model-name	glass-ui	Mistral Large
+product-name	glass-ui	AWS Bedrock
+product-name	glass-ui	Angular
+product-name	glass-ui	Azure DevOps
+product-name	glass-ui	Azure OpenAI
+product-name	glass-ui	Bugbot
+product-name	glass-ui	Canvas
+product-name	glass-ui	Cursor
+product-name	glass-ui	Cursor Origin
+product-name	glass-ui	Docker
+product-name	glass-ui	Dockerfile
+product-name	glass-ui	Emacs
+product-name	glass-ui	Galaxy S25 Ultra
+product-name	glass-ui	Git
+product-name	glass-ui	GitHub
+product-name	glass-ui	GitLab
+product-name	glass-ui	Graphite
+product-name	glass-ui	Makefile
+product-name	glass-ui	Markdown
+product-name	glass-ui	Max
+product-name	glass-ui	Microsoft Entra ID
+product-name	glass-ui	Origin
+product-name	glass-ui	Pixel 10
+product-name	glass-ui	Pro
+product-name	glass-ui	Python
+product-name	glass-ui	React
+product-name	glass-ui	React #
+product-name	glass-ui	React DevTools
+product-name	glass-ui	Rust
+product-name	glass-ui	Tab
+product-name	glass-ui	TypeScript
+product-name	glass-ui	Ultra
+product-name	glass-ui	VS Code
+product-name	glass-ui	Vim
+product-name	glass-ui	Vue
+shortcut	glass-ui	Command K
+shortcut	glass-ui	Enter
+voice-name	glass-ui	Altair
+voice-name	glass-ui	Ara
+voice-name	glass-ui	Atlas
+voice-name	glass-ui	Aurora
+voice-name	glass-ui	Carina
+voice-name	glass-ui	Castor
+voice-name	glass-ui	Celeste
+voice-name	glass-ui	Cosmo
+voice-name	glass-ui	Eve
+voice-name	glass-ui	Helios
+voice-name	glass-ui	Helix
+voice-name	glass-ui	Iris
+voice-name	glass-ui	Kepler
+voice-name	glass-ui	Leo
+voice-name	glass-ui	Liora
+voice-name	glass-ui	Lumen
+voice-name	glass-ui	Luna
+voice-name	glass-ui	Lux
+voice-name	glass-ui	Naksh
+voice-name	glass-ui	Orion
+voice-name	glass-ui	Perseus
+voice-name	glass-ui	Rex
+voice-name	glass-ui	Rigel
+voice-name	glass-ui	Sal
+voice-name	glass-ui	Sirius
+voice-name	glass-ui	Ursa
+voice-name	glass-ui	Zagan
+voice-name	glass-ui	Zenith

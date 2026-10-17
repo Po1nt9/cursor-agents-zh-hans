@@ -16,7 +16,7 @@ export function lintChinese(english, chinese) {
   if (!zh || !/[\u4e00-\u9fff]/.test(zh)) return issues;
   if (zh.includes('的的')) issues.push('stacked-de');
   if (/\bAgent\b/.test(en) && !/proxy/i.test(en) && zh.includes('代理')) issues.push('agent-as-proxy');
-  if (/\b[Ss]teer\b/.test(en) && (zh.includes('引导') || !zh.includes('转向'))) issues.push('steer-calque');
+  if (/\b[Ss]teer\b/.test(en) && (zh.includes('引导') || zh.includes('转向'))) issues.push('steer-calque');
   if (HAN_LATIN.test(zh) && !/\/[A-Za-z]/.test(zh)) issues.push('missing-space');
   if (!skipPunct(zh) && HALF_PUNCT.test(zh)) issues.push('halfwidth-punct');
   if (/[\u4e00-\u9fff]/.test(zh) && /[A-Za-z]{4,}/.test(zh)) {
