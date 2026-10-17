@@ -47,6 +47,7 @@ ${dom}
 startDomTranslator({
   translateText: translateText,
   shouldSkipElement: shouldSkipElement,
+  shouldSkipAttributeTarget: shouldSkipAttributeTarget,
   dictionary: compileDictionary(${payload}),
   version: ${JSON.stringify(version)}
 }, { document: document, MutationObserver: MutationObserver, Element: Element, window: window });

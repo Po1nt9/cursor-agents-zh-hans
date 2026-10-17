@@ -148,5 +148,1907 @@
     "pattern": "^Link (\\d+)$",
     "flags": "",
     "replacement": "链接 $1"
+  },
+  {
+    "id": "seconds-ago",
+    "pattern": "^(\\d+)s ago$",
+    "replacement": "$1 秒前",
+    "flags": ""
+  },
+  {
+    "id": "percent-used",
+    "pattern": "^(\\d+(?:\\.\\d+)?)% used$",
+    "replacement": "已使用 $1%",
+    "flags": ""
+  },
+  {
+    "id": "dollars-remaining",
+    "pattern": "^\\$(\\d{1,3}(?:,\\d{3})*(?:\\.\\d{2})?) remaining$",
+    "replacement": "剩余 $$$1",
+    "flags": ""
+  },
+  {
+    "id": "included-in-plan",
+    "pattern": "^Included in (.+)$",
+    "replacement": "已包含在 $1 中",
+    "flags": ""
+  },
+  {
+    "id": "auto-import-modules",
+    "pattern": "^Automatically import necessary modules for (.+)$",
+    "replacement": "自动为 $1 导入所需模块",
+    "flags": ""
+  },
+  {
+    "id": "weekly-Jan-0-minutes",
+    "pattern": "^Weekly usage resets on Jan (\\d{1,2}) \\(0 minutes left\\)$",
+    "replacement": "每周用量将于 1 月 $1 日重置（还剩 0 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "weekly-Jan-minute",
+    "pattern": "^Weekly usage resets on Jan (\\d{1,2}) \\((\\d+) minute left\\)$",
+    "replacement": "每周用量将于 1 月 $1 日重置（还剩 $2 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "weekly-Jan-minutes",
+    "pattern": "^Weekly usage resets on Jan (\\d{1,2}) \\((\\d+) minutes left\\)$",
+    "replacement": "每周用量将于 1 月 $1 日重置（还剩 $2 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "weekly-Jan-hour",
+    "pattern": "^Weekly usage resets on Jan (\\d{1,2}) \\((\\d+) hour left\\)$",
+    "replacement": "每周用量将于 1 月 $1 日重置（还剩 $2 小时）",
+    "flags": ""
+  },
+  {
+    "id": "weekly-Jan-hours",
+    "pattern": "^Weekly usage resets on Jan (\\d{1,2}) \\((\\d+) hours left\\)$",
+    "replacement": "每周用量将于 1 月 $1 日重置（还剩 $2 小时）",
+    "flags": ""
+  },
+  {
+    "id": "weekly-Jan-hour-minute",
+    "pattern": "^Weekly usage resets on Jan (\\d{1,2}) \\((\\d+) hour and (\\d+) minute left\\)$",
+    "replacement": "每周用量将于 1 月 $1 日重置（还剩 $2 小时 $3 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "weekly-Jan-hour-minutes",
+    "pattern": "^Weekly usage resets on Jan (\\d{1,2}) \\((\\d+) hour and (\\d+) minutes left\\)$",
+    "replacement": "每周用量将于 1 月 $1 日重置（还剩 $2 小时 $3 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "weekly-Jan-hours-minute",
+    "pattern": "^Weekly usage resets on Jan (\\d{1,2}) \\((\\d+) hours and (\\d+) minute left\\)$",
+    "replacement": "每周用量将于 1 月 $1 日重置（还剩 $2 小时 $3 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "weekly-Jan-hours-minutes",
+    "pattern": "^Weekly usage resets on Jan (\\d{1,2}) \\((\\d+) hours and (\\d+) minutes left\\)$",
+    "replacement": "每周用量将于 1 月 $1 日重置（还剩 $2 小时 $3 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "weekly-Jan-day",
+    "pattern": "^Weekly usage resets on Jan (\\d{1,2}) \\((\\d+) day left\\)$",
+    "replacement": "每周用量将于 1 月 $1 日重置（还剩 $2 天）",
+    "flags": ""
+  },
+  {
+    "id": "weekly-Jan-days",
+    "pattern": "^Weekly usage resets on Jan (\\d{1,2}) \\((\\d+) days left\\)$",
+    "replacement": "每周用量将于 1 月 $1 日重置（还剩 $2 天）",
+    "flags": ""
+  },
+  {
+    "id": "weekly-Feb-0-minutes",
+    "pattern": "^Weekly usage resets on Feb (\\d{1,2}) \\(0 minutes left\\)$",
+    "replacement": "每周用量将于 2 月 $1 日重置（还剩 0 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "weekly-Feb-minute",
+    "pattern": "^Weekly usage resets on Feb (\\d{1,2}) \\((\\d+) minute left\\)$",
+    "replacement": "每周用量将于 2 月 $1 日重置（还剩 $2 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "weekly-Feb-minutes",
+    "pattern": "^Weekly usage resets on Feb (\\d{1,2}) \\((\\d+) minutes left\\)$",
+    "replacement": "每周用量将于 2 月 $1 日重置（还剩 $2 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "weekly-Feb-hour",
+    "pattern": "^Weekly usage resets on Feb (\\d{1,2}) \\((\\d+) hour left\\)$",
+    "replacement": "每周用量将于 2 月 $1 日重置（还剩 $2 小时）",
+    "flags": ""
+  },
+  {
+    "id": "weekly-Feb-hours",
+    "pattern": "^Weekly usage resets on Feb (\\d{1,2}) \\((\\d+) hours left\\)$",
+    "replacement": "每周用量将于 2 月 $1 日重置（还剩 $2 小时）",
+    "flags": ""
+  },
+  {
+    "id": "weekly-Feb-hour-minute",
+    "pattern": "^Weekly usage resets on Feb (\\d{1,2}) \\((\\d+) hour and (\\d+) minute left\\)$",
+    "replacement": "每周用量将于 2 月 $1 日重置（还剩 $2 小时 $3 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "weekly-Feb-hour-minutes",
+    "pattern": "^Weekly usage resets on Feb (\\d{1,2}) \\((\\d+) hour and (\\d+) minutes left\\)$",
+    "replacement": "每周用量将于 2 月 $1 日重置（还剩 $2 小时 $3 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "weekly-Feb-hours-minute",
+    "pattern": "^Weekly usage resets on Feb (\\d{1,2}) \\((\\d+) hours and (\\d+) minute left\\)$",
+    "replacement": "每周用量将于 2 月 $1 日重置（还剩 $2 小时 $3 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "weekly-Feb-hours-minutes",
+    "pattern": "^Weekly usage resets on Feb (\\d{1,2}) \\((\\d+) hours and (\\d+) minutes left\\)$",
+    "replacement": "每周用量将于 2 月 $1 日重置（还剩 $2 小时 $3 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "weekly-Feb-day",
+    "pattern": "^Weekly usage resets on Feb (\\d{1,2}) \\((\\d+) day left\\)$",
+    "replacement": "每周用量将于 2 月 $1 日重置（还剩 $2 天）",
+    "flags": ""
+  },
+  {
+    "id": "weekly-Feb-days",
+    "pattern": "^Weekly usage resets on Feb (\\d{1,2}) \\((\\d+) days left\\)$",
+    "replacement": "每周用量将于 2 月 $1 日重置（还剩 $2 天）",
+    "flags": ""
+  },
+  {
+    "id": "weekly-Mar-0-minutes",
+    "pattern": "^Weekly usage resets on Mar (\\d{1,2}) \\(0 minutes left\\)$",
+    "replacement": "每周用量将于 3 月 $1 日重置（还剩 0 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "weekly-Mar-minute",
+    "pattern": "^Weekly usage resets on Mar (\\d{1,2}) \\((\\d+) minute left\\)$",
+    "replacement": "每周用量将于 3 月 $1 日重置（还剩 $2 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "weekly-Mar-minutes",
+    "pattern": "^Weekly usage resets on Mar (\\d{1,2}) \\((\\d+) minutes left\\)$",
+    "replacement": "每周用量将于 3 月 $1 日重置（还剩 $2 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "weekly-Mar-hour",
+    "pattern": "^Weekly usage resets on Mar (\\d{1,2}) \\((\\d+) hour left\\)$",
+    "replacement": "每周用量将于 3 月 $1 日重置（还剩 $2 小时）",
+    "flags": ""
+  },
+  {
+    "id": "weekly-Mar-hours",
+    "pattern": "^Weekly usage resets on Mar (\\d{1,2}) \\((\\d+) hours left\\)$",
+    "replacement": "每周用量将于 3 月 $1 日重置（还剩 $2 小时）",
+    "flags": ""
+  },
+  {
+    "id": "weekly-Mar-hour-minute",
+    "pattern": "^Weekly usage resets on Mar (\\d{1,2}) \\((\\d+) hour and (\\d+) minute left\\)$",
+    "replacement": "每周用量将于 3 月 $1 日重置（还剩 $2 小时 $3 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "weekly-Mar-hour-minutes",
+    "pattern": "^Weekly usage resets on Mar (\\d{1,2}) \\((\\d+) hour and (\\d+) minutes left\\)$",
+    "replacement": "每周用量将于 3 月 $1 日重置（还剩 $2 小时 $3 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "weekly-Mar-hours-minute",
+    "pattern": "^Weekly usage resets on Mar (\\d{1,2}) \\((\\d+) hours and (\\d+) minute left\\)$",
+    "replacement": "每周用量将于 3 月 $1 日重置（还剩 $2 小时 $3 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "weekly-Mar-hours-minutes",
+    "pattern": "^Weekly usage resets on Mar (\\d{1,2}) \\((\\d+) hours and (\\d+) minutes left\\)$",
+    "replacement": "每周用量将于 3 月 $1 日重置（还剩 $2 小时 $3 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "weekly-Mar-day",
+    "pattern": "^Weekly usage resets on Mar (\\d{1,2}) \\((\\d+) day left\\)$",
+    "replacement": "每周用量将于 3 月 $1 日重置（还剩 $2 天）",
+    "flags": ""
+  },
+  {
+    "id": "weekly-Mar-days",
+    "pattern": "^Weekly usage resets on Mar (\\d{1,2}) \\((\\d+) days left\\)$",
+    "replacement": "每周用量将于 3 月 $1 日重置（还剩 $2 天）",
+    "flags": ""
+  },
+  {
+    "id": "weekly-Apr-0-minutes",
+    "pattern": "^Weekly usage resets on Apr (\\d{1,2}) \\(0 minutes left\\)$",
+    "replacement": "每周用量将于 4 月 $1 日重置（还剩 0 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "weekly-Apr-minute",
+    "pattern": "^Weekly usage resets on Apr (\\d{1,2}) \\((\\d+) minute left\\)$",
+    "replacement": "每周用量将于 4 月 $1 日重置（还剩 $2 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "weekly-Apr-minutes",
+    "pattern": "^Weekly usage resets on Apr (\\d{1,2}) \\((\\d+) minutes left\\)$",
+    "replacement": "每周用量将于 4 月 $1 日重置（还剩 $2 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "weekly-Apr-hour",
+    "pattern": "^Weekly usage resets on Apr (\\d{1,2}) \\((\\d+) hour left\\)$",
+    "replacement": "每周用量将于 4 月 $1 日重置（还剩 $2 小时）",
+    "flags": ""
+  },
+  {
+    "id": "weekly-Apr-hours",
+    "pattern": "^Weekly usage resets on Apr (\\d{1,2}) \\((\\d+) hours left\\)$",
+    "replacement": "每周用量将于 4 月 $1 日重置（还剩 $2 小时）",
+    "flags": ""
+  },
+  {
+    "id": "weekly-Apr-hour-minute",
+    "pattern": "^Weekly usage resets on Apr (\\d{1,2}) \\((\\d+) hour and (\\d+) minute left\\)$",
+    "replacement": "每周用量将于 4 月 $1 日重置（还剩 $2 小时 $3 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "weekly-Apr-hour-minutes",
+    "pattern": "^Weekly usage resets on Apr (\\d{1,2}) \\((\\d+) hour and (\\d+) minutes left\\)$",
+    "replacement": "每周用量将于 4 月 $1 日重置（还剩 $2 小时 $3 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "weekly-Apr-hours-minute",
+    "pattern": "^Weekly usage resets on Apr (\\d{1,2}) \\((\\d+) hours and (\\d+) minute left\\)$",
+    "replacement": "每周用量将于 4 月 $1 日重置（还剩 $2 小时 $3 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "weekly-Apr-hours-minutes",
+    "pattern": "^Weekly usage resets on Apr (\\d{1,2}) \\((\\d+) hours and (\\d+) minutes left\\)$",
+    "replacement": "每周用量将于 4 月 $1 日重置（还剩 $2 小时 $3 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "weekly-Apr-day",
+    "pattern": "^Weekly usage resets on Apr (\\d{1,2}) \\((\\d+) day left\\)$",
+    "replacement": "每周用量将于 4 月 $1 日重置（还剩 $2 天）",
+    "flags": ""
+  },
+  {
+    "id": "weekly-Apr-days",
+    "pattern": "^Weekly usage resets on Apr (\\d{1,2}) \\((\\d+) days left\\)$",
+    "replacement": "每周用量将于 4 月 $1 日重置（还剩 $2 天）",
+    "flags": ""
+  },
+  {
+    "id": "weekly-May-0-minutes",
+    "pattern": "^Weekly usage resets on May (\\d{1,2}) \\(0 minutes left\\)$",
+    "replacement": "每周用量将于 5 月 $1 日重置（还剩 0 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "weekly-May-minute",
+    "pattern": "^Weekly usage resets on May (\\d{1,2}) \\((\\d+) minute left\\)$",
+    "replacement": "每周用量将于 5 月 $1 日重置（还剩 $2 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "weekly-May-minutes",
+    "pattern": "^Weekly usage resets on May (\\d{1,2}) \\((\\d+) minutes left\\)$",
+    "replacement": "每周用量将于 5 月 $1 日重置（还剩 $2 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "weekly-May-hour",
+    "pattern": "^Weekly usage resets on May (\\d{1,2}) \\((\\d+) hour left\\)$",
+    "replacement": "每周用量将于 5 月 $1 日重置（还剩 $2 小时）",
+    "flags": ""
+  },
+  {
+    "id": "weekly-May-hours",
+    "pattern": "^Weekly usage resets on May (\\d{1,2}) \\((\\d+) hours left\\)$",
+    "replacement": "每周用量将于 5 月 $1 日重置（还剩 $2 小时）",
+    "flags": ""
+  },
+  {
+    "id": "weekly-May-hour-minute",
+    "pattern": "^Weekly usage resets on May (\\d{1,2}) \\((\\d+) hour and (\\d+) minute left\\)$",
+    "replacement": "每周用量将于 5 月 $1 日重置（还剩 $2 小时 $3 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "weekly-May-hour-minutes",
+    "pattern": "^Weekly usage resets on May (\\d{1,2}) \\((\\d+) hour and (\\d+) minutes left\\)$",
+    "replacement": "每周用量将于 5 月 $1 日重置（还剩 $2 小时 $3 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "weekly-May-hours-minute",
+    "pattern": "^Weekly usage resets on May (\\d{1,2}) \\((\\d+) hours and (\\d+) minute left\\)$",
+    "replacement": "每周用量将于 5 月 $1 日重置（还剩 $2 小时 $3 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "weekly-May-hours-minutes",
+    "pattern": "^Weekly usage resets on May (\\d{1,2}) \\((\\d+) hours and (\\d+) minutes left\\)$",
+    "replacement": "每周用量将于 5 月 $1 日重置（还剩 $2 小时 $3 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "weekly-May-day",
+    "pattern": "^Weekly usage resets on May (\\d{1,2}) \\((\\d+) day left\\)$",
+    "replacement": "每周用量将于 5 月 $1 日重置（还剩 $2 天）",
+    "flags": ""
+  },
+  {
+    "id": "weekly-May-days",
+    "pattern": "^Weekly usage resets on May (\\d{1,2}) \\((\\d+) days left\\)$",
+    "replacement": "每周用量将于 5 月 $1 日重置（还剩 $2 天）",
+    "flags": ""
+  },
+  {
+    "id": "weekly-Jun-0-minutes",
+    "pattern": "^Weekly usage resets on Jun (\\d{1,2}) \\(0 minutes left\\)$",
+    "replacement": "每周用量将于 6 月 $1 日重置（还剩 0 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "weekly-Jun-minute",
+    "pattern": "^Weekly usage resets on Jun (\\d{1,2}) \\((\\d+) minute left\\)$",
+    "replacement": "每周用量将于 6 月 $1 日重置（还剩 $2 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "weekly-Jun-minutes",
+    "pattern": "^Weekly usage resets on Jun (\\d{1,2}) \\((\\d+) minutes left\\)$",
+    "replacement": "每周用量将于 6 月 $1 日重置（还剩 $2 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "weekly-Jun-hour",
+    "pattern": "^Weekly usage resets on Jun (\\d{1,2}) \\((\\d+) hour left\\)$",
+    "replacement": "每周用量将于 6 月 $1 日重置（还剩 $2 小时）",
+    "flags": ""
+  },
+  {
+    "id": "weekly-Jun-hours",
+    "pattern": "^Weekly usage resets on Jun (\\d{1,2}) \\((\\d+) hours left\\)$",
+    "replacement": "每周用量将于 6 月 $1 日重置（还剩 $2 小时）",
+    "flags": ""
+  },
+  {
+    "id": "weekly-Jun-hour-minute",
+    "pattern": "^Weekly usage resets on Jun (\\d{1,2}) \\((\\d+) hour and (\\d+) minute left\\)$",
+    "replacement": "每周用量将于 6 月 $1 日重置（还剩 $2 小时 $3 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "weekly-Jun-hour-minutes",
+    "pattern": "^Weekly usage resets on Jun (\\d{1,2}) \\((\\d+) hour and (\\d+) minutes left\\)$",
+    "replacement": "每周用量将于 6 月 $1 日重置（还剩 $2 小时 $3 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "weekly-Jun-hours-minute",
+    "pattern": "^Weekly usage resets on Jun (\\d{1,2}) \\((\\d+) hours and (\\d+) minute left\\)$",
+    "replacement": "每周用量将于 6 月 $1 日重置（还剩 $2 小时 $3 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "weekly-Jun-hours-minutes",
+    "pattern": "^Weekly usage resets on Jun (\\d{1,2}) \\((\\d+) hours and (\\d+) minutes left\\)$",
+    "replacement": "每周用量将于 6 月 $1 日重置（还剩 $2 小时 $3 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "weekly-Jun-day",
+    "pattern": "^Weekly usage resets on Jun (\\d{1,2}) \\((\\d+) day left\\)$",
+    "replacement": "每周用量将于 6 月 $1 日重置（还剩 $2 天）",
+    "flags": ""
+  },
+  {
+    "id": "weekly-Jun-days",
+    "pattern": "^Weekly usage resets on Jun (\\d{1,2}) \\((\\d+) days left\\)$",
+    "replacement": "每周用量将于 6 月 $1 日重置（还剩 $2 天）",
+    "flags": ""
+  },
+  {
+    "id": "weekly-Jul-0-minutes",
+    "pattern": "^Weekly usage resets on Jul (\\d{1,2}) \\(0 minutes left\\)$",
+    "replacement": "每周用量将于 7 月 $1 日重置（还剩 0 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "weekly-Jul-minute",
+    "pattern": "^Weekly usage resets on Jul (\\d{1,2}) \\((\\d+) minute left\\)$",
+    "replacement": "每周用量将于 7 月 $1 日重置（还剩 $2 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "weekly-Jul-minutes",
+    "pattern": "^Weekly usage resets on Jul (\\d{1,2}) \\((\\d+) minutes left\\)$",
+    "replacement": "每周用量将于 7 月 $1 日重置（还剩 $2 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "weekly-Jul-hour",
+    "pattern": "^Weekly usage resets on Jul (\\d{1,2}) \\((\\d+) hour left\\)$",
+    "replacement": "每周用量将于 7 月 $1 日重置（还剩 $2 小时）",
+    "flags": ""
+  },
+  {
+    "id": "weekly-Jul-hours",
+    "pattern": "^Weekly usage resets on Jul (\\d{1,2}) \\((\\d+) hours left\\)$",
+    "replacement": "每周用量将于 7 月 $1 日重置（还剩 $2 小时）",
+    "flags": ""
+  },
+  {
+    "id": "weekly-Jul-hour-minute",
+    "pattern": "^Weekly usage resets on Jul (\\d{1,2}) \\((\\d+) hour and (\\d+) minute left\\)$",
+    "replacement": "每周用量将于 7 月 $1 日重置（还剩 $2 小时 $3 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "weekly-Jul-hour-minutes",
+    "pattern": "^Weekly usage resets on Jul (\\d{1,2}) \\((\\d+) hour and (\\d+) minutes left\\)$",
+    "replacement": "每周用量将于 7 月 $1 日重置（还剩 $2 小时 $3 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "weekly-Jul-hours-minute",
+    "pattern": "^Weekly usage resets on Jul (\\d{1,2}) \\((\\d+) hours and (\\d+) minute left\\)$",
+    "replacement": "每周用量将于 7 月 $1 日重置（还剩 $2 小时 $3 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "weekly-Jul-hours-minutes",
+    "pattern": "^Weekly usage resets on Jul (\\d{1,2}) \\((\\d+) hours and (\\d+) minutes left\\)$",
+    "replacement": "每周用量将于 7 月 $1 日重置（还剩 $2 小时 $3 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "weekly-Jul-day",
+    "pattern": "^Weekly usage resets on Jul (\\d{1,2}) \\((\\d+) day left\\)$",
+    "replacement": "每周用量将于 7 月 $1 日重置（还剩 $2 天）",
+    "flags": ""
+  },
+  {
+    "id": "weekly-Jul-days",
+    "pattern": "^Weekly usage resets on Jul (\\d{1,2}) \\((\\d+) days left\\)$",
+    "replacement": "每周用量将于 7 月 $1 日重置（还剩 $2 天）",
+    "flags": ""
+  },
+  {
+    "id": "weekly-Aug-0-minutes",
+    "pattern": "^Weekly usage resets on Aug (\\d{1,2}) \\(0 minutes left\\)$",
+    "replacement": "每周用量将于 8 月 $1 日重置（还剩 0 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "weekly-Aug-minute",
+    "pattern": "^Weekly usage resets on Aug (\\d{1,2}) \\((\\d+) minute left\\)$",
+    "replacement": "每周用量将于 8 月 $1 日重置（还剩 $2 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "weekly-Aug-minutes",
+    "pattern": "^Weekly usage resets on Aug (\\d{1,2}) \\((\\d+) minutes left\\)$",
+    "replacement": "每周用量将于 8 月 $1 日重置（还剩 $2 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "weekly-Aug-hour",
+    "pattern": "^Weekly usage resets on Aug (\\d{1,2}) \\((\\d+) hour left\\)$",
+    "replacement": "每周用量将于 8 月 $1 日重置（还剩 $2 小时）",
+    "flags": ""
+  },
+  {
+    "id": "weekly-Aug-hours",
+    "pattern": "^Weekly usage resets on Aug (\\d{1,2}) \\((\\d+) hours left\\)$",
+    "replacement": "每周用量将于 8 月 $1 日重置（还剩 $2 小时）",
+    "flags": ""
+  },
+  {
+    "id": "weekly-Aug-hour-minute",
+    "pattern": "^Weekly usage resets on Aug (\\d{1,2}) \\((\\d+) hour and (\\d+) minute left\\)$",
+    "replacement": "每周用量将于 8 月 $1 日重置（还剩 $2 小时 $3 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "weekly-Aug-hour-minutes",
+    "pattern": "^Weekly usage resets on Aug (\\d{1,2}) \\((\\d+) hour and (\\d+) minutes left\\)$",
+    "replacement": "每周用量将于 8 月 $1 日重置（还剩 $2 小时 $3 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "weekly-Aug-hours-minute",
+    "pattern": "^Weekly usage resets on Aug (\\d{1,2}) \\((\\d+) hours and (\\d+) minute left\\)$",
+    "replacement": "每周用量将于 8 月 $1 日重置（还剩 $2 小时 $3 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "weekly-Aug-hours-minutes",
+    "pattern": "^Weekly usage resets on Aug (\\d{1,2}) \\((\\d+) hours and (\\d+) minutes left\\)$",
+    "replacement": "每周用量将于 8 月 $1 日重置（还剩 $2 小时 $3 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "weekly-Aug-day",
+    "pattern": "^Weekly usage resets on Aug (\\d{1,2}) \\((\\d+) day left\\)$",
+    "replacement": "每周用量将于 8 月 $1 日重置（还剩 $2 天）",
+    "flags": ""
+  },
+  {
+    "id": "weekly-Aug-days",
+    "pattern": "^Weekly usage resets on Aug (\\d{1,2}) \\((\\d+) days left\\)$",
+    "replacement": "每周用量将于 8 月 $1 日重置（还剩 $2 天）",
+    "flags": ""
+  },
+  {
+    "id": "weekly-Sep-0-minutes",
+    "pattern": "^Weekly usage resets on Sep (\\d{1,2}) \\(0 minutes left\\)$",
+    "replacement": "每周用量将于 9 月 $1 日重置（还剩 0 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "weekly-Sep-minute",
+    "pattern": "^Weekly usage resets on Sep (\\d{1,2}) \\((\\d+) minute left\\)$",
+    "replacement": "每周用量将于 9 月 $1 日重置（还剩 $2 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "weekly-Sep-minutes",
+    "pattern": "^Weekly usage resets on Sep (\\d{1,2}) \\((\\d+) minutes left\\)$",
+    "replacement": "每周用量将于 9 月 $1 日重置（还剩 $2 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "weekly-Sep-hour",
+    "pattern": "^Weekly usage resets on Sep (\\d{1,2}) \\((\\d+) hour left\\)$",
+    "replacement": "每周用量将于 9 月 $1 日重置（还剩 $2 小时）",
+    "flags": ""
+  },
+  {
+    "id": "weekly-Sep-hours",
+    "pattern": "^Weekly usage resets on Sep (\\d{1,2}) \\((\\d+) hours left\\)$",
+    "replacement": "每周用量将于 9 月 $1 日重置（还剩 $2 小时）",
+    "flags": ""
+  },
+  {
+    "id": "weekly-Sep-hour-minute",
+    "pattern": "^Weekly usage resets on Sep (\\d{1,2}) \\((\\d+) hour and (\\d+) minute left\\)$",
+    "replacement": "每周用量将于 9 月 $1 日重置（还剩 $2 小时 $3 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "weekly-Sep-hour-minutes",
+    "pattern": "^Weekly usage resets on Sep (\\d{1,2}) \\((\\d+) hour and (\\d+) minutes left\\)$",
+    "replacement": "每周用量将于 9 月 $1 日重置（还剩 $2 小时 $3 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "weekly-Sep-hours-minute",
+    "pattern": "^Weekly usage resets on Sep (\\d{1,2}) \\((\\d+) hours and (\\d+) minute left\\)$",
+    "replacement": "每周用量将于 9 月 $1 日重置（还剩 $2 小时 $3 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "weekly-Sep-hours-minutes",
+    "pattern": "^Weekly usage resets on Sep (\\d{1,2}) \\((\\d+) hours and (\\d+) minutes left\\)$",
+    "replacement": "每周用量将于 9 月 $1 日重置（还剩 $2 小时 $3 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "weekly-Sep-day",
+    "pattern": "^Weekly usage resets on Sep (\\d{1,2}) \\((\\d+) day left\\)$",
+    "replacement": "每周用量将于 9 月 $1 日重置（还剩 $2 天）",
+    "flags": ""
+  },
+  {
+    "id": "weekly-Sep-days",
+    "pattern": "^Weekly usage resets on Sep (\\d{1,2}) \\((\\d+) days left\\)$",
+    "replacement": "每周用量将于 9 月 $1 日重置（还剩 $2 天）",
+    "flags": ""
+  },
+  {
+    "id": "weekly-Oct-0-minutes",
+    "pattern": "^Weekly usage resets on Oct (\\d{1,2}) \\(0 minutes left\\)$",
+    "replacement": "每周用量将于 10 月 $1 日重置（还剩 0 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "weekly-Oct-minute",
+    "pattern": "^Weekly usage resets on Oct (\\d{1,2}) \\((\\d+) minute left\\)$",
+    "replacement": "每周用量将于 10 月 $1 日重置（还剩 $2 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "weekly-Oct-minutes",
+    "pattern": "^Weekly usage resets on Oct (\\d{1,2}) \\((\\d+) minutes left\\)$",
+    "replacement": "每周用量将于 10 月 $1 日重置（还剩 $2 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "weekly-Oct-hour",
+    "pattern": "^Weekly usage resets on Oct (\\d{1,2}) \\((\\d+) hour left\\)$",
+    "replacement": "每周用量将于 10 月 $1 日重置（还剩 $2 小时）",
+    "flags": ""
+  },
+  {
+    "id": "weekly-Oct-hours",
+    "pattern": "^Weekly usage resets on Oct (\\d{1,2}) \\((\\d+) hours left\\)$",
+    "replacement": "每周用量将于 10 月 $1 日重置（还剩 $2 小时）",
+    "flags": ""
+  },
+  {
+    "id": "weekly-Oct-hour-minute",
+    "pattern": "^Weekly usage resets on Oct (\\d{1,2}) \\((\\d+) hour and (\\d+) minute left\\)$",
+    "replacement": "每周用量将于 10 月 $1 日重置（还剩 $2 小时 $3 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "weekly-Oct-hour-minutes",
+    "pattern": "^Weekly usage resets on Oct (\\d{1,2}) \\((\\d+) hour and (\\d+) minutes left\\)$",
+    "replacement": "每周用量将于 10 月 $1 日重置（还剩 $2 小时 $3 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "weekly-Oct-hours-minute",
+    "pattern": "^Weekly usage resets on Oct (\\d{1,2}) \\((\\d+) hours and (\\d+) minute left\\)$",
+    "replacement": "每周用量将于 10 月 $1 日重置（还剩 $2 小时 $3 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "weekly-Oct-hours-minutes",
+    "pattern": "^Weekly usage resets on Oct (\\d{1,2}) \\((\\d+) hours and (\\d+) minutes left\\)$",
+    "replacement": "每周用量将于 10 月 $1 日重置（还剩 $2 小时 $3 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "weekly-Oct-day",
+    "pattern": "^Weekly usage resets on Oct (\\d{1,2}) \\((\\d+) day left\\)$",
+    "replacement": "每周用量将于 10 月 $1 日重置（还剩 $2 天）",
+    "flags": ""
+  },
+  {
+    "id": "weekly-Oct-days",
+    "pattern": "^Weekly usage resets on Oct (\\d{1,2}) \\((\\d+) days left\\)$",
+    "replacement": "每周用量将于 10 月 $1 日重置（还剩 $2 天）",
+    "flags": ""
+  },
+  {
+    "id": "weekly-Nov-0-minutes",
+    "pattern": "^Weekly usage resets on Nov (\\d{1,2}) \\(0 minutes left\\)$",
+    "replacement": "每周用量将于 11 月 $1 日重置（还剩 0 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "weekly-Nov-minute",
+    "pattern": "^Weekly usage resets on Nov (\\d{1,2}) \\((\\d+) minute left\\)$",
+    "replacement": "每周用量将于 11 月 $1 日重置（还剩 $2 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "weekly-Nov-minutes",
+    "pattern": "^Weekly usage resets on Nov (\\d{1,2}) \\((\\d+) minutes left\\)$",
+    "replacement": "每周用量将于 11 月 $1 日重置（还剩 $2 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "weekly-Nov-hour",
+    "pattern": "^Weekly usage resets on Nov (\\d{1,2}) \\((\\d+) hour left\\)$",
+    "replacement": "每周用量将于 11 月 $1 日重置（还剩 $2 小时）",
+    "flags": ""
+  },
+  {
+    "id": "weekly-Nov-hours",
+    "pattern": "^Weekly usage resets on Nov (\\d{1,2}) \\((\\d+) hours left\\)$",
+    "replacement": "每周用量将于 11 月 $1 日重置（还剩 $2 小时）",
+    "flags": ""
+  },
+  {
+    "id": "weekly-Nov-hour-minute",
+    "pattern": "^Weekly usage resets on Nov (\\d{1,2}) \\((\\d+) hour and (\\d+) minute left\\)$",
+    "replacement": "每周用量将于 11 月 $1 日重置（还剩 $2 小时 $3 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "weekly-Nov-hour-minutes",
+    "pattern": "^Weekly usage resets on Nov (\\d{1,2}) \\((\\d+) hour and (\\d+) minutes left\\)$",
+    "replacement": "每周用量将于 11 月 $1 日重置（还剩 $2 小时 $3 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "weekly-Nov-hours-minute",
+    "pattern": "^Weekly usage resets on Nov (\\d{1,2}) \\((\\d+) hours and (\\d+) minute left\\)$",
+    "replacement": "每周用量将于 11 月 $1 日重置（还剩 $2 小时 $3 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "weekly-Nov-hours-minutes",
+    "pattern": "^Weekly usage resets on Nov (\\d{1,2}) \\((\\d+) hours and (\\d+) minutes left\\)$",
+    "replacement": "每周用量将于 11 月 $1 日重置（还剩 $2 小时 $3 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "weekly-Nov-day",
+    "pattern": "^Weekly usage resets on Nov (\\d{1,2}) \\((\\d+) day left\\)$",
+    "replacement": "每周用量将于 11 月 $1 日重置（还剩 $2 天）",
+    "flags": ""
+  },
+  {
+    "id": "weekly-Nov-days",
+    "pattern": "^Weekly usage resets on Nov (\\d{1,2}) \\((\\d+) days left\\)$",
+    "replacement": "每周用量将于 11 月 $1 日重置（还剩 $2 天）",
+    "flags": ""
+  },
+  {
+    "id": "weekly-Dec-0-minutes",
+    "pattern": "^Weekly usage resets on Dec (\\d{1,2}) \\(0 minutes left\\)$",
+    "replacement": "每周用量将于 12 月 $1 日重置（还剩 0 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "weekly-Dec-minute",
+    "pattern": "^Weekly usage resets on Dec (\\d{1,2}) \\((\\d+) minute left\\)$",
+    "replacement": "每周用量将于 12 月 $1 日重置（还剩 $2 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "weekly-Dec-minutes",
+    "pattern": "^Weekly usage resets on Dec (\\d{1,2}) \\((\\d+) minutes left\\)$",
+    "replacement": "每周用量将于 12 月 $1 日重置（还剩 $2 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "weekly-Dec-hour",
+    "pattern": "^Weekly usage resets on Dec (\\d{1,2}) \\((\\d+) hour left\\)$",
+    "replacement": "每周用量将于 12 月 $1 日重置（还剩 $2 小时）",
+    "flags": ""
+  },
+  {
+    "id": "weekly-Dec-hours",
+    "pattern": "^Weekly usage resets on Dec (\\d{1,2}) \\((\\d+) hours left\\)$",
+    "replacement": "每周用量将于 12 月 $1 日重置（还剩 $2 小时）",
+    "flags": ""
+  },
+  {
+    "id": "weekly-Dec-hour-minute",
+    "pattern": "^Weekly usage resets on Dec (\\d{1,2}) \\((\\d+) hour and (\\d+) minute left\\)$",
+    "replacement": "每周用量将于 12 月 $1 日重置（还剩 $2 小时 $3 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "weekly-Dec-hour-minutes",
+    "pattern": "^Weekly usage resets on Dec (\\d{1,2}) \\((\\d+) hour and (\\d+) minutes left\\)$",
+    "replacement": "每周用量将于 12 月 $1 日重置（还剩 $2 小时 $3 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "weekly-Dec-hours-minute",
+    "pattern": "^Weekly usage resets on Dec (\\d{1,2}) \\((\\d+) hours and (\\d+) minute left\\)$",
+    "replacement": "每周用量将于 12 月 $1 日重置（还剩 $2 小时 $3 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "weekly-Dec-hours-minutes",
+    "pattern": "^Weekly usage resets on Dec (\\d{1,2}) \\((\\d+) hours and (\\d+) minutes left\\)$",
+    "replacement": "每周用量将于 12 月 $1 日重置（还剩 $2 小时 $3 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "weekly-Dec-day",
+    "pattern": "^Weekly usage resets on Dec (\\d{1,2}) \\((\\d+) day left\\)$",
+    "replacement": "每周用量将于 12 月 $1 日重置（还剩 $2 天）",
+    "flags": ""
+  },
+  {
+    "id": "weekly-Dec-days",
+    "pattern": "^Weekly usage resets on Dec (\\d{1,2}) \\((\\d+) days left\\)$",
+    "replacement": "每周用量将于 12 月 $1 日重置（还剩 $2 天）",
+    "flags": ""
+  },
+  {
+    "id": "weekly-any-0-minutes",
+    "pattern": "^Weekly usage resets on (.+) \\(0 minutes left\\)$",
+    "replacement": "每周用量将于 $1 重置（还剩 0 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "weekly-any-minute",
+    "pattern": "^Weekly usage resets on (.+) \\((\\d+) minute left\\)$",
+    "replacement": "每周用量将于 $1 重置（还剩 $2 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "weekly-any-minutes",
+    "pattern": "^Weekly usage resets on (.+) \\((\\d+) minutes left\\)$",
+    "replacement": "每周用量将于 $1 重置（还剩 $2 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "weekly-any-hour",
+    "pattern": "^Weekly usage resets on (.+) \\((\\d+) hour left\\)$",
+    "replacement": "每周用量将于 $1 重置（还剩 $2 小时）",
+    "flags": ""
+  },
+  {
+    "id": "weekly-any-hours",
+    "pattern": "^Weekly usage resets on (.+) \\((\\d+) hours left\\)$",
+    "replacement": "每周用量将于 $1 重置（还剩 $2 小时）",
+    "flags": ""
+  },
+  {
+    "id": "weekly-any-hour-minute",
+    "pattern": "^Weekly usage resets on (.+) \\((\\d+) hour and (\\d+) minute left\\)$",
+    "replacement": "每周用量将于 $1 重置（还剩 $2 小时 $3 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "weekly-any-hour-minutes",
+    "pattern": "^Weekly usage resets on (.+) \\((\\d+) hour and (\\d+) minutes left\\)$",
+    "replacement": "每周用量将于 $1 重置（还剩 $2 小时 $3 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "weekly-any-hours-minute",
+    "pattern": "^Weekly usage resets on (.+) \\((\\d+) hours and (\\d+) minute left\\)$",
+    "replacement": "每周用量将于 $1 重置（还剩 $2 小时 $3 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "weekly-any-hours-minutes",
+    "pattern": "^Weekly usage resets on (.+) \\((\\d+) hours and (\\d+) minutes left\\)$",
+    "replacement": "每周用量将于 $1 重置（还剩 $2 小时 $3 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "weekly-any-day",
+    "pattern": "^Weekly usage resets on (.+) \\((\\d+) day left\\)$",
+    "replacement": "每周用量将于 $1 重置（还剩 $2 天）",
+    "flags": ""
+  },
+  {
+    "id": "weekly-any-days",
+    "pattern": "^Weekly usage resets on (.+) \\((\\d+) days left\\)$",
+    "replacement": "每周用量将于 $1 重置（还剩 $2 天）",
+    "flags": ""
+  },
+  {
+    "id": "limits-Jan-0-minutes",
+    "pattern": "^Usage limits reset on Jan (\\d{1,2}) \\(0 minutes left\\)$",
+    "replacement": "用量上限将于 1 月 $1 日重置（还剩 0 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "limits-Jan-minute",
+    "pattern": "^Usage limits reset on Jan (\\d{1,2}) \\((\\d+) minute left\\)$",
+    "replacement": "用量上限将于 1 月 $1 日重置（还剩 $2 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "limits-Jan-minutes",
+    "pattern": "^Usage limits reset on Jan (\\d{1,2}) \\((\\d+) minutes left\\)$",
+    "replacement": "用量上限将于 1 月 $1 日重置（还剩 $2 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "limits-Jan-hour",
+    "pattern": "^Usage limits reset on Jan (\\d{1,2}) \\((\\d+) hour left\\)$",
+    "replacement": "用量上限将于 1 月 $1 日重置（还剩 $2 小时）",
+    "flags": ""
+  },
+  {
+    "id": "limits-Jan-hours",
+    "pattern": "^Usage limits reset on Jan (\\d{1,2}) \\((\\d+) hours left\\)$",
+    "replacement": "用量上限将于 1 月 $1 日重置（还剩 $2 小时）",
+    "flags": ""
+  },
+  {
+    "id": "limits-Jan-hour-minute",
+    "pattern": "^Usage limits reset on Jan (\\d{1,2}) \\((\\d+) hour and (\\d+) minute left\\)$",
+    "replacement": "用量上限将于 1 月 $1 日重置（还剩 $2 小时 $3 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "limits-Jan-hour-minutes",
+    "pattern": "^Usage limits reset on Jan (\\d{1,2}) \\((\\d+) hour and (\\d+) minutes left\\)$",
+    "replacement": "用量上限将于 1 月 $1 日重置（还剩 $2 小时 $3 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "limits-Jan-hours-minute",
+    "pattern": "^Usage limits reset on Jan (\\d{1,2}) \\((\\d+) hours and (\\d+) minute left\\)$",
+    "replacement": "用量上限将于 1 月 $1 日重置（还剩 $2 小时 $3 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "limits-Jan-hours-minutes",
+    "pattern": "^Usage limits reset on Jan (\\d{1,2}) \\((\\d+) hours and (\\d+) minutes left\\)$",
+    "replacement": "用量上限将于 1 月 $1 日重置（还剩 $2 小时 $3 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "limits-Jan-day",
+    "pattern": "^Usage limits reset on Jan (\\d{1,2}) \\((\\d+) day left\\)$",
+    "replacement": "用量上限将于 1 月 $1 日重置（还剩 $2 天）",
+    "flags": ""
+  },
+  {
+    "id": "limits-Jan-days",
+    "pattern": "^Usage limits reset on Jan (\\d{1,2}) \\((\\d+) days left\\)$",
+    "replacement": "用量上限将于 1 月 $1 日重置（还剩 $2 天）",
+    "flags": ""
+  },
+  {
+    "id": "limits-Feb-0-minutes",
+    "pattern": "^Usage limits reset on Feb (\\d{1,2}) \\(0 minutes left\\)$",
+    "replacement": "用量上限将于 2 月 $1 日重置（还剩 0 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "limits-Feb-minute",
+    "pattern": "^Usage limits reset on Feb (\\d{1,2}) \\((\\d+) minute left\\)$",
+    "replacement": "用量上限将于 2 月 $1 日重置（还剩 $2 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "limits-Feb-minutes",
+    "pattern": "^Usage limits reset on Feb (\\d{1,2}) \\((\\d+) minutes left\\)$",
+    "replacement": "用量上限将于 2 月 $1 日重置（还剩 $2 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "limits-Feb-hour",
+    "pattern": "^Usage limits reset on Feb (\\d{1,2}) \\((\\d+) hour left\\)$",
+    "replacement": "用量上限将于 2 月 $1 日重置（还剩 $2 小时）",
+    "flags": ""
+  },
+  {
+    "id": "limits-Feb-hours",
+    "pattern": "^Usage limits reset on Feb (\\d{1,2}) \\((\\d+) hours left\\)$",
+    "replacement": "用量上限将于 2 月 $1 日重置（还剩 $2 小时）",
+    "flags": ""
+  },
+  {
+    "id": "limits-Feb-hour-minute",
+    "pattern": "^Usage limits reset on Feb (\\d{1,2}) \\((\\d+) hour and (\\d+) minute left\\)$",
+    "replacement": "用量上限将于 2 月 $1 日重置（还剩 $2 小时 $3 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "limits-Feb-hour-minutes",
+    "pattern": "^Usage limits reset on Feb (\\d{1,2}) \\((\\d+) hour and (\\d+) minutes left\\)$",
+    "replacement": "用量上限将于 2 月 $1 日重置（还剩 $2 小时 $3 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "limits-Feb-hours-minute",
+    "pattern": "^Usage limits reset on Feb (\\d{1,2}) \\((\\d+) hours and (\\d+) minute left\\)$",
+    "replacement": "用量上限将于 2 月 $1 日重置（还剩 $2 小时 $3 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "limits-Feb-hours-minutes",
+    "pattern": "^Usage limits reset on Feb (\\d{1,2}) \\((\\d+) hours and (\\d+) minutes left\\)$",
+    "replacement": "用量上限将于 2 月 $1 日重置（还剩 $2 小时 $3 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "limits-Feb-day",
+    "pattern": "^Usage limits reset on Feb (\\d{1,2}) \\((\\d+) day left\\)$",
+    "replacement": "用量上限将于 2 月 $1 日重置（还剩 $2 天）",
+    "flags": ""
+  },
+  {
+    "id": "limits-Feb-days",
+    "pattern": "^Usage limits reset on Feb (\\d{1,2}) \\((\\d+) days left\\)$",
+    "replacement": "用量上限将于 2 月 $1 日重置（还剩 $2 天）",
+    "flags": ""
+  },
+  {
+    "id": "limits-Mar-0-minutes",
+    "pattern": "^Usage limits reset on Mar (\\d{1,2}) \\(0 minutes left\\)$",
+    "replacement": "用量上限将于 3 月 $1 日重置（还剩 0 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "limits-Mar-minute",
+    "pattern": "^Usage limits reset on Mar (\\d{1,2}) \\((\\d+) minute left\\)$",
+    "replacement": "用量上限将于 3 月 $1 日重置（还剩 $2 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "limits-Mar-minutes",
+    "pattern": "^Usage limits reset on Mar (\\d{1,2}) \\((\\d+) minutes left\\)$",
+    "replacement": "用量上限将于 3 月 $1 日重置（还剩 $2 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "limits-Mar-hour",
+    "pattern": "^Usage limits reset on Mar (\\d{1,2}) \\((\\d+) hour left\\)$",
+    "replacement": "用量上限将于 3 月 $1 日重置（还剩 $2 小时）",
+    "flags": ""
+  },
+  {
+    "id": "limits-Mar-hours",
+    "pattern": "^Usage limits reset on Mar (\\d{1,2}) \\((\\d+) hours left\\)$",
+    "replacement": "用量上限将于 3 月 $1 日重置（还剩 $2 小时）",
+    "flags": ""
+  },
+  {
+    "id": "limits-Mar-hour-minute",
+    "pattern": "^Usage limits reset on Mar (\\d{1,2}) \\((\\d+) hour and (\\d+) minute left\\)$",
+    "replacement": "用量上限将于 3 月 $1 日重置（还剩 $2 小时 $3 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "limits-Mar-hour-minutes",
+    "pattern": "^Usage limits reset on Mar (\\d{1,2}) \\((\\d+) hour and (\\d+) minutes left\\)$",
+    "replacement": "用量上限将于 3 月 $1 日重置（还剩 $2 小时 $3 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "limits-Mar-hours-minute",
+    "pattern": "^Usage limits reset on Mar (\\d{1,2}) \\((\\d+) hours and (\\d+) minute left\\)$",
+    "replacement": "用量上限将于 3 月 $1 日重置（还剩 $2 小时 $3 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "limits-Mar-hours-minutes",
+    "pattern": "^Usage limits reset on Mar (\\d{1,2}) \\((\\d+) hours and (\\d+) minutes left\\)$",
+    "replacement": "用量上限将于 3 月 $1 日重置（还剩 $2 小时 $3 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "limits-Mar-day",
+    "pattern": "^Usage limits reset on Mar (\\d{1,2}) \\((\\d+) day left\\)$",
+    "replacement": "用量上限将于 3 月 $1 日重置（还剩 $2 天）",
+    "flags": ""
+  },
+  {
+    "id": "limits-Mar-days",
+    "pattern": "^Usage limits reset on Mar (\\d{1,2}) \\((\\d+) days left\\)$",
+    "replacement": "用量上限将于 3 月 $1 日重置（还剩 $2 天）",
+    "flags": ""
+  },
+  {
+    "id": "limits-Apr-0-minutes",
+    "pattern": "^Usage limits reset on Apr (\\d{1,2}) \\(0 minutes left\\)$",
+    "replacement": "用量上限将于 4 月 $1 日重置（还剩 0 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "limits-Apr-minute",
+    "pattern": "^Usage limits reset on Apr (\\d{1,2}) \\((\\d+) minute left\\)$",
+    "replacement": "用量上限将于 4 月 $1 日重置（还剩 $2 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "limits-Apr-minutes",
+    "pattern": "^Usage limits reset on Apr (\\d{1,2}) \\((\\d+) minutes left\\)$",
+    "replacement": "用量上限将于 4 月 $1 日重置（还剩 $2 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "limits-Apr-hour",
+    "pattern": "^Usage limits reset on Apr (\\d{1,2}) \\((\\d+) hour left\\)$",
+    "replacement": "用量上限将于 4 月 $1 日重置（还剩 $2 小时）",
+    "flags": ""
+  },
+  {
+    "id": "limits-Apr-hours",
+    "pattern": "^Usage limits reset on Apr (\\d{1,2}) \\((\\d+) hours left\\)$",
+    "replacement": "用量上限将于 4 月 $1 日重置（还剩 $2 小时）",
+    "flags": ""
+  },
+  {
+    "id": "limits-Apr-hour-minute",
+    "pattern": "^Usage limits reset on Apr (\\d{1,2}) \\((\\d+) hour and (\\d+) minute left\\)$",
+    "replacement": "用量上限将于 4 月 $1 日重置（还剩 $2 小时 $3 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "limits-Apr-hour-minutes",
+    "pattern": "^Usage limits reset on Apr (\\d{1,2}) \\((\\d+) hour and (\\d+) minutes left\\)$",
+    "replacement": "用量上限将于 4 月 $1 日重置（还剩 $2 小时 $3 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "limits-Apr-hours-minute",
+    "pattern": "^Usage limits reset on Apr (\\d{1,2}) \\((\\d+) hours and (\\d+) minute left\\)$",
+    "replacement": "用量上限将于 4 月 $1 日重置（还剩 $2 小时 $3 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "limits-Apr-hours-minutes",
+    "pattern": "^Usage limits reset on Apr (\\d{1,2}) \\((\\d+) hours and (\\d+) minutes left\\)$",
+    "replacement": "用量上限将于 4 月 $1 日重置（还剩 $2 小时 $3 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "limits-Apr-day",
+    "pattern": "^Usage limits reset on Apr (\\d{1,2}) \\((\\d+) day left\\)$",
+    "replacement": "用量上限将于 4 月 $1 日重置（还剩 $2 天）",
+    "flags": ""
+  },
+  {
+    "id": "limits-Apr-days",
+    "pattern": "^Usage limits reset on Apr (\\d{1,2}) \\((\\d+) days left\\)$",
+    "replacement": "用量上限将于 4 月 $1 日重置（还剩 $2 天）",
+    "flags": ""
+  },
+  {
+    "id": "limits-May-0-minutes",
+    "pattern": "^Usage limits reset on May (\\d{1,2}) \\(0 minutes left\\)$",
+    "replacement": "用量上限将于 5 月 $1 日重置（还剩 0 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "limits-May-minute",
+    "pattern": "^Usage limits reset on May (\\d{1,2}) \\((\\d+) minute left\\)$",
+    "replacement": "用量上限将于 5 月 $1 日重置（还剩 $2 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "limits-May-minutes",
+    "pattern": "^Usage limits reset on May (\\d{1,2}) \\((\\d+) minutes left\\)$",
+    "replacement": "用量上限将于 5 月 $1 日重置（还剩 $2 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "limits-May-hour",
+    "pattern": "^Usage limits reset on May (\\d{1,2}) \\((\\d+) hour left\\)$",
+    "replacement": "用量上限将于 5 月 $1 日重置（还剩 $2 小时）",
+    "flags": ""
+  },
+  {
+    "id": "limits-May-hours",
+    "pattern": "^Usage limits reset on May (\\d{1,2}) \\((\\d+) hours left\\)$",
+    "replacement": "用量上限将于 5 月 $1 日重置（还剩 $2 小时）",
+    "flags": ""
+  },
+  {
+    "id": "limits-May-hour-minute",
+    "pattern": "^Usage limits reset on May (\\d{1,2}) \\((\\d+) hour and (\\d+) minute left\\)$",
+    "replacement": "用量上限将于 5 月 $1 日重置（还剩 $2 小时 $3 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "limits-May-hour-minutes",
+    "pattern": "^Usage limits reset on May (\\d{1,2}) \\((\\d+) hour and (\\d+) minutes left\\)$",
+    "replacement": "用量上限将于 5 月 $1 日重置（还剩 $2 小时 $3 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "limits-May-hours-minute",
+    "pattern": "^Usage limits reset on May (\\d{1,2}) \\((\\d+) hours and (\\d+) minute left\\)$",
+    "replacement": "用量上限将于 5 月 $1 日重置（还剩 $2 小时 $3 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "limits-May-hours-minutes",
+    "pattern": "^Usage limits reset on May (\\d{1,2}) \\((\\d+) hours and (\\d+) minutes left\\)$",
+    "replacement": "用量上限将于 5 月 $1 日重置（还剩 $2 小时 $3 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "limits-May-day",
+    "pattern": "^Usage limits reset on May (\\d{1,2}) \\((\\d+) day left\\)$",
+    "replacement": "用量上限将于 5 月 $1 日重置（还剩 $2 天）",
+    "flags": ""
+  },
+  {
+    "id": "limits-May-days",
+    "pattern": "^Usage limits reset on May (\\d{1,2}) \\((\\d+) days left\\)$",
+    "replacement": "用量上限将于 5 月 $1 日重置（还剩 $2 天）",
+    "flags": ""
+  },
+  {
+    "id": "limits-Jun-0-minutes",
+    "pattern": "^Usage limits reset on Jun (\\d{1,2}) \\(0 minutes left\\)$",
+    "replacement": "用量上限将于 6 月 $1 日重置（还剩 0 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "limits-Jun-minute",
+    "pattern": "^Usage limits reset on Jun (\\d{1,2}) \\((\\d+) minute left\\)$",
+    "replacement": "用量上限将于 6 月 $1 日重置（还剩 $2 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "limits-Jun-minutes",
+    "pattern": "^Usage limits reset on Jun (\\d{1,2}) \\((\\d+) minutes left\\)$",
+    "replacement": "用量上限将于 6 月 $1 日重置（还剩 $2 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "limits-Jun-hour",
+    "pattern": "^Usage limits reset on Jun (\\d{1,2}) \\((\\d+) hour left\\)$",
+    "replacement": "用量上限将于 6 月 $1 日重置（还剩 $2 小时）",
+    "flags": ""
+  },
+  {
+    "id": "limits-Jun-hours",
+    "pattern": "^Usage limits reset on Jun (\\d{1,2}) \\((\\d+) hours left\\)$",
+    "replacement": "用量上限将于 6 月 $1 日重置（还剩 $2 小时）",
+    "flags": ""
+  },
+  {
+    "id": "limits-Jun-hour-minute",
+    "pattern": "^Usage limits reset on Jun (\\d{1,2}) \\((\\d+) hour and (\\d+) minute left\\)$",
+    "replacement": "用量上限将于 6 月 $1 日重置（还剩 $2 小时 $3 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "limits-Jun-hour-minutes",
+    "pattern": "^Usage limits reset on Jun (\\d{1,2}) \\((\\d+) hour and (\\d+) minutes left\\)$",
+    "replacement": "用量上限将于 6 月 $1 日重置（还剩 $2 小时 $3 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "limits-Jun-hours-minute",
+    "pattern": "^Usage limits reset on Jun (\\d{1,2}) \\((\\d+) hours and (\\d+) minute left\\)$",
+    "replacement": "用量上限将于 6 月 $1 日重置（还剩 $2 小时 $3 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "limits-Jun-hours-minutes",
+    "pattern": "^Usage limits reset on Jun (\\d{1,2}) \\((\\d+) hours and (\\d+) minutes left\\)$",
+    "replacement": "用量上限将于 6 月 $1 日重置（还剩 $2 小时 $3 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "limits-Jun-day",
+    "pattern": "^Usage limits reset on Jun (\\d{1,2}) \\((\\d+) day left\\)$",
+    "replacement": "用量上限将于 6 月 $1 日重置（还剩 $2 天）",
+    "flags": ""
+  },
+  {
+    "id": "limits-Jun-days",
+    "pattern": "^Usage limits reset on Jun (\\d{1,2}) \\((\\d+) days left\\)$",
+    "replacement": "用量上限将于 6 月 $1 日重置（还剩 $2 天）",
+    "flags": ""
+  },
+  {
+    "id": "limits-Jul-0-minutes",
+    "pattern": "^Usage limits reset on Jul (\\d{1,2}) \\(0 minutes left\\)$",
+    "replacement": "用量上限将于 7 月 $1 日重置（还剩 0 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "limits-Jul-minute",
+    "pattern": "^Usage limits reset on Jul (\\d{1,2}) \\((\\d+) minute left\\)$",
+    "replacement": "用量上限将于 7 月 $1 日重置（还剩 $2 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "limits-Jul-minutes",
+    "pattern": "^Usage limits reset on Jul (\\d{1,2}) \\((\\d+) minutes left\\)$",
+    "replacement": "用量上限将于 7 月 $1 日重置（还剩 $2 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "limits-Jul-hour",
+    "pattern": "^Usage limits reset on Jul (\\d{1,2}) \\((\\d+) hour left\\)$",
+    "replacement": "用量上限将于 7 月 $1 日重置（还剩 $2 小时）",
+    "flags": ""
+  },
+  {
+    "id": "limits-Jul-hours",
+    "pattern": "^Usage limits reset on Jul (\\d{1,2}) \\((\\d+) hours left\\)$",
+    "replacement": "用量上限将于 7 月 $1 日重置（还剩 $2 小时）",
+    "flags": ""
+  },
+  {
+    "id": "limits-Jul-hour-minute",
+    "pattern": "^Usage limits reset on Jul (\\d{1,2}) \\((\\d+) hour and (\\d+) minute left\\)$",
+    "replacement": "用量上限将于 7 月 $1 日重置（还剩 $2 小时 $3 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "limits-Jul-hour-minutes",
+    "pattern": "^Usage limits reset on Jul (\\d{1,2}) \\((\\d+) hour and (\\d+) minutes left\\)$",
+    "replacement": "用量上限将于 7 月 $1 日重置（还剩 $2 小时 $3 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "limits-Jul-hours-minute",
+    "pattern": "^Usage limits reset on Jul (\\d{1,2}) \\((\\d+) hours and (\\d+) minute left\\)$",
+    "replacement": "用量上限将于 7 月 $1 日重置（还剩 $2 小时 $3 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "limits-Jul-hours-minutes",
+    "pattern": "^Usage limits reset on Jul (\\d{1,2}) \\((\\d+) hours and (\\d+) minutes left\\)$",
+    "replacement": "用量上限将于 7 月 $1 日重置（还剩 $2 小时 $3 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "limits-Jul-day",
+    "pattern": "^Usage limits reset on Jul (\\d{1,2}) \\((\\d+) day left\\)$",
+    "replacement": "用量上限将于 7 月 $1 日重置（还剩 $2 天）",
+    "flags": ""
+  },
+  {
+    "id": "limits-Jul-days",
+    "pattern": "^Usage limits reset on Jul (\\d{1,2}) \\((\\d+) days left\\)$",
+    "replacement": "用量上限将于 7 月 $1 日重置（还剩 $2 天）",
+    "flags": ""
+  },
+  {
+    "id": "limits-Aug-0-minutes",
+    "pattern": "^Usage limits reset on Aug (\\d{1,2}) \\(0 minutes left\\)$",
+    "replacement": "用量上限将于 8 月 $1 日重置（还剩 0 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "limits-Aug-minute",
+    "pattern": "^Usage limits reset on Aug (\\d{1,2}) \\((\\d+) minute left\\)$",
+    "replacement": "用量上限将于 8 月 $1 日重置（还剩 $2 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "limits-Aug-minutes",
+    "pattern": "^Usage limits reset on Aug (\\d{1,2}) \\((\\d+) minutes left\\)$",
+    "replacement": "用量上限将于 8 月 $1 日重置（还剩 $2 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "limits-Aug-hour",
+    "pattern": "^Usage limits reset on Aug (\\d{1,2}) \\((\\d+) hour left\\)$",
+    "replacement": "用量上限将于 8 月 $1 日重置（还剩 $2 小时）",
+    "flags": ""
+  },
+  {
+    "id": "limits-Aug-hours",
+    "pattern": "^Usage limits reset on Aug (\\d{1,2}) \\((\\d+) hours left\\)$",
+    "replacement": "用量上限将于 8 月 $1 日重置（还剩 $2 小时）",
+    "flags": ""
+  },
+  {
+    "id": "limits-Aug-hour-minute",
+    "pattern": "^Usage limits reset on Aug (\\d{1,2}) \\((\\d+) hour and (\\d+) minute left\\)$",
+    "replacement": "用量上限将于 8 月 $1 日重置（还剩 $2 小时 $3 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "limits-Aug-hour-minutes",
+    "pattern": "^Usage limits reset on Aug (\\d{1,2}) \\((\\d+) hour and (\\d+) minutes left\\)$",
+    "replacement": "用量上限将于 8 月 $1 日重置（还剩 $2 小时 $3 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "limits-Aug-hours-minute",
+    "pattern": "^Usage limits reset on Aug (\\d{1,2}) \\((\\d+) hours and (\\d+) minute left\\)$",
+    "replacement": "用量上限将于 8 月 $1 日重置（还剩 $2 小时 $3 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "limits-Aug-hours-minutes",
+    "pattern": "^Usage limits reset on Aug (\\d{1,2}) \\((\\d+) hours and (\\d+) minutes left\\)$",
+    "replacement": "用量上限将于 8 月 $1 日重置（还剩 $2 小时 $3 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "limits-Aug-day",
+    "pattern": "^Usage limits reset on Aug (\\d{1,2}) \\((\\d+) day left\\)$",
+    "replacement": "用量上限将于 8 月 $1 日重置（还剩 $2 天）",
+    "flags": ""
+  },
+  {
+    "id": "limits-Aug-days",
+    "pattern": "^Usage limits reset on Aug (\\d{1,2}) \\((\\d+) days left\\)$",
+    "replacement": "用量上限将于 8 月 $1 日重置（还剩 $2 天）",
+    "flags": ""
+  },
+  {
+    "id": "limits-Sep-0-minutes",
+    "pattern": "^Usage limits reset on Sep (\\d{1,2}) \\(0 minutes left\\)$",
+    "replacement": "用量上限将于 9 月 $1 日重置（还剩 0 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "limits-Sep-minute",
+    "pattern": "^Usage limits reset on Sep (\\d{1,2}) \\((\\d+) minute left\\)$",
+    "replacement": "用量上限将于 9 月 $1 日重置（还剩 $2 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "limits-Sep-minutes",
+    "pattern": "^Usage limits reset on Sep (\\d{1,2}) \\((\\d+) minutes left\\)$",
+    "replacement": "用量上限将于 9 月 $1 日重置（还剩 $2 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "limits-Sep-hour",
+    "pattern": "^Usage limits reset on Sep (\\d{1,2}) \\((\\d+) hour left\\)$",
+    "replacement": "用量上限将于 9 月 $1 日重置（还剩 $2 小时）",
+    "flags": ""
+  },
+  {
+    "id": "limits-Sep-hours",
+    "pattern": "^Usage limits reset on Sep (\\d{1,2}) \\((\\d+) hours left\\)$",
+    "replacement": "用量上限将于 9 月 $1 日重置（还剩 $2 小时）",
+    "flags": ""
+  },
+  {
+    "id": "limits-Sep-hour-minute",
+    "pattern": "^Usage limits reset on Sep (\\d{1,2}) \\((\\d+) hour and (\\d+) minute left\\)$",
+    "replacement": "用量上限将于 9 月 $1 日重置（还剩 $2 小时 $3 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "limits-Sep-hour-minutes",
+    "pattern": "^Usage limits reset on Sep (\\d{1,2}) \\((\\d+) hour and (\\d+) minutes left\\)$",
+    "replacement": "用量上限将于 9 月 $1 日重置（还剩 $2 小时 $3 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "limits-Sep-hours-minute",
+    "pattern": "^Usage limits reset on Sep (\\d{1,2}) \\((\\d+) hours and (\\d+) minute left\\)$",
+    "replacement": "用量上限将于 9 月 $1 日重置（还剩 $2 小时 $3 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "limits-Sep-hours-minutes",
+    "pattern": "^Usage limits reset on Sep (\\d{1,2}) \\((\\d+) hours and (\\d+) minutes left\\)$",
+    "replacement": "用量上限将于 9 月 $1 日重置（还剩 $2 小时 $3 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "limits-Sep-day",
+    "pattern": "^Usage limits reset on Sep (\\d{1,2}) \\((\\d+) day left\\)$",
+    "replacement": "用量上限将于 9 月 $1 日重置（还剩 $2 天）",
+    "flags": ""
+  },
+  {
+    "id": "limits-Sep-days",
+    "pattern": "^Usage limits reset on Sep (\\d{1,2}) \\((\\d+) days left\\)$",
+    "replacement": "用量上限将于 9 月 $1 日重置（还剩 $2 天）",
+    "flags": ""
+  },
+  {
+    "id": "limits-Oct-0-minutes",
+    "pattern": "^Usage limits reset on Oct (\\d{1,2}) \\(0 minutes left\\)$",
+    "replacement": "用量上限将于 10 月 $1 日重置（还剩 0 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "limits-Oct-minute",
+    "pattern": "^Usage limits reset on Oct (\\d{1,2}) \\((\\d+) minute left\\)$",
+    "replacement": "用量上限将于 10 月 $1 日重置（还剩 $2 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "limits-Oct-minutes",
+    "pattern": "^Usage limits reset on Oct (\\d{1,2}) \\((\\d+) minutes left\\)$",
+    "replacement": "用量上限将于 10 月 $1 日重置（还剩 $2 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "limits-Oct-hour",
+    "pattern": "^Usage limits reset on Oct (\\d{1,2}) \\((\\d+) hour left\\)$",
+    "replacement": "用量上限将于 10 月 $1 日重置（还剩 $2 小时）",
+    "flags": ""
+  },
+  {
+    "id": "limits-Oct-hours",
+    "pattern": "^Usage limits reset on Oct (\\d{1,2}) \\((\\d+) hours left\\)$",
+    "replacement": "用量上限将于 10 月 $1 日重置（还剩 $2 小时）",
+    "flags": ""
+  },
+  {
+    "id": "limits-Oct-hour-minute",
+    "pattern": "^Usage limits reset on Oct (\\d{1,2}) \\((\\d+) hour and (\\d+) minute left\\)$",
+    "replacement": "用量上限将于 10 月 $1 日重置（还剩 $2 小时 $3 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "limits-Oct-hour-minutes",
+    "pattern": "^Usage limits reset on Oct (\\d{1,2}) \\((\\d+) hour and (\\d+) minutes left\\)$",
+    "replacement": "用量上限将于 10 月 $1 日重置（还剩 $2 小时 $3 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "limits-Oct-hours-minute",
+    "pattern": "^Usage limits reset on Oct (\\d{1,2}) \\((\\d+) hours and (\\d+) minute left\\)$",
+    "replacement": "用量上限将于 10 月 $1 日重置（还剩 $2 小时 $3 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "limits-Oct-hours-minutes",
+    "pattern": "^Usage limits reset on Oct (\\d{1,2}) \\((\\d+) hours and (\\d+) minutes left\\)$",
+    "replacement": "用量上限将于 10 月 $1 日重置（还剩 $2 小时 $3 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "limits-Oct-day",
+    "pattern": "^Usage limits reset on Oct (\\d{1,2}) \\((\\d+) day left\\)$",
+    "replacement": "用量上限将于 10 月 $1 日重置（还剩 $2 天）",
+    "flags": ""
+  },
+  {
+    "id": "limits-Oct-days",
+    "pattern": "^Usage limits reset on Oct (\\d{1,2}) \\((\\d+) days left\\)$",
+    "replacement": "用量上限将于 10 月 $1 日重置（还剩 $2 天）",
+    "flags": ""
+  },
+  {
+    "id": "limits-Nov-0-minutes",
+    "pattern": "^Usage limits reset on Nov (\\d{1,2}) \\(0 minutes left\\)$",
+    "replacement": "用量上限将于 11 月 $1 日重置（还剩 0 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "limits-Nov-minute",
+    "pattern": "^Usage limits reset on Nov (\\d{1,2}) \\((\\d+) minute left\\)$",
+    "replacement": "用量上限将于 11 月 $1 日重置（还剩 $2 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "limits-Nov-minutes",
+    "pattern": "^Usage limits reset on Nov (\\d{1,2}) \\((\\d+) minutes left\\)$",
+    "replacement": "用量上限将于 11 月 $1 日重置（还剩 $2 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "limits-Nov-hour",
+    "pattern": "^Usage limits reset on Nov (\\d{1,2}) \\((\\d+) hour left\\)$",
+    "replacement": "用量上限将于 11 月 $1 日重置（还剩 $2 小时）",
+    "flags": ""
+  },
+  {
+    "id": "limits-Nov-hours",
+    "pattern": "^Usage limits reset on Nov (\\d{1,2}) \\((\\d+) hours left\\)$",
+    "replacement": "用量上限将于 11 月 $1 日重置（还剩 $2 小时）",
+    "flags": ""
+  },
+  {
+    "id": "limits-Nov-hour-minute",
+    "pattern": "^Usage limits reset on Nov (\\d{1,2}) \\((\\d+) hour and (\\d+) minute left\\)$",
+    "replacement": "用量上限将于 11 月 $1 日重置（还剩 $2 小时 $3 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "limits-Nov-hour-minutes",
+    "pattern": "^Usage limits reset on Nov (\\d{1,2}) \\((\\d+) hour and (\\d+) minutes left\\)$",
+    "replacement": "用量上限将于 11 月 $1 日重置（还剩 $2 小时 $3 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "limits-Nov-hours-minute",
+    "pattern": "^Usage limits reset on Nov (\\d{1,2}) \\((\\d+) hours and (\\d+) minute left\\)$",
+    "replacement": "用量上限将于 11 月 $1 日重置（还剩 $2 小时 $3 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "limits-Nov-hours-minutes",
+    "pattern": "^Usage limits reset on Nov (\\d{1,2}) \\((\\d+) hours and (\\d+) minutes left\\)$",
+    "replacement": "用量上限将于 11 月 $1 日重置（还剩 $2 小时 $3 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "limits-Nov-day",
+    "pattern": "^Usage limits reset on Nov (\\d{1,2}) \\((\\d+) day left\\)$",
+    "replacement": "用量上限将于 11 月 $1 日重置（还剩 $2 天）",
+    "flags": ""
+  },
+  {
+    "id": "limits-Nov-days",
+    "pattern": "^Usage limits reset on Nov (\\d{1,2}) \\((\\d+) days left\\)$",
+    "replacement": "用量上限将于 11 月 $1 日重置（还剩 $2 天）",
+    "flags": ""
+  },
+  {
+    "id": "limits-Dec-0-minutes",
+    "pattern": "^Usage limits reset on Dec (\\d{1,2}) \\(0 minutes left\\)$",
+    "replacement": "用量上限将于 12 月 $1 日重置（还剩 0 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "limits-Dec-minute",
+    "pattern": "^Usage limits reset on Dec (\\d{1,2}) \\((\\d+) minute left\\)$",
+    "replacement": "用量上限将于 12 月 $1 日重置（还剩 $2 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "limits-Dec-minutes",
+    "pattern": "^Usage limits reset on Dec (\\d{1,2}) \\((\\d+) minutes left\\)$",
+    "replacement": "用量上限将于 12 月 $1 日重置（还剩 $2 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "limits-Dec-hour",
+    "pattern": "^Usage limits reset on Dec (\\d{1,2}) \\((\\d+) hour left\\)$",
+    "replacement": "用量上限将于 12 月 $1 日重置（还剩 $2 小时）",
+    "flags": ""
+  },
+  {
+    "id": "limits-Dec-hours",
+    "pattern": "^Usage limits reset on Dec (\\d{1,2}) \\((\\d+) hours left\\)$",
+    "replacement": "用量上限将于 12 月 $1 日重置（还剩 $2 小时）",
+    "flags": ""
+  },
+  {
+    "id": "limits-Dec-hour-minute",
+    "pattern": "^Usage limits reset on Dec (\\d{1,2}) \\((\\d+) hour and (\\d+) minute left\\)$",
+    "replacement": "用量上限将于 12 月 $1 日重置（还剩 $2 小时 $3 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "limits-Dec-hour-minutes",
+    "pattern": "^Usage limits reset on Dec (\\d{1,2}) \\((\\d+) hour and (\\d+) minutes left\\)$",
+    "replacement": "用量上限将于 12 月 $1 日重置（还剩 $2 小时 $3 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "limits-Dec-hours-minute",
+    "pattern": "^Usage limits reset on Dec (\\d{1,2}) \\((\\d+) hours and (\\d+) minute left\\)$",
+    "replacement": "用量上限将于 12 月 $1 日重置（还剩 $2 小时 $3 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "limits-Dec-hours-minutes",
+    "pattern": "^Usage limits reset on Dec (\\d{1,2}) \\((\\d+) hours and (\\d+) minutes left\\)$",
+    "replacement": "用量上限将于 12 月 $1 日重置（还剩 $2 小时 $3 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "limits-Dec-day",
+    "pattern": "^Usage limits reset on Dec (\\d{1,2}) \\((\\d+) day left\\)$",
+    "replacement": "用量上限将于 12 月 $1 日重置（还剩 $2 天）",
+    "flags": ""
+  },
+  {
+    "id": "limits-Dec-days",
+    "pattern": "^Usage limits reset on Dec (\\d{1,2}) \\((\\d+) days left\\)$",
+    "replacement": "用量上限将于 12 月 $1 日重置（还剩 $2 天）",
+    "flags": ""
+  },
+  {
+    "id": "limits-any-0-minutes",
+    "pattern": "^Usage limits reset on (.+) \\(0 minutes left\\)$",
+    "replacement": "用量上限将于 $1 重置（还剩 0 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "limits-any-minute",
+    "pattern": "^Usage limits reset on (.+) \\((\\d+) minute left\\)$",
+    "replacement": "用量上限将于 $1 重置（还剩 $2 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "limits-any-minutes",
+    "pattern": "^Usage limits reset on (.+) \\((\\d+) minutes left\\)$",
+    "replacement": "用量上限将于 $1 重置（还剩 $2 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "limits-any-hour",
+    "pattern": "^Usage limits reset on (.+) \\((\\d+) hour left\\)$",
+    "replacement": "用量上限将于 $1 重置（还剩 $2 小时）",
+    "flags": ""
+  },
+  {
+    "id": "limits-any-hours",
+    "pattern": "^Usage limits reset on (.+) \\((\\d+) hours left\\)$",
+    "replacement": "用量上限将于 $1 重置（还剩 $2 小时）",
+    "flags": ""
+  },
+  {
+    "id": "limits-any-hour-minute",
+    "pattern": "^Usage limits reset on (.+) \\((\\d+) hour and (\\d+) minute left\\)$",
+    "replacement": "用量上限将于 $1 重置（还剩 $2 小时 $3 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "limits-any-hour-minutes",
+    "pattern": "^Usage limits reset on (.+) \\((\\d+) hour and (\\d+) minutes left\\)$",
+    "replacement": "用量上限将于 $1 重置（还剩 $2 小时 $3 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "limits-any-hours-minute",
+    "pattern": "^Usage limits reset on (.+) \\((\\d+) hours and (\\d+) minute left\\)$",
+    "replacement": "用量上限将于 $1 重置（还剩 $2 小时 $3 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "limits-any-hours-minutes",
+    "pattern": "^Usage limits reset on (.+) \\((\\d+) hours and (\\d+) minutes left\\)$",
+    "replacement": "用量上限将于 $1 重置（还剩 $2 小时 $3 分钟）",
+    "flags": ""
+  },
+  {
+    "id": "limits-any-day",
+    "pattern": "^Usage limits reset on (.+) \\((\\d+) day left\\)$",
+    "replacement": "用量上限将于 $1 重置（还剩 $2 天）",
+    "flags": ""
+  },
+  {
+    "id": "limits-any-days",
+    "pattern": "^Usage limits reset on (.+) \\((\\d+) days left\\)$",
+    "replacement": "用量上限将于 $1 重置（还剩 $2 天）",
+    "flags": ""
+  },
+  {
+    "id": "included-resets-Jan",
+    "pattern": "^Included usage with your subscription\\. Resets Jan (\\d{1,2})\\.$",
+    "replacement": "订阅包含的用量。将于 1 月 $1 日重置。",
+    "flags": ""
+  },
+  {
+    "id": "included-resets-credits-Jan",
+    "pattern": "^Included usage with your subscription\\. Resets Jan (\\d{1,2})\\. Used before your credits\\.$",
+    "replacement": "订阅包含的用量。将于 1 月 $1 日重置。会在额度之前消耗。",
+    "flags": ""
+  },
+  {
+    "id": "included-resets-Feb",
+    "pattern": "^Included usage with your subscription\\. Resets Feb (\\d{1,2})\\.$",
+    "replacement": "订阅包含的用量。将于 2 月 $1 日重置。",
+    "flags": ""
+  },
+  {
+    "id": "included-resets-credits-Feb",
+    "pattern": "^Included usage with your subscription\\. Resets Feb (\\d{1,2})\\. Used before your credits\\.$",
+    "replacement": "订阅包含的用量。将于 2 月 $1 日重置。会在额度之前消耗。",
+    "flags": ""
+  },
+  {
+    "id": "included-resets-Mar",
+    "pattern": "^Included usage with your subscription\\. Resets Mar (\\d{1,2})\\.$",
+    "replacement": "订阅包含的用量。将于 3 月 $1 日重置。",
+    "flags": ""
+  },
+  {
+    "id": "included-resets-credits-Mar",
+    "pattern": "^Included usage with your subscription\\. Resets Mar (\\d{1,2})\\. Used before your credits\\.$",
+    "replacement": "订阅包含的用量。将于 3 月 $1 日重置。会在额度之前消耗。",
+    "flags": ""
+  },
+  {
+    "id": "included-resets-Apr",
+    "pattern": "^Included usage with your subscription\\. Resets Apr (\\d{1,2})\\.$",
+    "replacement": "订阅包含的用量。将于 4 月 $1 日重置。",
+    "flags": ""
+  },
+  {
+    "id": "included-resets-credits-Apr",
+    "pattern": "^Included usage with your subscription\\. Resets Apr (\\d{1,2})\\. Used before your credits\\.$",
+    "replacement": "订阅包含的用量。将于 4 月 $1 日重置。会在额度之前消耗。",
+    "flags": ""
+  },
+  {
+    "id": "included-resets-May",
+    "pattern": "^Included usage with your subscription\\. Resets May (\\d{1,2})\\.$",
+    "replacement": "订阅包含的用量。将于 5 月 $1 日重置。",
+    "flags": ""
+  },
+  {
+    "id": "included-resets-credits-May",
+    "pattern": "^Included usage with your subscription\\. Resets May (\\d{1,2})\\. Used before your credits\\.$",
+    "replacement": "订阅包含的用量。将于 5 月 $1 日重置。会在额度之前消耗。",
+    "flags": ""
+  },
+  {
+    "id": "included-resets-Jun",
+    "pattern": "^Included usage with your subscription\\. Resets Jun (\\d{1,2})\\.$",
+    "replacement": "订阅包含的用量。将于 6 月 $1 日重置。",
+    "flags": ""
+  },
+  {
+    "id": "included-resets-credits-Jun",
+    "pattern": "^Included usage with your subscription\\. Resets Jun (\\d{1,2})\\. Used before your credits\\.$",
+    "replacement": "订阅包含的用量。将于 6 月 $1 日重置。会在额度之前消耗。",
+    "flags": ""
+  },
+  {
+    "id": "included-resets-Jul",
+    "pattern": "^Included usage with your subscription\\. Resets Jul (\\d{1,2})\\.$",
+    "replacement": "订阅包含的用量。将于 7 月 $1 日重置。",
+    "flags": ""
+  },
+  {
+    "id": "included-resets-credits-Jul",
+    "pattern": "^Included usage with your subscription\\. Resets Jul (\\d{1,2})\\. Used before your credits\\.$",
+    "replacement": "订阅包含的用量。将于 7 月 $1 日重置。会在额度之前消耗。",
+    "flags": ""
+  },
+  {
+    "id": "included-resets-Aug",
+    "pattern": "^Included usage with your subscription\\. Resets Aug (\\d{1,2})\\.$",
+    "replacement": "订阅包含的用量。将于 8 月 $1 日重置。",
+    "flags": ""
+  },
+  {
+    "id": "included-resets-credits-Aug",
+    "pattern": "^Included usage with your subscription\\. Resets Aug (\\d{1,2})\\. Used before your credits\\.$",
+    "replacement": "订阅包含的用量。将于 8 月 $1 日重置。会在额度之前消耗。",
+    "flags": ""
+  },
+  {
+    "id": "included-resets-Sep",
+    "pattern": "^Included usage with your subscription\\. Resets Sep (\\d{1,2})\\.$",
+    "replacement": "订阅包含的用量。将于 9 月 $1 日重置。",
+    "flags": ""
+  },
+  {
+    "id": "included-resets-credits-Sep",
+    "pattern": "^Included usage with your subscription\\. Resets Sep (\\d{1,2})\\. Used before your credits\\.$",
+    "replacement": "订阅包含的用量。将于 9 月 $1 日重置。会在额度之前消耗。",
+    "flags": ""
+  },
+  {
+    "id": "included-resets-Oct",
+    "pattern": "^Included usage with your subscription\\. Resets Oct (\\d{1,2})\\.$",
+    "replacement": "订阅包含的用量。将于 10 月 $1 日重置。",
+    "flags": ""
+  },
+  {
+    "id": "included-resets-credits-Oct",
+    "pattern": "^Included usage with your subscription\\. Resets Oct (\\d{1,2})\\. Used before your credits\\.$",
+    "replacement": "订阅包含的用量。将于 10 月 $1 日重置。会在额度之前消耗。",
+    "flags": ""
+  },
+  {
+    "id": "included-resets-Nov",
+    "pattern": "^Included usage with your subscription\\. Resets Nov (\\d{1,2})\\.$",
+    "replacement": "订阅包含的用量。将于 11 月 $1 日重置。",
+    "flags": ""
+  },
+  {
+    "id": "included-resets-credits-Nov",
+    "pattern": "^Included usage with your subscription\\. Resets Nov (\\d{1,2})\\. Used before your credits\\.$",
+    "replacement": "订阅包含的用量。将于 11 月 $1 日重置。会在额度之前消耗。",
+    "flags": ""
+  },
+  {
+    "id": "included-resets-Dec",
+    "pattern": "^Included usage with your subscription\\. Resets Dec (\\d{1,2})\\.$",
+    "replacement": "订阅包含的用量。将于 12 月 $1 日重置。",
+    "flags": ""
+  },
+  {
+    "id": "included-resets-credits-Dec",
+    "pattern": "^Included usage with your subscription\\. Resets Dec (\\d{1,2})\\. Used before your credits\\.$",
+    "replacement": "订阅包含的用量。将于 12 月 $1 日重置。会在额度之前消耗。",
+    "flags": ""
+  },
+  {
+    "id": "included-resets-any",
+    "pattern": "^Included usage with your subscription\\. Resets (.+)\\.$",
+    "replacement": "订阅包含的用量。将于 $1 重置。",
+    "flags": ""
+  },
+  {
+    "id": "included-resets-credits-any",
+    "pattern": "^Included usage with your subscription\\. Resets (.+)\\. Used before your credits\\.$",
+    "replacement": "订阅包含的用量。将于 $1 重置。会在额度之前消耗。",
+    "flags": ""
   }
 ]

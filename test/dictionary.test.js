@@ -31,7 +31,24 @@ test('the shipped dictionary compiles and static rules agree with it', () => {
   assert.equal(raw.exact.Agent, '智能体');
   assert.equal(raw.exact.Terminal, '终端');
   assert.equal(translateText('Worked for 2m 15s', compiled).text, '工作了 2 分 15 秒');
+  assert.equal(translateText('Worked for 6s', compiled).text, '工作了 6 秒');
   assert.equal(translateText('26m ago', compiled).text, '26 分钟前');
+  assert.equal(translateText('4h ago', compiled).text, '4 小时前');
+  assert.equal(translateText('4h\u202fago', compiled).text, '4 小时前');
+  assert.equal(translateText('12s ago', compiled).text, '12 秒前');
+  assert.equal(translateText('3% used', compiled).text, '已使用 3%');
+  assert.equal(translateText('$0.00 remaining', compiled).text, '剩余 $0.00');
+  assert.equal(translateText('Included in Ultra', compiled).text, '已包含在 Ultra 中');
+  assert.equal(translateText('Weekly usage resets on Oct 24 (7 days left)', compiled).text, '每周用量将于 10 月 24 日重置（还剩 7 天）');
+  assert.equal(
+    translateText('Included usage with your subscription. Resets Oct 24. Used before your credits.', compiled).text,
+    '订阅包含的用量。将于 10 月 24 日重置。会在额度之前消耗。',
+  );
+  assert.equal(raw.exact['Send follow-up'], '发送后续消息');
+  assert.equal(raw.exact['Cursor Agents Window'], 'Cursor 智能体窗口');
+  assert.equal(raw.exact.Account, '账户');
+  assert.equal(raw.exact['Log Out'], '退出登录');
+  assert.equal(raw.exact['Sign out'], '退出登录');
   assert.equal(translateText('Explored 2 searches', compiled).text, '探索了 2 次搜索');
   assert.equal(translateText('Use Cloud Agents inside a longer sentence', compiled).changed, false);
 });

@@ -22,7 +22,7 @@
 | Commit / Branch / Changes | 提交 / 分支 / 更改 |
 | Cancel / Delete / Rename / Close / Open | 取消 / 删除 / 重命名 / 关闭 / 打开 |
 | Accept / Apply | 接受 / 应用 |
-| Account | 帐户 |
+| Account | 账户 |
 | Untitled | 无标题 |
 | Chat | 聊天 |
 

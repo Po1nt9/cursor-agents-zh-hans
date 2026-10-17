@@ -1,4 +1,5 @@
 import fs from 'node:fs';
+import { extractCoverageCandidates, summarizeCoverage } from './coverage.js';
 import { loadDictionary, loadStaticRules } from './dictionary.js';
 import { appFiles, detectAppPath } from './paths.js';
 import { readProductFile } from './product.js';
@@ -129,10 +130,13 @@ export function scanInstall(options = {}) {
     throw new Error('没有可读的 workbench 包。');
   }
   const report = scanSources(sources, compiled, staticRules, product.version);
+  const candidates = sources.flatMap((item) => extractCoverageCandidates(item.source, { bundle: item.id }));
+  const coverage = summarizeCoverage(candidates, compiled);
   return {
     ...report,
     appPath,
     bundles: sources.map((item) => item.id),
+    coverage,
   };
 }
 
@@ -165,6 +169,11 @@ export function formatScanReport(report, options = {}) {
     }
   }
   lines.push('');
+  if (report.coverage) {
+    const covered = report.coverage;
+    lines.push(`界面覆盖: ${covered.translated}/${covered.total}（${covered.total ? Math.round((covered.translated / covered.total) * 1000) / 10 : 0}%）。分类明细用 --coverage 写成 Markdown。`);
+    lines.push('');
+  }
   lines.push(`静态规则漂移: ${mismatches.length} 条命中次数与 ${report.version} 的 expectedHits 不一致。`);
   for (const item of mismatches) {
     lines.push(`  ! ${item.id}: 期望 ${item.expected}，实际 ${item.actual}  (${item.literal})`);

@@ -6,6 +6,7 @@
 export const TRANSLATABLE_ATTRS = [
   'title',
   'placeholder',
+  'data-placeholder',
   'aria-label',
   'aria-description',
   'aria-placeholder',
@@ -13,6 +14,7 @@ export const TRANSLATABLE_ATTRS = [
 
 export function startDomTranslator(api, env) {
   const { translateText, shouldSkipElement, dictionary, version } = api;
+  const shouldSkipAttributeTarget = api.shouldSkipAttributeTarget || shouldSkipElement;
   const document = env.document;
   const MutationObserver = env.MutationObserver;
   const host = env.window || env.globalThis || {};
@@ -130,7 +132,7 @@ export function startDomTranslator(api, env) {
 
   function translateAttrs(el) {
     if (!el || el.nodeType !== 1 || typeof el.getAttribute !== 'function') return;
-    if (shouldSkipElement(el)) return;
+    if (shouldSkipAttributeTarget(el)) return;
     let memo = attrMemo.get(el);
     if (!memo) {
       memo = Object.create(null);
@@ -162,7 +164,7 @@ export function startDomTranslator(api, env) {
       return;
     }
     if (node.nodeType !== 1) return;
-    if (shouldSkipElement(node)) return;
+    if (shouldSkipAttributeTarget(node)) return;
     translateAttrs(node);
     if (node.shadowRoot) {
       observe(node.shadowRoot);

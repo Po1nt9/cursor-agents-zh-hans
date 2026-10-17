@@ -2,6 +2,7 @@ import fs from 'node:fs';
 import { apply } from './apply.js';
 import { CliError } from './errors.js';
 import { restore } from './restore.js';
+import { renderCoverageMarkdown } from './coverage.js';
 import { formatScanReport, scanInstall } from './scan.js';
 import { formatDoctor, formatStatus, inspectInstall } from './status.js';
 import { TOOL_VERSION } from './version.js';
@@ -30,6 +31,7 @@ const HELP = `cursor-zh ${TOOL_VERSION}
   --limit N                scan 最多打印 N 条未收录字符串（默认 200，-1 为全部）
   --json                   status / doctor / scan 输出 JSON
   --out FILE               把 scan 报告写到文件（内容仍只是字符串列表）
+  --coverage FILE          把分类覆盖率写成 Markdown（只有计数和界面字符串）
 
 apply 和 restore 在检测到 Cursor 主进程时会拒绝执行。请完全退出，不要只 Reload Window。
 `;
@@ -46,6 +48,7 @@ export function parseArgs(argv) {
     codesign: true,
     clearQuarantine: true,
     out: null,
+    coverage: null,
     limit: 200,
     minCount: 2,
     json: false,
@@ -67,6 +70,7 @@ export function parseArgs(argv) {
       case '--data-dir': opts.dataDir = take(); break;
       case '--dictionary': opts.dictionaryDir = take(); break;
       case '--out': opts.out = take(); break;
+      case '--coverage': opts.coverage = take(); break;
       case '--limit': opts.limit = Number(take()); break;
       case '--min-count': opts.minCount = Number(take()); break;
       case '--bundles': opts.bundles = take(); break;
@@ -134,6 +138,12 @@ export async function main(argv) {
       return 0;
     }
     const report = scanInstall(opts);
+    if (opts.coverage) {
+      fs.writeFileSync(opts.coverage, renderCoverageMarkdown(report.coverage, {
+        version: report.version,
+        previous: opts.previousCoverage || null,
+      }));
+    }
     const text = formatScanReport(report, opts);
     const body = opts.json ? JSON.stringify(report, null, 2) : text;
     if (opts.out) fs.writeFileSync(opts.out, `${body}\n`);

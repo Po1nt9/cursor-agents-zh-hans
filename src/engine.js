@@ -6,20 +6,21 @@
 export const MAX_TEXT_LENGTH = 2000;
 export const MAX_CORE_LENGTH = 500;
 
-const SKIP_TAGS = new Set([
+const PROTECTED_TAGS = new Set([
   'SCRIPT',
   'STYLE',
   'NOSCRIPT',
-  'TEXTAREA',
-  'INPUT',
-  'SELECT',
-  'OPTION',
   'CANVAS',
   'CODE',
   'PRE',
 ]);
 
-const SKIP_CLASSES = new Set([
+const EDITABLE_TAGS = new Set([
+  'TEXTAREA',
+  'INPUT',
+]);
+
+const PROTECTED_CLASSES = new Set([
   'monaco-editor',
   'monaco-diff-editor',
   'monaco-mouse-cursor-text',
@@ -38,13 +39,19 @@ const SKIP_CLASSES = new Set([
   'composer-human-message',
   'composer-human-message-content',
   'composer-message-codeblock',
-  'composer-messages-container',
   'human-message-inline-body',
   'markdown-root',
-  'markdown-lexical-editor-content-editable',
   'markdown-lexical-editor-code',
   'markdown-lexical-editor-code-block',
   'agent-transcript-row-markdown',
+  'ui-kbd',
+  'monaco-keybinding',
+  'keybinding-key',
+  'keybinding-label',
+]);
+
+const EDITABLE_CLASSES = new Set([
+  'markdown-lexical-editor-content-editable',
   'ai-input-full-input-box',
   'composer-questionnaire-toolbar-freeform-input',
   'monaco-inputbox',
@@ -52,6 +59,10 @@ const SKIP_CLASSES = new Set([
   'agent-sidebar-cell-rename-input',
   'agent-tab-rename-input',
 ]);
+
+const PROTECTED_MESSAGE_KINDS = new Set(['assistant', 'human']);
+
+const MATCH_SPACES = /[\u00a0\u202f\u2007\u2009\u200a\ufeff]/g;
 
 export function isSafeFragment(text) {
   if (typeof text !== 'string') return false;
@@ -173,22 +184,23 @@ export function translateText(input, dictionary) {
   if (!core || core.length > MAX_CORE_LENGTH) {
     return { text: input, changed: false, tier: null };
   }
+  const normalizedCore = core.replace(MATCH_SPACES, ' ');
 
-  if (dictionary.exact.has(core)) {
-    const text = lead + dictionary.exact.get(core) + tail;
+  if (dictionary.exact.has(normalizedCore)) {
+    const text = lead + dictionary.exact.get(normalizedCore) + tail;
     return { text, changed: text !== input, tier: 'exact' };
   }
 
   for (const entry of dictionary.regex) {
     entry.re.lastIndex = 0;
-    if (!entry.re.test(core)) continue;
+    if (!entry.re.test(normalizedCore)) continue;
     entry.re.lastIndex = 0;
-    const text = lead + core.replace(entry.re, entry.replacement) + tail;
+    const text = lead + normalizedCore.replace(entry.re, entry.replacement) + tail;
     return { text, changed: text !== input, tier: 'regex' };
   }
 
   for (const frag of dictionary.fragments) {
-    if (frag.from !== core) continue;
+    if (frag.from !== normalizedCore) continue;
     const text = lead + frag.to + tail;
     return { text, changed: text !== input, tier: 'fragment' };
   }
@@ -204,21 +216,41 @@ function hasClass(el, name) {
   return raw.split(/\s+/).includes(name);
 }
 
-export function elementMatchesSkip(el) {
+function tagNameOf(el) {
+  return typeof el.tagName === 'string' ? el.tagName.toUpperCase() : '';
+}
+
+export function isProtectedSurface(el) {
   if (!el || el.nodeType === 3) return false;
-  const tag = typeof el.tagName === 'string' ? el.tagName.toUpperCase() : '';
-  if (tag && SKIP_TAGS.has(tag)) return true;
-  if (el.isContentEditable) return true;
-  const editable = el.getAttribute?.('contenteditable');
-  if (editable != null && editable !== 'false') return true;
+  const tag = tagNameOf(el);
+  if (tag && PROTECTED_TAGS.has(tag)) return true;
   if (el.getAttribute?.('data-cursor-zh-skip') != null) return true;
-  for (const name of SKIP_CLASSES) {
+  const kind = el.getAttribute?.('data-message-kind');
+  if (kind && PROTECTED_MESSAGE_KINDS.has(String(kind))) return true;
+  for (const name of PROTECTED_CLASSES) {
     if (hasClass(el, name)) return true;
   }
   return false;
 }
 
-export function shouldSkipElement(el) {
+export function isEditableControl(el) {
+  if (!el || el.nodeType === 3) return false;
+  const tag = tagNameOf(el);
+  if (tag && EDITABLE_TAGS.has(tag)) return true;
+  if (el.isContentEditable) return true;
+  const editable = el.getAttribute?.('contenteditable');
+  if (editable != null && editable !== 'false') return true;
+  for (const name of EDITABLE_CLASSES) {
+    if (hasClass(el, name)) return true;
+  }
+  return false;
+}
+
+export function elementMatchesSkip(el) {
+  return isProtectedSurface(el) || isEditableControl(el);
+}
+
+function walkAncestors(el, predicate) {
   let cur = el;
   const seen = new Set();
   while (cur && !seen.has(cur)) {
@@ -227,7 +259,7 @@ export function shouldSkipElement(el) {
       cur = cur.parentElement || null;
       continue;
     }
-    if (elementMatchesSkip(cur)) return true;
+    if (predicate(cur)) return true;
     if (cur.parentElement) {
       cur = cur.parentElement;
       continue;
@@ -240,4 +272,12 @@ export function shouldSkipElement(el) {
     break;
   }
   return false;
+}
+
+export function shouldSkipElement(el) {
+  return walkAncestors(el, (node) => isProtectedSurface(node) || isEditableControl(node));
+}
+
+export function shouldSkipAttributeTarget(el) {
+  return walkAncestors(el, isProtectedSurface);
 }

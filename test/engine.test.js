@@ -4,6 +4,7 @@ import { startDomTranslator } from '../src/dom.js';
 import {
   applyFragments,
   compileDictionary,
+  shouldSkipAttributeTarget,
   shouldSkipElement,
   translateText,
 } from '../src/engine.js';
@@ -121,11 +122,18 @@ test('skips editor, terminal, diff, chat, and inputs, and translates other label
   assert.equal(shouldSkipElement(element({ classes: ['terminal-wrapper'] })), true);
   assert.equal(shouldSkipElement(element({ classes: ['diff-line-content'] })), true);
   assert.equal(shouldSkipElement(element({ classes: ['markdown-root'] })), true);
-  assert.equal(shouldSkipElement(element({ classes: ['composer-messages-container'] })), true);
+  assert.equal(shouldSkipElement(element({ classes: ['composer-messages-container'] })), false);
   assert.equal(shouldSkipElement(element({ tag: 'TEXTAREA' })), true);
   assert.equal(shouldSkipElement(element({ editable: true })), true);
   assert.equal(shouldSkipElement(element({ attrs: { contenteditable: 'true' } })), true);
   assert.equal(shouldSkipElement(element({ tag: 'CODE' })), true);
+  assert.equal(shouldSkipElement(element({ tag: 'OPTION' })), false);
+  assert.equal(shouldSkipElement(element({ attrs: { 'data-message-kind': 'assistant' } })), true);
+  assert.equal(shouldSkipElement(element({ attrs: { 'data-message-kind': 'tool' } })), false);
+  assert.equal(shouldSkipAttributeTarget(element({ tag: 'INPUT' })), false);
+  assert.equal(shouldSkipAttributeTarget(element({ editable: true })), false);
+  assert.equal(shouldSkipAttributeTarget(element({ classes: ['markdown-root'] })), true);
+  assert.equal(shouldSkipAttributeTarget(element({ classes: ['ui-kbd'] })), true);
 });
 
 test('skips text inside a shadow tree hosted by a protected element', () => {
@@ -315,4 +323,134 @@ test('split sentence is translated as a whole and a lone short label still chang
   assert.equal(shortcut.nodeValue, 'Tab');
   assert.equal(titleText.nodeValue, '聚焦时显示云端智能体批准横幅');
   assert.equal(navText.nodeValue, '语音');
+});
+
+test('placeholders inside editors translate, and chat chrome does too, while message bodies stay', () => {
+  function makeElement(tag = 'DIV', options = {}) {
+    const classes = options.classes || [];
+    const el = {
+      nodeType: 1,
+      tagName: tag,
+      classList: { contains: (name) => classes.includes(name) },
+      parentElement: null,
+      childNodes: [],
+      attrs: { ...(options.attrs || {}) },
+      isContentEditable: Boolean(options.editable),
+      shadowRoot: null,
+      getAttribute(name) { return Object.prototype.hasOwnProperty.call(this.attrs, name) ? this.attrs[name] : null; },
+      setAttribute(name, value) { this.attrs[name] = value; },
+      hasAttribute(name) { return Object.prototype.hasOwnProperty.call(this.attrs, name); },
+      appendChild(child) {
+        child.parentElement = this;
+        this.childNodes.push(child);
+        return child;
+      },
+      getRootNode() { return { host: null }; },
+    };
+    return el;
+  }
+  function makeText(value) {
+    return { nodeType: 3, nodeValue: value, parentElement: null };
+  }
+  class MockObserver {
+    constructor() {}
+    observe() {}
+    disconnect() {}
+  }
+
+  const compiled = compileDictionary({
+    exact: {
+      'Plan, Build, / for skills, @ for context': '计划、构建，/ 调用技能，@ 添加上下文',
+      'Send follow-up': '发送后续消息',
+      'Search Settings': '搜索设置',
+      Tab: '补全',
+      English: '英语',
+      'Keep this reply': '保留这段回复',
+    },
+    fragments: [],
+    regex: [
+      { id: 'worked', pattern: '^Worked for (\\d+)s$', flags: '', replacement: '工作了 $1 秒' },
+      { id: 'ago', pattern: '^(\\d+)h ago$', flags: '', replacement: '$1 小时前' },
+    ],
+  });
+
+  const body = makeElement('BODY');
+  const root = makeElement('HTML');
+  root.appendChild(body);
+
+  const box = makeElement('DIV', { classes: ['ai-input-full-input-box'] });
+  const editor = makeElement('DIV', { attrs: { contenteditable: 'true' }, editable: true });
+  const empty = makeElement('P', {
+    attrs: { 'data-placeholder': 'Plan, Build, / for skills, @ for context' },
+  });
+  const typed = makeText('Keep this reply');
+  empty.appendChild(typed);
+  editor.appendChild(empty);
+  box.appendChild(editor);
+  body.appendChild(box);
+
+  const follow = makeElement('DIV', { editable: true, attrs: { contenteditable: 'true' } });
+  const followLine = makeElement('P', { attrs: { 'data-placeholder': 'Send follow-up' } });
+  follow.appendChild(followLine);
+  body.appendChild(follow);
+
+  const search = makeElement('INPUT', { attrs: { placeholder: 'Search Settings' } });
+  const searchTyped = makeText('Keep this reply');
+  search.appendChild(searchTyped);
+  body.appendChild(search);
+
+  const thread = makeElement('DIV', { classes: ['composer-messages-container'] });
+  const worked = makeText('Worked for 6s');
+  const ago = makeText('4h\u202fago');
+  thread.appendChild(worked);
+  thread.appendChild(ago);
+  const assistant = makeElement('DIV', { attrs: { 'data-message-kind': 'assistant' } });
+  const reply = makeText('Keep this reply');
+  assistant.appendChild(reply);
+  thread.appendChild(assistant);
+  const markdown = makeElement('DIV', { classes: ['markdown-root'] });
+  const md = makeText('Keep this reply');
+  markdown.appendChild(md);
+  thread.appendChild(markdown);
+  body.appendChild(thread);
+
+  const kbd = makeElement('SPAN', { classes: ['ui-kbd'] });
+  const key = makeText('Tab');
+  kbd.appendChild(key);
+  body.appendChild(kbd);
+  const heading = makeElement('H2');
+  const headingText = makeText('Tab');
+  heading.appendChild(headingText);
+  body.appendChild(heading);
+
+  const option = makeElement('OPTION');
+  const language = makeText('English');
+  option.appendChild(language);
+  body.appendChild(option);
+
+  startDomTranslator({
+    translateText,
+    shouldSkipElement,
+    shouldSkipAttributeTarget,
+    dictionary: compiled,
+    version: 'test',
+  }, {
+    document: { body, documentElement: root },
+    MutationObserver: MockObserver,
+    Element: class {},
+    window: {},
+  });
+
+  assert.equal(empty.attrs['data-placeholder'], '计划、构建，/ 调用技能，@ 添加上下文');
+  assert.equal(typed.nodeValue, 'Keep this reply');
+  assert.equal(followLine.attrs['data-placeholder'], '发送后续消息');
+  assert.equal(search.attrs.placeholder, '搜索设置');
+  assert.equal(searchTyped.nodeValue, 'Keep this reply');
+  assert.equal(worked.nodeValue, '工作了 6 秒');
+  assert.equal(ago.nodeValue, '4 小时前');
+  assert.equal(reply.nodeValue, 'Keep this reply');
+  assert.equal(md.nodeValue, 'Keep this reply');
+  assert.equal(key.nodeValue, 'Tab');
+  assert.equal(headingText.nodeValue, '补全');
+  assert.equal(language.nodeValue, '英语');
 });
