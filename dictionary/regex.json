@@ -1,0 +1,68 @@
+[
+  {
+    "id": "agent-count",
+    "pattern": "^(\\d+) Agents?$",
+    "flags": "",
+    "replacement": "$1 个智能体"
+  },
+  {
+    "id": "agent-not-found",
+    "pattern": "^Agent not found: (.+)$",
+    "flags": "",
+    "replacement": "未找到智能体：$1"
+  },
+  {
+    "id": "checking-out-branch",
+    "pattern": "^Checking out branch (.+)\\.\\.\\.$",
+    "flags": "",
+    "replacement": "正在检出分支 $1…"
+  },
+  {
+    "id": "failed-delete",
+    "pattern": "^Failed to delete \"(.+)\"\\.$",
+    "flags": "",
+    "replacement": "删除“$1”失败。"
+  },
+  {
+    "id": "file-count",
+    "pattern": "^(\\d+) files?$",
+    "flags": "",
+    "replacement": "$1 个文件"
+  },
+  {
+    "id": "files-changed",
+    "pattern": "^(\\d+) files? changed$",
+    "flags": "",
+    "replacement": "$1 个文件已更改"
+  },
+  {
+    "id": "local-conflict",
+    "pattern": "^Your local changes conflict with agent changes in (\\d+) files?\\.$",
+    "flags": "",
+    "replacement": "你的本地更改与智能体对 $1 个文件的更改冲突。"
+  },
+  {
+    "id": "no-chats-older",
+    "pattern": "^No chats older than (\\d+) days found\\.$",
+    "flags": "",
+    "replacement": "没有找到超过 $1 天的聊天。"
+  },
+  {
+    "id": "open-chat-mode",
+    "pattern": "^Open Chat in (.+) Mode$",
+    "flags": "",
+    "replacement": "以 $1 模式打开聊天"
+  },
+  {
+    "id": "pr-number",
+    "pattern": "^PR #(\\d+)$",
+    "flags": "",
+    "replacement": "拉取请求 #$1"
+  },
+  {
+    "id": "project-unavailable",
+    "pattern": "^Project \"(.+)\" is no longer available$",
+    "flags": "",
+    "replacement": "项目“$1”已不可用"
+  }
+]

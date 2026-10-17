@@ -1,0 +1,48 @@
+import assert from 'node:assert/strict';
+import test from 'node:test';
+import { loadDictionary, loadStaticRules } from '../src/dictionary.js';
+import { isAmbiguousStaticRule } from '../src/static-replace.js';
+import { buildRuntimeScript } from '../src/runtime.js';
+import { assertJavaScriptSyntax } from '../src/syntax.js';
+import { diffAgainstDictionary, extractUiStrings } from '../src/scan.js';
+
+test('the shipped dictionary compiles and static rules agree with it', () => {
+  const { raw, compiled } = loadDictionary();
+  assert.ok(compiled.exact.size > 100);
+  assert.ok(compiled.fragments.length > 10);
+  assert.ok(compiled.regex.length > 5);
+  const rules = loadStaticRules();
+  const ids = new Set();
+  for (const rule of rules.rules) {
+    assert.equal(ids.has(rule.id), false, rule.id);
+    ids.add(rule.id);
+    assert.equal(isAmbiguousStaticRule(rule), false, rule.id);
+    assert.equal(compiled.exact.get(rule.literal), rule.translation, rule.literal);
+    assert.equal(typeof rule.expectedHits['3.25.6'], 'number');
+  }
+  assert.equal(raw.exact['New Agent'], '新建智能体');
+  assert.equal(raw.exact.Agent, '智能体');
+  assert.equal(raw.exact.Terminal, '终端');
+});
+
+test('generated runtime is plain script and passes node --check', () => {
+  const { raw } = loadDictionary();
+  const script = buildRuntimeScript(raw);
+  assert.doesNotMatch(script, /\bexport\s/);
+  assert.match(script, /新建智能体/);
+  assert.match(script, /MutationObserver/);
+  assertJavaScriptSyntax(script, 'cursor-zh-hans.js');
+});
+
+test('scan diffs candidate strings against the dictionary', () => {
+  const source = 'const a = "New Agent"; const b = "New Agent"; const c = "Some Brand New Label"; const d = "camelCase"; const e = "","Memories";';
+  const counts = extractUiStrings(source);
+  assert.equal(counts.get('New Agent'), 2);
+  assert.equal(counts.get('Memories'), 1);
+  assert.equal(counts.has('camelCase'), false);
+  assert.equal(extractUiStrings('var x = "ERROR"; var y = "Cancel";').has('ERROR'), false);
+  const { compiled } = loadDictionary();
+  const diff = diffAgainstDictionary(counts, compiled);
+  assert.equal(diff.missing.some((item) => item.text === 'Some Brand New Label'), true);
+  assert.equal(diff.missing.some((item) => item.text === 'New Agent'), false);
+});
