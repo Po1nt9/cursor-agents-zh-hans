@@ -1,6 +1,7 @@
 import fs from 'node:fs';
 import { backupRootFor, readManifest, readState } from './backup.js';
 import { sha256Base64 } from './checksum.js';
+import { readMacEntitlements } from './macos.js';
 import { appFiles, detectAppPath, macBundlePath, userDataDir } from './paths.js';
 import { inspectCursorProcesses } from './process-check.js';
 import { readProductFile } from './product.js';
@@ -88,6 +89,9 @@ export function inspectInstall(options = {}) {
     ),
     writable: canWrite(detected.appPath),
     running,
+    entitlements: (options.platform ?? process.platform) === 'darwin'
+      ? readMacEntitlements(macBundlePath(detected.appPath), options.execFile)
+      : { checked: false, missing: false, reason: 'not-darwin' },
   };
 }
 
@@ -150,6 +154,12 @@ export function formatDoctor(report) {
     lines.push('  codesign --force --deep --preserve-metadata=entitlements,requirements,flags --sign - <Cursor.app>');
     lines.push('这是 ad-hoc 重签名，不是 Apple 开发者签名。它会换掉原来的 Developer ID 签名；要恢复官方签名，请重新安装 Cursor。');
     lines.push('签名时会尽量保留 entitlements、requirements 和 flags（包括 hardened runtime）。保留失败时才会退回不带这些元数据的签名。');
+    if (report.entitlements && report.entitlements.missing) {
+      lines.push('当前签名没有 entitlements。这是 codesign 修复之前的 v0.1 留下的：当时的 ad-hoc 重签名把原来的权限清掉了。');
+      lines.push('只有重新安装 Cursor 才能恢复 entitlements 和 Developer ID 签名。装好之后再执行 apply。');
+    } else if (report.entitlements && report.entitlements.reason === 'unavailable') {
+      lines.push('未能读取 entitlements。若这台 Mac 在 codesign 修复前打过补丁，请重新安装 Cursor 后再 apply。');
+    }
     lines.push('可用 --no-codesign 与 --no-clear-quarantine 跳过。Apple Silicon 上，未重签的修改版可能被系统直接结束进程。');
     lines.push('屏幕顶部的 macOS 菜单栏是系统原生菜单，这份补丁改不到。请从扩展市场安装 MS-CEINTL.vscode-language-pack-zh-hans。');
   } else {

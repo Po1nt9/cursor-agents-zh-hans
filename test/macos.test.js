@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { runMacPostProcess } from '../src/macos.js';
+import { readMacEntitlements, runMacPostProcess } from '../src/macos.js';
 
 test('codesign keeps entitlements, requirements, and flags', () => {
   const calls = [];
@@ -29,4 +29,17 @@ test('codesign falls back when metadata cannot be preserved', () => {
   assert.equal(result.steps[0].preservedMetadata, false);
   assert.match(result.warnings[0], /entitlements/);
   assert.match(result.warnings[0], /Developer ID/);
+});
+
+test('doctor can see an empty entitlement plist', () => {
+  const empty = readMacEntitlements('/Applications/Cursor.app', () => '');
+  assert.equal(empty.missing, true);
+  const present = readMacEntitlements('/Applications/Cursor.app', () => '<?xml version="1.0"?><plist><dict><key>com.apple.security.cs.allow-jit</key><true/></dict></plist>');
+  assert.equal(present.missing, false);
+  const unsigned = readMacEntitlements('/Applications/Cursor.app', () => {
+    const error = new Error('code object is not signed at all');
+    error.stderr = 'code object is not signed at all';
+    throw error;
+  });
+  assert.equal(unsigned.missing, true);
 });

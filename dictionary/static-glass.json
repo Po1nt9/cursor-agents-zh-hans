@@ -437,7 +437,7 @@
     {
       "id": "steer-without-interrupting",
       "literal": "Steer without interrupting",
-      "translation": "引导而不打断",
+      "translation": "转向，不打断",
       "expectedHits": {
         "3.25.6": 2
       }
@@ -469,7 +469,7 @@
     {
       "id": "start-writing-your-plan",
       "literal": "Start writing your plan...",
-      "translation": "开始撰写你的计划...",
+      "translation": "开始写计划…",
       "expectedHits": {
         "3.25.6": 1
       }
@@ -517,7 +517,7 @@
     {
       "id": "create-an-origin-namespace-to-save-and-publish-y",
       "literal": "Create an Origin namespace to save and publish your work easily",
-      "translation": "创建一个 Origin 命名空间，方便保存和发布你的工作",
+      "translation": "创建 Origin 命名空间，方便保存和发布工作",
       "expectedHits": {
         "3.25.6": 1
       }

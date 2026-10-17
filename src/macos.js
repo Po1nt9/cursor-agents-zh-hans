@@ -50,3 +50,26 @@ export function runMacPostProcess(appPath, options = {}) {
   }
   return { performed: steps.length > 0, reason: 'darwin', bundle, steps, warnings };
 }
+
+function commandOutput(error) {
+  return `${error && error.stdout ? error.stdout : ''}\n${error && error.stderr ? error.stderr : ''}\n${error && error.message ? error.message : ''}`;
+}
+
+export function readMacEntitlements(bundle, execFile = execFileSync) {
+  if (!bundle) return { checked: false, missing: false, reason: 'no-bundle' };
+  try {
+    const out = execFile('codesign', ['-d', '--entitlements', ':-', bundle], {
+      encoding: 'utf8',
+      stdio: ['ignore', 'pipe', 'pipe'],
+    });
+    const text = String(out || '');
+    const missing = !/<key>/.test(text) && !/\[Key\]/.test(text) && !/\[Dict\]/.test(text);
+    return { checked: true, missing, reason: missing ? 'empty' : 'present' };
+  } catch (error) {
+    const blob = commandOutput(error);
+    if (/no entitlements|not signed|code object is not signed/i.test(blob)) {
+      return { checked: true, missing: true, reason: 'empty' };
+    }
+    return { checked: false, missing: false, reason: 'unavailable' };
+  }
+}

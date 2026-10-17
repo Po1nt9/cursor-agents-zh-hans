@@ -90,7 +90,7 @@ node bin/cursor-zh.js restore --app-path /Applications/Agent/Cursor.app
 
 AppImage 没有固定解压目录，请先解压再把里面的 `resources/app` 传给 `--app-path`。
 
-`/Applications` 下的 Cursor 往往没有写权限。本工具不会自己调用 sudo。需要时请自行用 sudo 运行，并确认你信任当前这份代码。
+`/Applications` 下的 Cursor 往往没有写权限。本工具不会自己调用 sudo。需要时请自行用 sudo 运行，并确认你信任当前这份代码。用 sudo 时，备份目录跟发起命令的用户走（看 `SUDO_USER`），不会写到 `/var/root`。也可以自己传 `--data-dir`。
 
 ## 还原
 
@@ -108,9 +108,17 @@ node bin/cursor-zh.js restore
 
 找不到当前版本的备份时，命令会停下来，不会拿旧版本的文件覆盖新安装。那种情况要回到干净的界面，请重新安装 Cursor。
 
+如果是在 codesign 修复之前用过 v0.1（2026-10-17 当天的第一版会把 entitlements 清掉），请先重新安装 Cursor，再 `apply`。`doctor` 在 macOS 上会检查当前签名有没有 entitlements，并直接说明只有重装才能恢复。
+
 ## 实机验证
 
-Cursor 3.25.6 的已登录智能体窗口上对过这一版：抽到的首页提示都是整句中文，`report()` 的预算条目是 0，没有半句中文半句英文，空闲时渲染进程 CPU 大约 1.4%，设置项在打开菜单前后没有变化。这里的自动化测试不打开真正的 Cursor。
+Cursor 3.25.6 上，`54d9266` 在已登录的智能体窗口里对过：抽到的首页提示都是整句中文，`report()` 的预算条目是 0，没有半句中文半句英文，空闲时渲染进程 CPU 大约 1.4%，设置项在打开菜单前后没有变化。`99eb59f` 在 Mac 上能装上并运行，菜单、提示、用量和 macOS 快捷键仍有英文，部分译文不自然。这一版针对这些缺口改了词典和覆盖范围。本仓库的自动化测试不打开真正的 Cursor。
+
+## 译文从哪来
+
+界面语气见 [dictionary/STYLE.md](dictionary/STYLE.md)，术语见 [dictionary/GLOSSARY.md](dictionary/GLOSSARY.md)。
+
+错误、通知和对话框里来自 VS Code 核心的英文，按原文去对 [vscode-loc](https://github.com/microsoft/vscode-loc) 的 `i18n/vscode-language-pack-zh-hans/translations/main.i18n.json`。那份语言包是 MIT 许可，版权归 Microsoft。本仓库只收录对得上的简体中文，并改成「你」和全角标点。编辑器本体和屏幕顶部的 macOS 菜单仍请安装 `MS-CEINTL.vscode-language-pack-zh-hans`。
 
 ## 反馈还没译的字
 
@@ -140,6 +148,8 @@ codesign --force --deep --preserve-metadata=entitlements,requirements,flags --si
 ```
 
 这是临时的 ad-hoc 签名，不是 Apple 开发者证书。原来的 Developer ID 签名会被换掉；要回到官方签名，重新安装 Cursor。`--preserve-metadata` 用来留下 entitlements、requirements 和 flags（含 hardened runtime，以及 allow-jit、摄像头、麦克风、Apple Events 这些权限）。这一步失败时，才会退回不保留这些元数据的签名，并在输出里说明。
+
+codesign 修复之前的 v0.1 已经把 entitlements 清成空的。那种安装即使用现在的 `--preserve-metadata`，也没有东西可以保留。请先重新安装 Cursor，再打补丁。`doctor` 会写出这件事。
 
 `--no-codesign` 跳过签名，`--no-clear-quarantine` 跳过隔离属性。两种都关掉时，程序只改文件，签名问题留给你自己处理。非 macOS 系统会跳过这两步，并在输出里说明。
 

@@ -3,10 +3,15 @@ import test from 'node:test';
 import { compileDictionary } from '../src/engine.js';
 import {
   classifyArea,
+  classifyGroup,
+  isCoverageCandidate,
   extractCoverageCandidates,
+  extractSpecialLiterals,
   isUserVisibleText,
   renderCoverageMarkdown,
+  renderGroupMarkdown,
   summarizeCoverage,
+  summarizeGroups,
 } from '../src/coverage.js';
 
 test('visible-text filter drops identifiers, css, urls, and logs stay out of props', () => {
@@ -69,4 +74,29 @@ test('coverage summary and markdown count translated labels', () => {
   assert.match(markdown, /Still English/);
   assert.match(markdown, /Before this pass/);
   assert.doesNotMatch(markdown, /function\s*\(/);
+});
+
+test('macOS strings, toasts, and nls land in separate coverage groups', () => {
+  assert.equal(classifyGroup({ text: 'Submit with ⌘ + Enter' }), 'macos-only');
+  assert.equal(classifyGroup({ text: 'Unable to resolve your shell environment in a reasonable time. Please review your shell configuration and restart.', source: 'nls' }), 'errors-toasts');
+  assert.equal(classifyGroup({ text: 'Clear Notification', source: 'nls' }), 'core-nls');
+  assert.equal(classifyGroup({ text: 'New Agent', area: 'home-composer' }), 'glass-ui');
+  assert.equal(isCoverageCandidate('⌘K'), false);
+  assert.equal(isCoverageCandidate('Delete old chats'), true);
+  assert.equal(isCoverageCandidate('Icon for the clear action in notifications.'), false);
+  const compiled = compileDictionary({
+    exact: { 'New Agent': '新建智能体' },
+    fragments: [],
+    regex: [],
+  });
+  const summary = summarizeGroups([
+    { text: 'New Agent' },
+    { text: 'This Mac', macos: true },
+    { text: 'Still a toast', area: 'dialogs' },
+  ], compiled);
+  assert.equal(summary['glass-ui'].translated, 1);
+  assert.equal(summary['macos-only'].untranslated, 1);
+  assert.match(renderGroupMarkdown(summary), /macOS-only/);
+  const literals = extractSpecialLiterals('const s="Unable to save the file";const k="Submit with \\u2318 + Enter";const x="not a label";');
+  assert.deepEqual(literals.map((item) => item.text).sort(), ['Submit with ⌘ + Enter', 'Unable to save the file']);
 });

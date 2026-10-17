@@ -631,7 +631,7 @@ test('a usage row of sibling labels is not swallowed by one regex', () => {
   });
   assert.equal(included.nodeValue, '已包含在 Ultra 中');
   assert.equal(weekly.nodeValue, '每周用量上限');
-  assert.equal(used.nodeValue, '已使用 5%');
+  assert.equal(used.nodeValue, '已用 5%');
   assert.equal(sepA.nodeValue, 'x');
   assert.equal(sepB.nodeValue, 'x');
   assert.equal(row.childNodes.length, 5);
@@ -932,9 +932,9 @@ test('split usage phrases translate without swallowing sibling labels', () => {
   row.appendChild(h.makeText('x'));
   row.appendChild(used);
   translateTree([money, lone, row], compiled);
-  assert.equal(visibleText(used), '已使用 5%');
+  assert.equal(visibleText(used), '已用 5%');
   assert.equal(visibleText(money), '剩余 $0.00');
-  assert.equal(visibleText(lone), '% 已使用');
+  assert.equal(visibleText(lone), '% 已用');
   assert.equal(visibleText(included), '已包含在 Ultra 中');
   assert.equal(visibleText(weekly), '每周用量上限');
   assert.equal(visibleText(row).includes('已包含在 Ultrax'), false);
@@ -1141,7 +1141,7 @@ test('a key chip stays inside the translated home tip', () => {
   translateTree([tip], compiled);
   assert.equal(
     visibleText(tip),
-    'Ask 模式使用只读智能体研究你的代码库。按 shift+tab 开始。',
+    '提问模式用只读智能体研究代码库。按 shift+tab 开始。',
   );
   assert.equal(kbd.childNodes[0].nodeValue, 'shift+tab');
 });
@@ -1196,7 +1196,7 @@ test('a whole 6% used label translates', () => {
   const worked = h.makeElement('SPAN');
   worked.appendChild(h.makeText('Worked for 6s'));
   translateTree([label, worked], compiled);
-  assert.equal(visibleText(label), '已使用 6%');
+  assert.equal(visibleText(label), '已用 6%');
   assert.equal(visibleText(worked), '工作了 6 秒');
 });
 
@@ -1329,7 +1329,8 @@ test('effort, usage, and timestamp labels stay in their own slots', () => {
   assert.equal(effort.childNodes[0].nodeValue, '高·快速');
   assert.equal(medium.childNodes[0].nodeValue, '中');
   assert.equal(modelName.childNodes[0].nodeValue, 'High');
-  assert.equal(used.childNodes[0].nodeValue, '已使用');
+  assert.equal(percent.childNodes[0].nodeValue, '已用 12%');
+  assert.equal(used.childNodes[0].nodeValue, '');
   assert.equal(lone.childNodes[0].nodeValue, 'used');
   assert.equal(side.childNodes[0].nodeValue, '7小时');
   assert.equal(age.childNodes[0].nodeValue, '4分钟');

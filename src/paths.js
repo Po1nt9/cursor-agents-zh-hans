@@ -11,8 +11,30 @@ import {
   REL_STATE,
 } from './version.js';
 
-export function userDataDir() {
-  const home = os.homedir();
+export function invokingHome(env = process.env, fallback = os.homedir(), platform = process.platform, uid = currentUid()) {
+  const user = env && env.SUDO_USER;
+  if (
+    uid === 0
+    && platform !== 'win32'
+    && user
+    && user !== 'root'
+    && /^[A-Za-z0-9._-]+$/.test(user)
+  ) {
+    return platform === 'darwin' ? `/Users/${user}` : `/home/${user}`;
+  }
+  return fallback;
+}
+
+function currentUid() {
+  try {
+    return typeof process.getuid === 'function' ? process.getuid() : null;
+  } catch {
+    return null;
+  }
+}
+
+export function userDataDir(env = process.env) {
+  const home = invokingHome(env);
   if (process.platform === 'win32') {
     const base = process.env.APPDATA || path.join(home, 'AppData', 'Roaming');
     return path.join(base, 'cursor-zh-hans');

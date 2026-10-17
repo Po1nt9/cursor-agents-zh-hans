@@ -15,7 +15,7 @@ test('the shipped dictionary compiles and static rules agree with it', () => {
   assert.equal(raw.exact['Cloud Agent Approval Banners While Focused'], '聚焦时显示云端智能体批准横幅');
   assert.equal(
     raw.exact['Voice mode lets you dictate better prompts for your agents'],
-    '语音模式可以让你口述出更好的智能体提示',
+    '语音模式方便口述出更好的智能体提示',
   );
   assert.ok(compiled.regex.length > 5);
   const rules = loadStaticRules();
@@ -38,7 +38,7 @@ test('the shipped dictionary compiles and static rules agree with it', () => {
   assert.equal(translateText('2m ago', compiled).text, '2 分钟前');
   assert.equal(translateText('2mo ago', compiled).text, '2 个月前');
   assert.equal(translateText('12s ago', compiled).text, '12 秒前');
-  assert.equal(translateText('3% used', compiled).text, '已使用 3%');
+  assert.equal(translateText('3% used', compiled).text, '已用 3%');
   assert.equal(translateText('$0.00 remaining', compiled).text, '剩余 $0.00');
   assert.equal(translateText('Included in Ultra', compiled).text, '已包含在 Ultra 中');
   assert.equal(translateText('Installed 3', compiled).text, '已安装 3');
@@ -52,15 +52,15 @@ test('the shipped dictionary compiles and static rules agree with it', () => {
   assert.equal(raw.exact['New Output View'], '新建输出视图');
   assert.equal(raw.exact['This Computer'], '这台计算机');
   assert.equal(raw.exact['Remote Machine'], '远程计算机');
-  assert.equal(raw.exact.Steer, '引导');
-  assert.equal(raw.exact['Steer the agent without stopping it'], '引导智能体而不停止它');
+  assert.equal(raw.exact.Steer, '转向');
+  assert.equal(raw.exact['Steer the agent without stopping it'], '转向智能体，无需停止');
   assert.equal(
     raw.exact['Use /simplify to have Cursor review all changed files for code quality and efficiency'],
     '使用 /simplify 让 Cursor 审查所有已更改文件的代码质量和效率',
   );
   assert.equal(
     raw.exact['Use /cloud to run agents remotely for better parallelization and durable execution'],
-    '使用 /cloud 在远程运行智能体，以便更好地并行并持久执行',
+    '使用 /cloud 在远程运行智能体，并行更好，执行也更持久',
   );
   assert.equal(
     raw.exact['Use /in-cloud to start a subagent in its own cloud VM, keeping your local workspace free'],
@@ -68,7 +68,7 @@ test('the shipped dictionary compiles and static rules agree with it', () => {
   );
   assert.equal(
     raw.exact['Use /review for an agentic code review of your changes'],
-    '使用 /review 对你的更改进行智能体代码审查',
+    '使用 /review 对更改做智能体代码审查',
   );
   assert.equal(
     raw.exact['Use /automate to create Cursor Automations without leaving your agent chat'],
@@ -76,7 +76,7 @@ test('the shipped dictionary compiles and static rules agree with it', () => {
   );
   assert.equal(
     raw.exact['Messages sent while Cursor is working can steer it mid-run without interrupting - turn it on under New Messages in Agent settings'],
-    'Cursor 工作时发送的消息可以在运行中引导它而不打断。在智能体设置的「新消息」里打开。',
+    'Cursor 工作时发来的消息可以中途转向，不必打断。在智能体设置的「新消息」里打开。',
   );
   assert.equal(raw.exact.Today, '今天');
   assert.equal(raw.exact.Yesterday, '昨天');
@@ -85,23 +85,32 @@ test('the shipped dictionary compiles and static rules agree with it', () => {
   assert.equal(raw.exact['Manage Environment'], '管理环境');
   assert.equal(raw.exact.New, '新建');
   assert.equal(raw.exact.NEW, '新');
-  assert.equal(translateText('% used', compiled).text, '% 已使用');
-  assert.equal(translateText('5% used', compiled).text, '已使用 5%');
+  assert.equal(translateText('% used', compiled).text, '% 已用');
+  assert.equal(translateText('5% used', compiled).text, '已用 5%');
   assert.equal(translateText('$0.00 remaining', compiled).text, '剩余 $0.00');
   assert.equal(translateText('Weekly usage resets on Oct 24 (7 days left)', compiled).text, '每周用量将于 10 月 24 日重置（还剩 7 天）');
   assert.equal(
     translateText('Included usage with your subscription. Resets Oct 24. Used before your credits.', compiled).text,
-    '订阅包含的用量。将于 10 月 24 日重置。会在额度之前消耗。',
+    '订阅内含用量，10月24日重置，优先于额度扣除。',
   );
   assert.equal(raw.exact['Send follow-up'], '发送后续消息');
   assert.equal(raw.exact['Cursor Agents Window'], 'Cursor 智能体窗口');
   assert.equal(raw.exact.Account, '账户');
   assert.equal(raw.exact['Log Out'], '退出登录');
   assert.equal(raw.exact['Sign out'], '退出登录');
+  assert.equal(translateText('Included usage with your subscription. Resets 10月24日. Used before your credits.', compiled).text, '订阅内含用量，10月24日重置，优先于额度扣除。');
+  assert.equal(translateText('Submit with ⌘ + Enter', compiled).text, '使用 ⌘ + Enter 提交');
+  assert.equal(translateText('⌘Enter submits chat, Enter inserts a newline, and primary actions move to ⌥⌘Enter', compiled).text, '⌘Enter 提交聊天，Enter 换行，主要操作改为 ⌥⌘Enter');
+  assert.equal(raw.exact['Create Profile'], '创建配置文件');
+  assert.equal(raw.exact['Paired Devices'], '已配对设备');
+  assert.equal(
+    raw.exact['Unable to resolve your shell environment in a reasonable time. Please review your shell configuration and restart.'],
+    '无法在合理的时间内解析 shell 环境。请检查 shell 配置，然后重新启动。',
+  );
   assert.equal(raw.exact['Set Up Origin'], '设置 Origin');
   assert.equal(
     raw.exact['Create an Origin namespace to save and publish your work easily'],
-    '创建一个 Origin 命名空间，方便保存和发布你的工作',
+    '创建 Origin 命名空间，方便保存和发布工作',
   );
   assert.equal(raw.exact['Get Started'], '开始使用');
   assert.equal(raw.exact.Update, '更新');
@@ -123,7 +132,7 @@ test('the shipped dictionary compiles and static rules agree with it', () => {
   assert.equal(translateText('Loading chat', compiled).text, '正在加载聊天');
   assert.equal(translateText('New Automation', compiled).text, '新建自动化');
   assert.equal(translateText('Find critical bugs', compiled).text, '查找严重缺陷');
-  assert.equal(translateText('6% used', compiled).text, '已使用 6%');
+  assert.equal(translateText('6% used', compiled).text, '已用 6%');
   assert.equal(translateText('Worked for 6s', compiled).text, '工作了 6 秒');
   assert.equal(translateText('for 6s', compiled).text, '6 秒');
   assert.equal(translateText('Prompt', compiled).text, '提示');

@@ -39,7 +39,7 @@
     "id": "local-conflict",
     "pattern": "^Your local changes conflict with agent changes in (\\d+) files?\\.$",
     "flags": "",
-    "replacement": "你的本地更改与智能体对 $1 个文件的更改冲突。"
+    "replacement": "本地更改与智能体对 $1 个文件的更改冲突。"
   },
   {
     "id": "no-chats-older",
@@ -158,13 +158,13 @@
   {
     "id": "percent-used",
     "pattern": "^(\\d+(?:\\.\\d+)?)% used$",
-    "replacement": "已使用 $1%",
+    "replacement": "已用 $1%",
     "flags": ""
   },
   {
     "id": "percent-used-fragment",
     "pattern": "^% used$",
-    "replacement": "% 已使用",
+    "replacement": "% 已用",
     "flags": ""
   },
   {
@@ -1063,67 +1063,67 @@
   },
   {
     "id": "weekly-any-0-minutes",
-    "pattern": "^Weekly usage resets on (.+) \\(0 minutes left\\)$",
+    "pattern": "^Weekly usage resets on ([^().]+) \\(0 minutes left\\)$",
     "replacement": "每周用量将于 $1 重置（还剩 0 分钟）",
     "flags": ""
   },
   {
     "id": "weekly-any-minute",
-    "pattern": "^Weekly usage resets on (.+) \\((\\d+) minute left\\)$",
+    "pattern": "^Weekly usage resets on ([^().]+) \\((\\d+) minute left\\)$",
     "replacement": "每周用量将于 $1 重置（还剩 $2 分钟）",
     "flags": ""
   },
   {
     "id": "weekly-any-minutes",
-    "pattern": "^Weekly usage resets on (.+) \\((\\d+) minutes left\\)$",
+    "pattern": "^Weekly usage resets on ([^().]+) \\((\\d+) minutes left\\)$",
     "replacement": "每周用量将于 $1 重置（还剩 $2 分钟）",
     "flags": ""
   },
   {
     "id": "weekly-any-hour",
-    "pattern": "^Weekly usage resets on (.+) \\((\\d+) hour left\\)$",
+    "pattern": "^Weekly usage resets on ([^().]+) \\((\\d+) hour left\\)$",
     "replacement": "每周用量将于 $1 重置（还剩 $2 小时）",
     "flags": ""
   },
   {
     "id": "weekly-any-hours",
-    "pattern": "^Weekly usage resets on (.+) \\((\\d+) hours left\\)$",
+    "pattern": "^Weekly usage resets on ([^().]+) \\((\\d+) hours left\\)$",
     "replacement": "每周用量将于 $1 重置（还剩 $2 小时）",
     "flags": ""
   },
   {
     "id": "weekly-any-hour-minute",
-    "pattern": "^Weekly usage resets on (.+) \\((\\d+) hour and (\\d+) minute left\\)$",
+    "pattern": "^Weekly usage resets on ([^().]+) \\((\\d+) hour and (\\d+) minute left\\)$",
     "replacement": "每周用量将于 $1 重置（还剩 $2 小时 $3 分钟）",
     "flags": ""
   },
   {
     "id": "weekly-any-hour-minutes",
-    "pattern": "^Weekly usage resets on (.+) \\((\\d+) hour and (\\d+) minutes left\\)$",
+    "pattern": "^Weekly usage resets on ([^().]+) \\((\\d+) hour and (\\d+) minutes left\\)$",
     "replacement": "每周用量将于 $1 重置（还剩 $2 小时 $3 分钟）",
     "flags": ""
   },
   {
     "id": "weekly-any-hours-minute",
-    "pattern": "^Weekly usage resets on (.+) \\((\\d+) hours and (\\d+) minute left\\)$",
+    "pattern": "^Weekly usage resets on ([^().]+) \\((\\d+) hours and (\\d+) minute left\\)$",
     "replacement": "每周用量将于 $1 重置（还剩 $2 小时 $3 分钟）",
     "flags": ""
   },
   {
     "id": "weekly-any-hours-minutes",
-    "pattern": "^Weekly usage resets on (.+) \\((\\d+) hours and (\\d+) minutes left\\)$",
+    "pattern": "^Weekly usage resets on ([^().]+) \\((\\d+) hours and (\\d+) minutes left\\)$",
     "replacement": "每周用量将于 $1 重置（还剩 $2 小时 $3 分钟）",
     "flags": ""
   },
   {
     "id": "weekly-any-day",
-    "pattern": "^Weekly usage resets on (.+) \\((\\d+) day left\\)$",
+    "pattern": "^Weekly usage resets on ([^().]+) \\((\\d+) day left\\)$",
     "replacement": "每周用量将于 $1 重置（还剩 $2 天）",
     "flags": ""
   },
   {
     "id": "weekly-any-days",
-    "pattern": "^Weekly usage resets on (.+) \\((\\d+) days left\\)$",
+    "pattern": "^Weekly usage resets on ([^().]+) \\((\\d+) days left\\)$",
     "replacement": "每周用量将于 $1 重置（还剩 $2 天）",
     "flags": ""
   },
@@ -1988,157 +1988,157 @@
   {
     "id": "included-resets-Jan",
     "pattern": "^Included usage with your subscription\\. Resets Jan (\\d{1,2})\\.$",
-    "replacement": "订阅包含的用量。将于 1 月 $1 日重置。",
+    "replacement": "订阅内含用量，1月$1日重置。",
     "flags": ""
   },
   {
     "id": "included-resets-credits-Jan",
     "pattern": "^Included usage with your subscription\\. Resets Jan (\\d{1,2})\\. Used before your credits\\.$",
-    "replacement": "订阅包含的用量。将于 1 月 $1 日重置。会在额度之前消耗。",
+    "replacement": "订阅内含用量，1月$1日重置，优先于额度扣除。",
     "flags": ""
   },
   {
     "id": "included-resets-Feb",
     "pattern": "^Included usage with your subscription\\. Resets Feb (\\d{1,2})\\.$",
-    "replacement": "订阅包含的用量。将于 2 月 $1 日重置。",
+    "replacement": "订阅内含用量，2月$1日重置。",
     "flags": ""
   },
   {
     "id": "included-resets-credits-Feb",
     "pattern": "^Included usage with your subscription\\. Resets Feb (\\d{1,2})\\. Used before your credits\\.$",
-    "replacement": "订阅包含的用量。将于 2 月 $1 日重置。会在额度之前消耗。",
+    "replacement": "订阅内含用量，2月$1日重置，优先于额度扣除。",
     "flags": ""
   },
   {
     "id": "included-resets-Mar",
     "pattern": "^Included usage with your subscription\\. Resets Mar (\\d{1,2})\\.$",
-    "replacement": "订阅包含的用量。将于 3 月 $1 日重置。",
+    "replacement": "订阅内含用量，3月$1日重置。",
     "flags": ""
   },
   {
     "id": "included-resets-credits-Mar",
     "pattern": "^Included usage with your subscription\\. Resets Mar (\\d{1,2})\\. Used before your credits\\.$",
-    "replacement": "订阅包含的用量。将于 3 月 $1 日重置。会在额度之前消耗。",
+    "replacement": "订阅内含用量，3月$1日重置，优先于额度扣除。",
     "flags": ""
   },
   {
     "id": "included-resets-Apr",
     "pattern": "^Included usage with your subscription\\. Resets Apr (\\d{1,2})\\.$",
-    "replacement": "订阅包含的用量。将于 4 月 $1 日重置。",
+    "replacement": "订阅内含用量，4月$1日重置。",
     "flags": ""
   },
   {
     "id": "included-resets-credits-Apr",
     "pattern": "^Included usage with your subscription\\. Resets Apr (\\d{1,2})\\. Used before your credits\\.$",
-    "replacement": "订阅包含的用量。将于 4 月 $1 日重置。会在额度之前消耗。",
+    "replacement": "订阅内含用量，4月$1日重置，优先于额度扣除。",
     "flags": ""
   },
   {
     "id": "included-resets-May",
     "pattern": "^Included usage with your subscription\\. Resets May (\\d{1,2})\\.$",
-    "replacement": "订阅包含的用量。将于 5 月 $1 日重置。",
+    "replacement": "订阅内含用量，5月$1日重置。",
     "flags": ""
   },
   {
     "id": "included-resets-credits-May",
     "pattern": "^Included usage with your subscription\\. Resets May (\\d{1,2})\\. Used before your credits\\.$",
-    "replacement": "订阅包含的用量。将于 5 月 $1 日重置。会在额度之前消耗。",
+    "replacement": "订阅内含用量，5月$1日重置，优先于额度扣除。",
     "flags": ""
   },
   {
     "id": "included-resets-Jun",
     "pattern": "^Included usage with your subscription\\. Resets Jun (\\d{1,2})\\.$",
-    "replacement": "订阅包含的用量。将于 6 月 $1 日重置。",
+    "replacement": "订阅内含用量，6月$1日重置。",
     "flags": ""
   },
   {
     "id": "included-resets-credits-Jun",
     "pattern": "^Included usage with your subscription\\. Resets Jun (\\d{1,2})\\. Used before your credits\\.$",
-    "replacement": "订阅包含的用量。将于 6 月 $1 日重置。会在额度之前消耗。",
+    "replacement": "订阅内含用量，6月$1日重置，优先于额度扣除。",
     "flags": ""
   },
   {
     "id": "included-resets-Jul",
     "pattern": "^Included usage with your subscription\\. Resets Jul (\\d{1,2})\\.$",
-    "replacement": "订阅包含的用量。将于 7 月 $1 日重置。",
+    "replacement": "订阅内含用量，7月$1日重置。",
     "flags": ""
   },
   {
     "id": "included-resets-credits-Jul",
     "pattern": "^Included usage with your subscription\\. Resets Jul (\\d{1,2})\\. Used before your credits\\.$",
-    "replacement": "订阅包含的用量。将于 7 月 $1 日重置。会在额度之前消耗。",
+    "replacement": "订阅内含用量，7月$1日重置，优先于额度扣除。",
     "flags": ""
   },
   {
     "id": "included-resets-Aug",
     "pattern": "^Included usage with your subscription\\. Resets Aug (\\d{1,2})\\.$",
-    "replacement": "订阅包含的用量。将于 8 月 $1 日重置。",
+    "replacement": "订阅内含用量，8月$1日重置。",
     "flags": ""
   },
   {
     "id": "included-resets-credits-Aug",
     "pattern": "^Included usage with your subscription\\. Resets Aug (\\d{1,2})\\. Used before your credits\\.$",
-    "replacement": "订阅包含的用量。将于 8 月 $1 日重置。会在额度之前消耗。",
+    "replacement": "订阅内含用量，8月$1日重置，优先于额度扣除。",
     "flags": ""
   },
   {
     "id": "included-resets-Sep",
     "pattern": "^Included usage with your subscription\\. Resets Sep (\\d{1,2})\\.$",
-    "replacement": "订阅包含的用量。将于 9 月 $1 日重置。",
+    "replacement": "订阅内含用量，9月$1日重置。",
     "flags": ""
   },
   {
     "id": "included-resets-credits-Sep",
     "pattern": "^Included usage with your subscription\\. Resets Sep (\\d{1,2})\\. Used before your credits\\.$",
-    "replacement": "订阅包含的用量。将于 9 月 $1 日重置。会在额度之前消耗。",
+    "replacement": "订阅内含用量，9月$1日重置，优先于额度扣除。",
     "flags": ""
   },
   {
     "id": "included-resets-Oct",
     "pattern": "^Included usage with your subscription\\. Resets Oct (\\d{1,2})\\.$",
-    "replacement": "订阅包含的用量。将于 10 月 $1 日重置。",
+    "replacement": "订阅内含用量，10月$1日重置。",
     "flags": ""
   },
   {
     "id": "included-resets-credits-Oct",
     "pattern": "^Included usage with your subscription\\. Resets Oct (\\d{1,2})\\. Used before your credits\\.$",
-    "replacement": "订阅包含的用量。将于 10 月 $1 日重置。会在额度之前消耗。",
+    "replacement": "订阅内含用量，10月$1日重置，优先于额度扣除。",
     "flags": ""
   },
   {
     "id": "included-resets-Nov",
     "pattern": "^Included usage with your subscription\\. Resets Nov (\\d{1,2})\\.$",
-    "replacement": "订阅包含的用量。将于 11 月 $1 日重置。",
+    "replacement": "订阅内含用量，11月$1日重置。",
     "flags": ""
   },
   {
     "id": "included-resets-credits-Nov",
     "pattern": "^Included usage with your subscription\\. Resets Nov (\\d{1,2})\\. Used before your credits\\.$",
-    "replacement": "订阅包含的用量。将于 11 月 $1 日重置。会在额度之前消耗。",
+    "replacement": "订阅内含用量，11月$1日重置，优先于额度扣除。",
     "flags": ""
   },
   {
     "id": "included-resets-Dec",
     "pattern": "^Included usage with your subscription\\. Resets Dec (\\d{1,2})\\.$",
-    "replacement": "订阅包含的用量。将于 12 月 $1 日重置。",
+    "replacement": "订阅内含用量，12月$1日重置。",
     "flags": ""
   },
   {
     "id": "included-resets-credits-Dec",
     "pattern": "^Included usage with your subscription\\. Resets Dec (\\d{1,2})\\. Used before your credits\\.$",
-    "replacement": "订阅包含的用量。将于 12 月 $1 日重置。会在额度之前消耗。",
+    "replacement": "订阅内含用量，12月$1日重置，优先于额度扣除。",
     "flags": ""
   },
   {
     "id": "included-resets-any",
-    "pattern": "^Included usage with your subscription\\. Resets (.+)\\.$",
-    "replacement": "订阅包含的用量。将于 $1 重置。",
+    "pattern": "^Included usage with your subscription\\. Resets ([^.]+)\\.$",
+    "replacement": "订阅内含用量，$1重置。",
     "flags": ""
   },
   {
     "id": "included-resets-credits-any",
-    "pattern": "^Included usage with your subscription\\. Resets (.+)\\. Used before your credits\\.$",
-    "replacement": "订阅包含的用量。将于 $1 重置。会在额度之前消耗。",
+    "pattern": "^Included usage with your subscription\\. Resets ([^.]+)\\. Used before your credits\\.$",
+    "replacement": "订阅内含用量，$1重置，优先于额度扣除。",
     "flags": ""
   },
   {
@@ -2241,6 +2241,84 @@
     "id": "configure-named",
     "pattern": "^Configure ([A-Za-z0-9 ._+-]{1,40})$",
     "replacement": "配置 $1",
+    "flags": ""
+  },
+  {
+    "id": "resets-jan-day",
+    "pattern": "^Resets Jan (\\d{1,2})\\.$",
+    "replacement": "1月$1日重置。",
+    "flags": ""
+  },
+  {
+    "id": "resets-feb-day",
+    "pattern": "^Resets Feb (\\d{1,2})\\.$",
+    "replacement": "2月$1日重置。",
+    "flags": ""
+  },
+  {
+    "id": "resets-mar-day",
+    "pattern": "^Resets Mar (\\d{1,2})\\.$",
+    "replacement": "3月$1日重置。",
+    "flags": ""
+  },
+  {
+    "id": "resets-apr-day",
+    "pattern": "^Resets Apr (\\d{1,2})\\.$",
+    "replacement": "4月$1日重置。",
+    "flags": ""
+  },
+  {
+    "id": "resets-may-day",
+    "pattern": "^Resets May (\\d{1,2})\\.$",
+    "replacement": "5月$1日重置。",
+    "flags": ""
+  },
+  {
+    "id": "resets-jun-day",
+    "pattern": "^Resets Jun (\\d{1,2})\\.$",
+    "replacement": "6月$1日重置。",
+    "flags": ""
+  },
+  {
+    "id": "resets-jul-day",
+    "pattern": "^Resets Jul (\\d{1,2})\\.$",
+    "replacement": "7月$1日重置。",
+    "flags": ""
+  },
+  {
+    "id": "resets-aug-day",
+    "pattern": "^Resets Aug (\\d{1,2})\\.$",
+    "replacement": "8月$1日重置。",
+    "flags": ""
+  },
+  {
+    "id": "resets-sep-day",
+    "pattern": "^Resets Sep (\\d{1,2})\\.$",
+    "replacement": "9月$1日重置。",
+    "flags": ""
+  },
+  {
+    "id": "resets-oct-day",
+    "pattern": "^Resets Oct (\\d{1,2})\\.$",
+    "replacement": "10月$1日重置。",
+    "flags": ""
+  },
+  {
+    "id": "resets-nov-day",
+    "pattern": "^Resets Nov (\\d{1,2})\\.$",
+    "replacement": "11月$1日重置。",
+    "flags": ""
+  },
+  {
+    "id": "resets-dec-day",
+    "pattern": "^Resets Dec (\\d{1,2})\\.$",
+    "replacement": "12月$1日重置。",
+    "flags": ""
+  },
+  {
+    "id": "resets-localized-date",
+    "pattern": "^Resets ([^.]+)\\.$",
+    "replacement": "$1重置。",
     "flags": ""
   }
 ]

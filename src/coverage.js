@@ -364,3 +364,113 @@ export function renderCoverageMarkdown(summary, options = {}) {
   lines.push('');
   return lines.join('\n');
 }
+
+export const COVERAGE_GROUPS = [
+  ['glass-ui', 'Glass UI'],
+  ['core-nls', 'Core nls in the Agents window'],
+  ['errors-toasts', 'Errors, toasts, dialogs'],
+  ['macos-only', 'macOS-only'],
+];
+
+export function isCoverageCandidate(text) {
+  const value = String(text || '').trim();
+  if (!value || value.length > 180) return false;
+  if (/[<>]|&&|agentKv:|bubbleId:|ItemTable|SQLite|WAL sidecar|Freelist|B-tree/.test(value)) return false;
+  if (/^(Icon for |The color |Controls whether |Whether )/.test(value)) return false;
+  if (/^[a-z]/.test(value)) return false;
+  if (!/[A-Za-z]{3,}/.test(value)) return false;
+  const compact = value.replace(/\s+/g, '');
+  if (/^[⌘⌥⇧⌃]+[A-Za-z⏎]?$/.test(compact)) return false;
+  if (/^[⌘⌥⇧⌃+⏎\s]+$/.test(value)) return false;
+  if (/[⌘⌥⇧]/.test(value) && !/[a-z]{3,}/.test(value)) return false;
+  const chord = value.replace(/[⌘⌥⇧⌃+\s⏎]/g, '');
+  if (/[⌘⌥⇧]/.test(value) && /^(Enter|Tab|Space|Esc|Return|Delete|Backspace|[A-Z])+$/.test(chord)) return false;
+  return true;
+}
+
+export function isErrorToastText(text) {
+  const value = String(text || '').trim();
+  return /^(Unable to |Failed to |Could not |Cannot |Can't |An unknown error|An error occurred|Please restart|Please close|Warning: |Error: )/i.test(value);
+}
+
+export function classifyGroup(item) {
+  const text = String(item && item.text || '');
+  if (item && item.macos) return 'macos-only';
+  if (/[⌘⌥⇧]/.test(text) || text === 'This Mac' || /for iOS\b/.test(text)) return 'macos-only';
+  if (isErrorToastText(text) || (item && item.area === 'dialogs')) return 'errors-toasts';
+  if (item && item.source === 'nls') return 'core-nls';
+  return 'glass-ui';
+}
+
+export function summarizeGroups(candidates, compiled) {
+  const byGroup = {};
+  for (const [id] of COVERAGE_GROUPS) {
+    byGroup[id] = { total: 0, translated: 0, untranslated: 0, missing: [] };
+  }
+  const seen = new Set();
+  for (const item of candidates) {
+    if (!item || seen.has(item.text)) continue;
+    seen.add(item.text);
+    const id = classifyGroup(item);
+    const bucket = byGroup[id] || byGroup['glass-ui'];
+    bucket.total += 1;
+    if (isCoveredByDictionary(item.text, compiled)) bucket.translated += 1;
+    else {
+      bucket.untranslated += 1;
+      if (bucket.missing.length < 40) bucket.missing.push(item.text);
+    }
+  }
+  return byGroup;
+}
+
+export function renderGroupMarkdown(byGroup) {
+  const lines = [
+    '| Category | Candidates | Translated | Untranslated | Coverage |',
+    '| --- | ---: | ---: | ---: | ---: |',
+  ];
+  for (const [id, label] of COVERAGE_GROUPS) {
+    const bucket = byGroup[id];
+    lines.push(`| ${label} | ${bucket.total} | ${bucket.translated} | ${bucket.untranslated} | ${percent(bucket.translated, bucket.total)} |`);
+  }
+  return lines.join('\n');
+}
+
+const QUOTED = /"((?:\\.|[^"\\]){2,220})"/g;
+
+export function extractSpecialLiterals(source) {
+  const found = new Map();
+  QUOTED.lastIndex = 0;
+  let match;
+  const text = String(source || '');
+  while ((match = QUOTED.exec(text))) {
+    let value = match[1]
+      .replace(/\\n/g, '\n')
+      .replace(/\\t/g, '\t')
+      .replace(/\\u([0-9a-fA-F]{4})/g, (_all, hex) => String.fromCharCode(parseInt(hex, 16)))
+      .replace(/\\(.)/g, '$1');
+    value = value.trim();
+    if (!value || value.length > 220) continue;
+    const macos = /[⌘⌥⇧]/.test(value) || value === 'This Mac' || /for iOS\b/.test(value);
+    const error = isErrorToastText(value);
+    if (!macos && !error) continue;
+    if (!/[A-Za-z]/.test(value) && !macos) continue;
+    if (!found.has(value)) found.set(value, { text: value, macos, source: 'glass', area: error ? 'dialogs' : 'other' });
+  }
+  return [...found.values()];
+}
+
+export function nlsGroupCandidates(rows) {
+  const found = [];
+  const seen = new Set();
+  for (const row of rows) {
+    const text = String(row.en || '').trim();
+    if (!text || seen.has(text) || text.includes('{') || text.length > 220) continue;
+    if (!/[A-Za-z]/.test(text)) continue;
+    const error = isErrorToastText(text);
+    const keep = error || /notification|dialog|shellEnv/i.test(`${row.module} ${row.key}`);
+    if (!keep) continue;
+    seen.add(text);
+    found.push({ text, source: 'nls', area: error ? 'dialogs' : 'other', macos: false });
+  }
+  return found;
+}

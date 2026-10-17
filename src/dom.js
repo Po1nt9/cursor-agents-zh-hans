@@ -584,8 +584,26 @@ export function startDomTranslator(api, env) {
     return '';
   }
 
+  function findPercentText(node, depth) {
+    if (!node || depth > 4) return null;
+    if (node.nodeType === 3) {
+      const match = /^(\d+(?:\.\d+)?)%$/.exec(normalized(stripMarks(node.nodeValue)));
+      if (!match) return null;
+      return { node, value: `${match[1]}%` };
+    }
+    if (node.nodeType !== 1) return null;
+    const kids = node.childNodes || [];
+    if (kids.length > 6) return null;
+    for (let i = 0; i < kids.length; i += 1) {
+      const found = findPercentText(kids[i], depth + 1);
+      if (found) return found;
+    }
+    return null;
+  }
+
+  // "8%" beside the word "used" should read 已用 8%, not 8% 已使用.
   function usedBesidePercent(node) {
-    if (normalized(stripMarks(node.nodeValue)) !== 'used') return false;
+    if (normalized(stripMarks(node.nodeValue)) !== 'used') return null;
     let el = node.parentElement;
     for (let depth = 0; depth < 3 && el; depth += 1) {
       const parent = el.parentElement;
@@ -594,14 +612,12 @@ export function startDomTranslator(api, env) {
       for (let i = 0; i < kids.length; i += 1) {
         const kid = kids[i];
         if (kid === el) continue;
-        let text = '';
-        if (kid.nodeType === 3) text = kid.nodeValue || '';
-        else if (kid.nodeType === 1) text = elementText(kid, 40) || '';
-        if (/^\d+(?:\.\d+)?%$/.test(normalized(text))) return true;
+        const found = findPercentText(kid, 0);
+        if (found) return found;
       }
       el = parent;
     }
-    return false;
+    return null;
   }
 
   function otherLabelIn(root, token) {
@@ -685,8 +701,10 @@ export function startDomTranslator(api, env) {
       if (!cooled(node)) writeText(node, effort);
       return;
     }
-    if (usedBesidePercent(node)) {
-      if (!cooled(node)) writeText(node, '已使用');
+    const percent = usedBesidePercent(node);
+    if (percent) {
+      if (!cooled(percent.node)) writeText(percent.node, `已用 ${percent.value}`);
+      if (!cooled(node)) writeText(node, '');
       return;
     }
     const age = relativeTimeTranslation(parent, node.nodeValue);

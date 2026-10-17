@@ -83,6 +83,58 @@ function assertTranslation(from, to, where) {
   }
 }
 
+function symbolizeModifiers(text, compact) {
+  let out = text
+    .replace(/\bCtrl\b/g, '⌘')
+    .replace(/\bAlt\b/g, '⌥')
+    .replace(/\bShift\b/g, '⇧');
+  if (compact) out = out.replace(/([⌘⌥⇧])\s*\+\s*/g, '$1');
+  return out;
+}
+
+// macOS draws Ctrl/Alt/Shift as ⌘/⌥/⇧, sometimes without the plus.
+function addPlatformModifierKeys(exact) {
+  const extras = [];
+  for (const [from, to] of exact) {
+    if (!/\b(Ctrl|Alt|Shift)\b/.test(from)) continue;
+    const pairs = [
+      [symbolizeModifiers(from, false), symbolizeModifiers(to, false)],
+      [symbolizeModifiers(from, true), symbolizeModifiers(to, true)],
+    ];
+    for (const [key, value] of pairs) {
+      if (!key || key === from || exact.has(key)) continue;
+      extras.push([key, value]);
+    }
+  }
+  for (const [key, value] of extras) {
+    if (!exact.has(key) && key !== value) exact.set(key, value);
+  }
+}
+
+function projectModifiers(source, translated) {
+  let out = translated;
+  if (source.includes('⌘')) out = out.replace(/\bCtrl\b/g, '⌘');
+  if (source.includes('⌥')) out = out.replace(/\bAlt\b/g, '⌥');
+  if (source.includes('⇧')) out = out.replace(/\bShift\b/g, '⇧');
+  if (/[⌘⌥⇧][A-Za-z]/.test(source)) out = out.replace(/([⌘⌥⇧])\s*\+\s*/g, '$1');
+  return out;
+}
+
+function canonicalizeModifiers(text) {
+  return text
+    .replace(/⌘/g, 'Ctrl')
+    .replace(/⌥/g, 'Alt')
+    .replace(/⇧/g, 'Shift')
+    .replace(/⌃/g, 'Ctrl');
+}
+
+function lookupExact(dictionary, core) {
+  if (dictionary.exact.has(core)) return dictionary.exact.get(core);
+  const canonical = canonicalizeModifiers(core);
+  if (canonical === core || !dictionary.exact.has(canonical)) return null;
+  return projectModifiers(core, dictionary.exact.get(canonical));
+}
+
 export function compileDictionary(raw) {
   if (!raw || typeof raw !== 'object') {
     throw new Error('词典格式无效');
@@ -94,6 +146,7 @@ export function compileDictionary(raw) {
     assertTranslation(from, to, `exact[${from}]`);
     if (from !== to) exact.set(from, to);
   }
+  addPlatformModifierKeys(exact);
 
   const fragMap = new Map();
   const explicit = Array.isArray(raw.fragments) ? raw.fragments : [];
@@ -165,12 +218,23 @@ export function compileDictionary(raw) {
 }
 
 function patternIsOpen(pattern) {
+  let cls = false;
   for (let i = 0; i < pattern.length; i += 1) {
-    if (pattern[i] === '\\') {
+    const ch = pattern[i];
+    if (ch === '\\') {
       i += 1;
       continue;
     }
-    if (pattern[i] === '.') return true;
+    if (ch === '[') {
+      cls = true;
+      continue;
+    }
+    if (ch === ']' && cls) {
+      cls = false;
+      continue;
+    }
+    // A dot inside a character class is not a wildcard.
+    if (!cls && ch === '.') return true;
   }
   return false;
 }
@@ -265,8 +329,9 @@ export function translateText(input, dictionary) {
   }
   const normalizedCore = core.replace(MATCH_SPACES, ' ');
 
-  if (dictionary.exact.has(normalizedCore)) {
-    const text = lead + dictionary.exact.get(normalizedCore) + tail;
+  const exactHit = lookupExact(dictionary, normalizedCore);
+  if (exactHit) {
+    const text = lead + exactHit + tail;
     return { text, changed: text !== input, tier: 'exact' };
   }
 

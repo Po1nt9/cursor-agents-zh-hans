@@ -18,6 +18,16 @@ export function loadDictionaryRaw(dir) {
   const regex = readJson(path.join(root, 'regex.json'));
   const placeholderFile = path.join(root, 'placeholders.json');
   const placeholders = fs.existsSync(placeholderFile) ? readJson(placeholderFile) : [];
+  const nlsFile = path.join(root, 'nls.json');
+  const nlsRegexFile = path.join(root, 'nls-regex.json');
+  const nls = fs.existsSync(nlsFile) ? readJson(nlsFile) : {};
+  const nlsRegex = fs.existsSync(nlsRegexFile) ? readJson(nlsRegexFile) : [];
+  if (!nls || typeof nls !== 'object' || Array.isArray(nls)) throw new Error('nls.json 必须是对象');
+  if (!Array.isArray(nlsRegex)) throw new Error('nls-regex.json 必须是数组');
+  for (const from of Object.keys(nls)) {
+    if (!Object.prototype.hasOwnProperty.call(exact, from)) exact[from] = nls[from];
+  }
+  regex.push(...nlsRegex);
   if (!exact || typeof exact !== 'object' || Array.isArray(exact)) {
     throw new Error('exact.json 必须是对象');
   }

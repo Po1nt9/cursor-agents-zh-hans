@@ -42,7 +42,8 @@
 | Pull Request | 拉取请求 | 短按钮保留 PR，例如「创建 PR」。`PR #12` 这种整句译为「拉取请求 #12」。 |
 | IDE / Canvas / Markdown | 不译 | 产品或格式名。 |
 | Model | 模型 | |
-| Steer | 引导 | 下拉项的标题用「引导」。说明写成「引导智能体而不停止它」「引导而不打断」。旁边的 Interrupt 是另一个动作，译为「打断」，不要也写成引导。 |
+| Steer | 转向 | 下拉项用「转向」。说明写成「转向智能体，无需停止」「转向，不打断」。不要写成「引导」。旁边的 Interrupt 是「打断」。 |
+| Plan Mode / Ask Mode / Agent Mode | 计划模式 / 提问模式 / 智能体模式 | 模式名用中文，和单独的 Plan / Ask / Agent 对齐。斜杠命令 `/plan`、`/ask` 保持原文。 |
 | This Computer / This PC / On this computer | 这台计算机 | 你面前这台机器。不要写成「这台电脑」，以便和「远程计算机」用同一个名词。This Mac 保留 Mac。 |
 | Remote Machine / Remote Machines | 远程计算机 | 要连上去的另一台机器。 |
 | Remote Control | 远程控制 | 远程操控这台机器的功能，不是远程计算机。 |
