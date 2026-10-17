@@ -58,9 +58,14 @@ startDomTranslator({
   window: window,
   now: function () { return Date.now(); },
   budgetMs: 2000,
-  schedule: function (fn) {
-    if (typeof requestIdleCallback === 'function') requestIdleCallback(fn, { timeout: 40 });
-    else setTimeout(fn, 1);
+  scheduleSoon: function (fn) { setTimeout(fn, 0); },
+  scheduleIdle: function (fn) {
+    if (typeof requestIdleCallback === 'function') return requestIdleCallback(fn, { timeout: 50 });
+    return setTimeout(fn, 1);
+  },
+  cancelIdle: function (id) {
+    if (typeof cancelIdleCallback === 'function') cancelIdleCallback(id);
+    else clearTimeout(id);
   }
 });
 `;

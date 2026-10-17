@@ -5,7 +5,7 @@
     {
       "id": "give-agents-computer",
       "literal": "Give Agents a Computer",
-      "translation": "给智能体一台电脑",
+      "translation": "给智能体一台计算机",
       "expectedHits": {
         "3.25.6": 3
       }

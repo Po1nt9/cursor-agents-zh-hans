@@ -13,7 +13,7 @@ Cursor 3 的智能体窗口和经典窗口加载**同一份** `workbench.html`�
 `apply` 默认做两件事：
 
 1. 在 `workbench.html` 里、`workbench.js` 之前插入一个本地脚本 `cursor-zh-hans.js`。
-2. 脚本在页面里用 `MutationObserver` 只记录变更，翻译放到 `requestIdleCallback`（没有则用 `setTimeout`）里做，不会在观察者回调里改 DOM。查找表是 `Map`。正则按首字符分桶。会处理文本节点，以及普通控件上的 `title`、`placeholder`、`aria-label`、`aria-description`、`aria-placeholder`。编写器（`contenteditable`、`.ProseMirror`、`.tiptap`）里面不写入任何文字或属性。空编写器的占位符仍由 CSS `content: attr(data-placeholder)` 显示，补丁另注入样式，按原文精确覆盖 `::before` / `::after`。输入框自己的 `placeholder` 会翻译，已经键入的文字不会。`window.__cursorZhHans.disconnect()` 可以关掉观察者并撤掉这段样式。
+2. 脚本在页面里用 `MutationObserver` 只记录变更，不会在观察者回调里改 DOM。第一次扫整页文档用 `requestIdleCallback`（超时约 50ms，没有则用 `setTimeout`）。之后新出现的节点用 `setTimeout(0)` 尽快翻译，避免页面忙的时候空闲回调一直排不上、英文先闪几秒。查找表是 `Map`。正则按首字符分桶。会处理文本节点，以及普通控件上的 `title`、`placeholder`、`aria-label`、`aria-description`、`aria-placeholder`。编写器（`contenteditable`、`.ProseMirror`、`.tiptap`）里面不写入任何文字或属性。空编写器的占位符仍由 CSS `content: attr(data-placeholder)` 显示，补丁另注入样式，按原文精确覆盖 `::before` / `::after`。输入框自己的 `placeholder` 会翻译，已经键入的文字不会。`window.__cursorZhHans.disconnect()` 可以关掉观察者并撤掉这段样式。
 
 三层词典：
 

@@ -42,6 +42,14 @@
 | Pull Request | 拉取请求 | 短按钮保留 PR，例如「创建 PR」。`PR #12` 这种整句译为「拉取请求 #12」。 |
 | IDE / Canvas / Markdown | 不译 | 产品或格式名。 |
 | Model | 模型 | |
+| Steer | 引导 | 下拉项的标题用「引导」。说明写成「引导智能体而不停止它」「引导而不打断」。旁边的 Interrupt 是另一个动作，译为「打断」，不要也写成引导。 |
+| This Computer / This PC / On this computer | 这台计算机 | 你面前这台机器。不要写成「这台电脑」，以便和「远程计算机」用同一个名词。This Mac 保留 Mac。 |
+| Remote Machine / Remote Machines | 远程计算机 | 要连上去的另一台机器。 |
+| Remote Control | 远程控制 | 远程操控这台机器的功能，不是远程计算机。 |
+| Computer Use | 计算机使用 | 功能名。 |
+| Browser Tab / Open Browser Tab | 浏览器标签页 / 打开浏览器标签页 | 与「新建标签页」「新建浏览器标签页」同一套说法。 |
+| New Output View | 新建输出视图 | 与「新建浏览器」「显示输出」对齐。Output 用「输出」。 |
+| Nightly | 夜间版 | 更新通道名称。 |
 
 ## 三层词典
 

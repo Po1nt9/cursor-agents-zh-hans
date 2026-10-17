@@ -588,6 +588,189 @@ test('regex buckets keep the same translation as a full scan', () => {
   assert.ok(hits > compiled.regex.length * 0.85, `probes matched ${hits} of ${compiled.regex.length}`);
 });
 
+test('a usage row of sibling labels is not swallowed by one regex', () => {
+  const { compiled } = loadDictionary();
+  const h = harness();
+  function labeled(text) {
+    const span = h.makeElement('SPAN');
+    const node = h.makeText(text);
+    span.appendChild(node);
+    return node;
+  }
+  const row = h.makeElement('DIV');
+  const included = labeled('Included in Ultra');
+  const weekly = labeled('Weekly usage limit');
+  const used = labeled('5% used');
+  const sepA = h.makeText('x');
+  const sepB = h.makeText('x');
+  row.appendChild(included.parentElement);
+  row.appendChild(sepA);
+  row.appendChild(weekly.parentElement);
+  row.appendChild(sepB);
+  row.appendChild(used.parentElement);
+  const { root, body } = mount([row], h);
+  startDomTranslator({
+    translateText,
+    shouldSkipElement,
+    shouldSkipAttributeTarget,
+    dictionary: compiled,
+    version: 'budget',
+  }, {
+    document: { body, documentElement: root },
+    MutationObserver: h.MockObserver,
+    Element: class {},
+    window: {},
+    now: () => 0,
+    budgetMs: 2000,
+  });
+  assert.equal(included.nodeValue, '已包含在 Ultra 中');
+  assert.equal(weekly.nodeValue, '每周用量上限');
+  assert.equal(used.nodeValue, '已使用 5%');
+  assert.equal(sepA.nodeValue, 'x');
+  assert.equal(sepB.nodeValue, 'x');
+  assert.equal(row.childNodes.length, 5);
+});
+
+test('a short label beside a button is not left in English', () => {
+  const dictionary = {
+    exact: new Map([
+      ['Settings', '设置'],
+      ['Save', '保存'],
+    ]),
+    fragments: [],
+    regex: [],
+  };
+  const h = harness();
+  const row = h.makeElement('DIV');
+  const label = h.makeText('Settings');
+  const gap = h.makeText(' ');
+  const button = h.makeElement('BUTTON');
+  const action = h.makeText('Save');
+  button.appendChild(action);
+  row.appendChild(label);
+  row.appendChild(gap);
+  row.appendChild(button);
+  const { root, body } = mount([row], h);
+  startDomTranslator({
+    translateText,
+    shouldSkipElement,
+    shouldSkipAttributeTarget,
+    dictionary,
+    version: 'budget',
+  }, {
+    document: { body, documentElement: root },
+    MutationObserver: h.MockObserver,
+    Element: class {},
+    window: {},
+    now: () => 0,
+    budgetMs: 2000,
+  });
+  assert.equal(label.nodeValue, '设置');
+  assert.equal(action.nodeValue, '保存');
+});
+
+test('a tip with an inline code token keeps that element', () => {
+  const { compiled } = loadDictionary();
+  const h = harness();
+  const tip = h.makeElement('P');
+  const lead = h.makeText('Use ');
+  const code = h.makeElement('CODE');
+  const token = h.makeText('/simplify');
+  code.appendChild(token);
+  const rest = h.makeText(' to have Cursor review all changed files for code quality and efficiency');
+  tip.appendChild(lead);
+  tip.appendChild(code);
+  tip.appendChild(rest);
+  const { root, body } = mount([tip], h);
+  startDomTranslator({
+    translateText,
+    shouldSkipElement,
+    shouldSkipAttributeTarget,
+    dictionary: compiled,
+    version: 'budget',
+  }, {
+    document: { body, documentElement: root },
+    MutationObserver: h.MockObserver,
+    Element: class {},
+    window: {},
+    now: () => 0,
+    budgetMs: 2000,
+  });
+  assert.equal(token.nodeValue, '/simplify');
+  assert.equal(code.childNodes.length, 1);
+  assert.match(lead.nodeValue, /使用/);
+  assert.match(rest.nodeValue, /审查/);
+  assert.equal(`${lead.nodeValue}${token.nodeValue}${rest.nodeValue}`, compiled.exact.get(
+    'Use /simplify to have Cursor review all changed files for code quality and efficiency',
+  ));
+});
+
+test('the first document walk waits for idle, and new nodes use the soon scheduler', () => {
+  const dictionary = {
+    exact: new Map([
+      ['Cancel', '取消'],
+      ['Archive', '归档'],
+    ]),
+    fragments: [],
+    regex: [],
+  };
+  const h = harness();
+  const first = h.makeText('Cancel');
+  const { root, body } = mount([first], h);
+  const idle = [];
+  const soon = [];
+  const byId = new Map();
+  let nextId = 1;
+  startDomTranslator({
+    translateText,
+    shouldSkipElement,
+    shouldSkipAttributeTarget,
+    dictionary,
+    version: 'budget',
+  }, {
+    document: { body, documentElement: root },
+    MutationObserver: h.MockObserver,
+    Element: class {},
+    window: {},
+    now: () => 0,
+    budgetMs: 2000,
+    scheduleIdle(fn) {
+      const id = nextId;
+      nextId += 1;
+      idle.push(fn);
+      byId.set(id, fn);
+      return id;
+    },
+    scheduleSoon(fn) {
+      soon.push(fn);
+    },
+    cancelIdle(id) {
+      const fn = byId.get(id);
+      const index = idle.indexOf(fn);
+      if (index >= 0) idle.splice(index, 1);
+      byId.delete(id);
+    },
+  });
+  assert.equal(first.nodeValue, 'Cancel');
+  assert.ok(idle.length >= 1);
+  assert.equal(soon.length, 0);
+  const added = h.makeElement('DIV');
+  const archive = h.makeText('Archive');
+  added.appendChild(archive);
+  body.appendChild(added);
+  h.observerRef.current.emit([{ type: 'childList', addedNodes: [added] }]);
+  assert.ok(soon.length >= 1);
+  let guard = 0;
+  while (soon.length) {
+    const batch = soon.splice(0, soon.length);
+    for (const fn of batch) fn();
+    guard += 1;
+    if (guard > 20) throw new Error('soon walk did not settle');
+  }
+  assert.equal(first.nodeValue, '取消');
+  assert.equal(archive.nodeValue, '归档');
+});
+
 test('every runtime regular expression stays linear on long inputs', () => {
   const { compiled } = loadDictionary();
   const inputs = [

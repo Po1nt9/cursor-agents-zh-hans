@@ -41,6 +41,23 @@ test('the shipped dictionary compiles and static rules agree with it', () => {
   assert.equal(translateText('3% used', compiled).text, '已使用 3%');
   assert.equal(translateText('$0.00 remaining', compiled).text, '剩余 $0.00');
   assert.equal(translateText('Included in Ultra', compiled).text, '已包含在 Ultra 中');
+  assert.equal(translateText('Installed 3', compiled).text, '已安装 3');
+  assert.equal(translateText('Needs Attention 2', compiled).text, '需要关注 2');
+  assert.equal(translateText('Connected 1', compiled).text, '已连接 1');
+  assert.equal(translateText('31 tools enabled', compiled).text, '31 个工具已启用');
+  assert.equal(translateText('1 tool enabled', compiled).text, '1 个工具已启用');
+  assert.equal(translateText('2 tools, 1 resource enabled', compiled).text, '2 个工具、1 个资源已启用');
+  assert.equal(translateText('Show 4 more', compiled).text, '再显示 4 项');
+  assert.equal(raw.exact['Open Browser Tab'], '打开浏览器标签页');
+  assert.equal(raw.exact['New Output View'], '新建输出视图');
+  assert.equal(raw.exact['This Computer'], '这台计算机');
+  assert.equal(raw.exact['Remote Machine'], '远程计算机');
+  assert.equal(raw.exact.Steer, '引导');
+  assert.equal(raw.exact['Steer the agent without stopping it'], '引导智能体而不停止它');
+  assert.equal(
+    raw.exact['Use /simplify to have Cursor review all changed files for code quality and efficiency'],
+    '使用 /simplify 让 Cursor 审查所有已更改文件的代码质量和效率',
+  );
   assert.equal(translateText('Weekly usage resets on Oct 24 (7 days left)', compiled).text, '每周用量将于 10 月 24 日重置（还剩 7 天）');
   assert.equal(
     translateText('Included usage with your subscription. Resets Oct 24. Used before your credits.', compiled).text,
@@ -83,6 +100,10 @@ test('generated runtime is plain script and passes node --check', () => {
   assert.match(script, /新建智能体/);
   assert.match(script, /MutationObserver/);
   assert.match(script, /requestIdleCallback/);
+  assert.match(script, /timeout:\s*50/);
+  assert.match(script, /setTimeout\(fn,\s*0\)/);
+  assert.match(script, /scheduleSoon/);
+  assert.match(script, /scheduleIdle/);
   assert.match(script, /budgetMs:\s*2000/);
   assert.match(script, /__cursorZhHans\.disconnect/);
   assert.match(script, /is-editor-mention-only/);

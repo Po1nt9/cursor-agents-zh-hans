@@ -174,6 +174,84 @@
     "flags": ""
   },
   {
+    "id": "installed-count",
+    "pattern": "^Installed (\\d+)$",
+    "replacement": "已安装 $1",
+    "flags": ""
+  },
+  {
+    "id": "needs-attention-count",
+    "pattern": "^Needs Attention (\\d+)$",
+    "replacement": "需要关注 $1",
+    "flags": ""
+  },
+  {
+    "id": "connected-count",
+    "pattern": "^Connected (\\d+)$",
+    "replacement": "已连接 $1",
+    "flags": ""
+  },
+  {
+    "id": "tools-enabled",
+    "pattern": "^(\\d+) tools enabled$",
+    "replacement": "$1 个工具已启用",
+    "flags": ""
+  },
+  {
+    "id": "tool-enabled",
+    "pattern": "^(\\d+) tool enabled$",
+    "replacement": "$1 个工具已启用",
+    "flags": ""
+  },
+  {
+    "id": "tools-resources-enabled",
+    "pattern": "^(\\d+) tools, (\\d+) resources enabled$",
+    "replacement": "$1 个工具、$2 个资源已启用",
+    "flags": ""
+  },
+  {
+    "id": "tool-resources-enabled",
+    "pattern": "^(\\d+) tool, (\\d+) resources enabled$",
+    "replacement": "$1 个工具、$2 个资源已启用",
+    "flags": ""
+  },
+  {
+    "id": "tools-resource-enabled",
+    "pattern": "^(\\d+) tools, (\\d+) resource enabled$",
+    "replacement": "$1 个工具、$2 个资源已启用",
+    "flags": ""
+  },
+  {
+    "id": "tool-resource-enabled",
+    "pattern": "^(\\d+) tool, (\\d+) resource enabled$",
+    "replacement": "$1 个工具、$2 个资源已启用",
+    "flags": ""
+  },
+  {
+    "id": "go-to-tab",
+    "pattern": "^Go to Tab (\\d+)$",
+    "replacement": "转到标签页 $1",
+    "flags": ""
+  },
+  {
+    "id": "dev-delay-autoreview",
+    "pattern": "^Dev Delay Next Auto-review \\((\\d+) s\\)$",
+    "replacement": "开发者：将下次自动审查延迟 $1 秒",
+    "flags": ""
+  },
+  {
+    "id": "workspaces-count",
+    "pattern": "^(\\d+) Workspaces$",
+    "replacement": "$1 个工作区",
+    "flags": ""
+  },
+  {
+    "id": "show-n-more",
+    "pattern": "^Show (\\d+) more$",
+    "replacement": "再显示 $1 项",
+    "flags": ""
+  },
+  {
     "id": "newer-cursor-package",
     "pattern": "^A newer Cursor package \\((.+)\\) is available via (.+)\\.$",
     "replacement": "有新的 Cursor 安装包（$1）可通过 $2 获取。",

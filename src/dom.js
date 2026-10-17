@@ -62,6 +62,9 @@ export function startDomTranslator(api, env) {
   let killed = false;
   let pumping = false;
   let scheduled = false;
+  let scheduledKind = null;
+  let idleHandle = null;
+  let preferSoon = false;
   let spent = 0;
   let burst = 0;
   let burstSteps = 0;
@@ -106,6 +109,43 @@ export function startDomTranslator(api, env) {
     if (state.count >= WRITE_LIMIT) state.cooledUntil = now() + COOLDOWN_MS;
   }
 
+  const INLINE_TAGS = {
+    A: 1,
+    ABBR: 1,
+    B: 1,
+    CITE: 1,
+    CODE: 1,
+    EM: 1,
+    I: 1,
+    KBD: 1,
+    MARK: 1,
+    S: 1,
+    SMALL: 1,
+    SPAN: 1,
+    STRONG: 1,
+    SUB: 1,
+    SUP: 1,
+    TIME: 1,
+    U: 1,
+  };
+
+  function isInlinePhrase(el) {
+    const tag = String((el && el.tagName) || '').toUpperCase();
+    if (!el || el.nodeType !== 1 || !INLINE_TAGS[tag]) return false;
+    const list = el.classList;
+    if (list && typeof list.contains === 'function') {
+      if (
+        list.contains('ui-kbd')
+        || list.contains('monaco-keybinding')
+        || list.contains('keybinding-key')
+        || list.contains('keybinding-label')
+      ) {
+        return false;
+      }
+    }
+    return true;
+  }
+
   function elementText(el, cap) {
     const limit = cap || TEXT_LIMIT;
     if (!el || el.nodeType !== 1) return '';
@@ -115,7 +155,7 @@ export function startDomTranslator(api, env) {
     for (let i = 0; i < children.length; i += 1) {
       const child = children[i];
       if (child.nodeType === 3) out += child.nodeValue || '';
-      else if (child.nodeType === 1 && !shouldSkipElement(child)) {
+      else if (child.nodeType === 1 && isInlinePhrase(child)) {
         const piece = elementText(child, limit - out.length);
         if (piece == null) return null;
         out += piece;
@@ -123,6 +163,21 @@ export function startDomTranslator(api, env) {
       if (out.length > limit) return out;
     }
     return out;
+  }
+
+  // text: only text nodes. inline: every element child is phrasing. mixed: widgets.
+  // A wide parent is mixed so one text node cannot scan thousands of siblings.
+  function hostShape(el) {
+    const children = el.childNodes || [];
+    if (children.length > WIDE_CHILDREN) return 'mixed';
+    let elements = 0;
+    for (let i = 0; i < children.length; i += 1) {
+      const child = children[i];
+      if (child.nodeType !== 1) continue;
+      elements += 1;
+      if (!isInlinePhrase(child) || hostShape(child) === 'mixed') return 'mixed';
+    }
+    return elements ? 'inline' : 'text';
   }
 
   function normalized(text) {
@@ -172,12 +227,66 @@ export function startDomTranslator(api, env) {
       if (nodes[i].nodeValue && String(nodes[i].nodeValue).trim()) meaningful.push(nodes[i]);
     }
     if (!meaningful.length) return;
-    if (cooled(meaningful[0]) && meaningful[0].nodeValue !== translated) return;
-    if (!writeText(meaningful[0], translated)) return;
-    for (let i = 1; i < meaningful.length; i += 1) {
-      if (cooled(meaningful[i]) && meaningful[i].nodeValue !== '') continue;
-      writeText(meaningful[i], '');
+    const plan = [{ node: meaningful[0], text: translated }];
+    for (let i = 1; i < meaningful.length; i += 1) plan.push({ node: meaningful[i], text: '' });
+    for (let i = 0; i < plan.length; i += 1) {
+      if (cooled(plan[i].node) && plan[i].node.nodeValue !== plan[i].text) return;
     }
+    for (let i = 0; i < plan.length; i += 1) writeText(plan[i].node, plan[i].text);
+  }
+
+  function inlineToken(el) {
+    return normalized(elementText(el, CORE_LIMIT) || '');
+  }
+
+  // Keep code/kbd/span nodes. Put the translation's prefix and suffix in the
+  // text nodes around them. Refuse when a token is missing, so a loose match
+  // cannot wipe the inline element.
+  function applyInline(el, translated) {
+    const kids = el.childNodes || [];
+    const cuts = [];
+    let pos = 0;
+    for (let i = 0; i < kids.length; i += 1) {
+      const child = kids[i];
+      if (child.nodeType !== 1 || !isInlinePhrase(child)) continue;
+      const token = inlineToken(child);
+      if (!token) return false;
+      const at = translated.indexOf(token, pos);
+      if (at < 0) return false;
+      cuts.push({ at, end: at + token.length });
+      pos = at + token.length;
+    }
+    if (!cuts.length) return false;
+    const writes = [];
+    let cursor = 0;
+    let ti = 0;
+    let gap = [];
+    function takeGap(upTo) {
+      const slice = translated.slice(cursor, upTo);
+      cursor = upTo;
+      const textNodes = gap;
+      gap = [];
+      if (!textNodes.length) return slice.trim().length === 0;
+      writes.push({ node: textNodes[0], text: slice });
+      for (let i = 1; i < textNodes.length; i += 1) writes.push({ node: textNodes[i], text: '' });
+      return true;
+    }
+    for (let i = 0; i < kids.length; i += 1) {
+      const child = kids[i];
+      if (child.nodeType === 3) gap.push(child);
+      else if (child.nodeType === 1 && isInlinePhrase(child)) {
+        if (!takeGap(cuts[ti].at)) return false;
+        cursor = cuts[ti].end;
+        ti += 1;
+      }
+    }
+    if (!takeGap(translated.length)) return false;
+    for (let i = 0; i < writes.length; i += 1) {
+      const item = writes[i];
+      if (cooled(item.node) && item.node.nodeValue !== item.text) return false;
+    }
+    for (let i = 0; i < writes.length; i += 1) writeText(writes[i].node, writes[i].text);
+    return true;
   }
 
   function narrowText(el) {
@@ -200,18 +309,28 @@ export function startDomTranslator(api, env) {
     let best = null;
     let host = parent;
     for (let depth = 0; depth < ANCESTOR_DEPTH && host; depth += 1) {
-      if (shouldSkipElement(host)) break;
+      if (shouldSkipElement(host) && !isInlinePhrase(host)) break;
+      const shape = hostShape(host);
+      // A row of separate widgets must not be one sentence. Regex on that
+      // concatenation is what turned usage labels into a single garbled string.
+      if (shape === 'mixed') break;
       const raw = narrowText(host);
       if (raw == null) break;
       const compact = normalized(raw);
       if (compact) {
         const whole = budgetedTranslate(compact);
-        if (whole.changed) best = { host, text: whole.text };
+        const inlineExact = shape === 'inline' && whole.tier === 'exact';
+        if (whole.changed && (shape === 'text' || inlineExact)) {
+          best = { host, text: whole.text, inline: shape === 'inline' };
+        }
       }
+      if (shape === 'inline') break;
       host = host.parentElement || null;
     }
 
-    if (best) {
+    if (best && best.inline) {
+      if (applyInline(best.host, best.text)) return;
+    } else if (best) {
       const compact = normalized(narrowText(best.host) || '');
       const short = compact.length <= 24 && compact.indexOf(' ') === -1;
       const above = best.host.parentElement;
@@ -332,26 +451,42 @@ export function startDomTranslator(api, env) {
     for (let i = children.length - 1; i >= 0; i -= 1) enqueue(children[i]);
   }
 
-  function usesAsyncSchedule() {
-    if (typeof env.schedule !== 'function') return false;
+  function scheduler(kind) {
+    if (kind === 'soon' && typeof env.scheduleSoon === 'function') return env.scheduleSoon;
+    if (kind === 'idle' && typeof env.scheduleIdle === 'function') return env.scheduleIdle;
+    if (typeof env.schedule === 'function') return env.schedule;
+    return null;
+  }
+
+  function usesAsyncSchedule(kind) {
+    const fn = scheduler(kind);
+    if (typeof fn !== 'function') return false;
     if (scheduleMode === 'async') return true;
     if (scheduleMode === 'sync') return false;
     let ran = false;
-    env.schedule(() => {
+    fn(() => {
       ran = true;
     });
     scheduleMode = ran ? 'sync' : 'async';
     return scheduleMode === 'async';
   }
 
-  function yieldToHost(continuation) {
-    if (!usesAsyncSchedule()) return false;
+  function arm(kind, callback) {
+    const fn = scheduler(kind);
+    if (!usesAsyncSchedule(kind) || typeof fn !== 'function') return false;
     scheduled = true;
-    env.schedule(() => {
+    scheduledKind = kind;
+    const handle = fn(() => {
       scheduled = false;
-      continuation();
+      idleHandle = null;
+      callback();
     });
+    if (kind === 'idle') idleHandle = handle;
     return true;
+  }
+
+  function yieldToHost(continuation) {
+    return arm(preferSoon ? 'soon' : 'idle', continuation);
   }
 
   function charge(dt) {
@@ -424,17 +559,28 @@ export function startDomTranslator(api, env) {
 
   // Never translate inside the observer callback. A macrotask lets ProseMirror's
   // own observer return to the event loop; a synchronous reply livelocks both.
-  function schedulePump() {
-    if (killed || scheduled || pumping) return;
-    if (!usesAsyncSchedule()) {
-      pump();
+  // New nodes use setTimeout(0). requestIdleCallback is only the first document walk.
+  function schedulePump(kind) {
+    if (killed) return;
+    if (kind === 'soon') preferSoon = true;
+    if (pumping) return;
+    if (scheduled && preferSoon && scheduledKind === 'idle') {
+      if (idleHandle != null && typeof env.cancelIdle === 'function') {
+        try {
+          env.cancelIdle(idleHandle);
+        } catch {
+          // The idle handle may already have fired.
+        }
+      }
+      scheduled = false;
+      idleHandle = null;
+    } else if (scheduled) {
       return;
     }
-    scheduled = true;
-    env.schedule(() => {
-      scheduled = false;
+    const useKind = preferSoon ? 'soon' : (kind || 'idle');
+    if (!arm(useKind, () => {
       if (!killed && queue.length) pump();
-    });
+    })) pump();
   }
 
   observer = new MutationObserver((records) => {
@@ -451,7 +597,7 @@ export function startDomTranslator(api, env) {
       }
       enqueue(record);
     }
-    schedulePump();
+    schedulePump('soon');
   });
 
   const options = {
@@ -476,7 +622,7 @@ export function startDomTranslator(api, env) {
         const shadow = original.call(this, init);
         observe(shadow);
         enqueue(shadow);
-        schedulePump();
+        schedulePump('soon');
         return shadow;
       }
       wrapped.__cursorZhHans = true;
@@ -534,7 +680,7 @@ export function startDomTranslator(api, env) {
   const target = document.documentElement || document.body;
   if (target) observe(target);
   if (document.body) enqueue(document.body);
-  if (queue.length) schedulePump();
+  if (queue.length) schedulePump('idle');
 
   return {
     already: false,
