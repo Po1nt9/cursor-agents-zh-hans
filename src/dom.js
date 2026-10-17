@@ -24,7 +24,9 @@ const CHUNK_STEPS = 500;
 const CHUNK_MS = 12;
 const TEXT_LIMIT = 600;
 const CORE_LIMIT = 500;
-const WIDE_CHILDREN = 24;
+const SENTENCE_CHILDREN = 80;
+const SYNC_NODE_LIMIT = 200;
+const SYNC_MS = 4;
 const ANCESTOR_DEPTH = 6;
 const NODE_TRANSLATE_BUDGET = 12;
 const BURST_STEP_CAP = 2000000;
@@ -61,6 +63,7 @@ export function startDomTranslator(api, env) {
   let observer = null;
   let killed = false;
   let pumping = false;
+  let draining = false;
   let scheduled = false;
   let scheduledKind = null;
   let idleHandle = null;
@@ -150,7 +153,7 @@ export function startDomTranslator(api, env) {
     const limit = cap || TEXT_LIMIT;
     if (!el || el.nodeType !== 1) return '';
     const children = el.childNodes || [];
-    if (children.length > WIDE_CHILDREN) return null;
+    if (children.length > SENTENCE_CHILDREN) return null;
     let out = '';
     for (let i = 0; i < children.length; i += 1) {
       const child = children[i];
@@ -166,10 +169,10 @@ export function startDomTranslator(api, env) {
   }
 
   // text: only text nodes. inline: every element child is phrasing. mixed: widgets.
-  // A wide parent is mixed so one text node cannot scan thousands of siblings.
+  // Above the sentence cap, return mixed without scanning so a wide row stays O(1).
   function hostShape(el) {
     const children = el.childNodes || [];
-    if (children.length > WIDE_CHILDREN) return 'mixed';
+    if (children.length > SENTENCE_CHILDREN) return 'mixed';
     let elements = 0;
     for (let i = 0; i < children.length; i += 1) {
       const child = children[i];
@@ -228,7 +231,9 @@ export function startDomTranslator(api, env) {
     }
     if (!meaningful.length) return;
     const plan = [{ node: meaningful[0], text: translated }];
-    for (let i = 1; i < meaningful.length; i += 1) plan.push({ node: meaningful[i], text: '' });
+    for (let i = 0; i < nodes.length; i += 1) {
+      if (nodes[i] !== meaningful[0]) plan.push({ node: nodes[i], text: '' });
+    }
     for (let i = 0; i < plan.length; i += 1) {
       if (cooled(plan[i].node) && plan[i].node.nodeValue !== plan[i].text) return;
     }
@@ -292,10 +297,52 @@ export function startDomTranslator(api, env) {
   function narrowText(el) {
     if (!el || el.nodeType !== 1) return null;
     const kids = el.childNodes || [];
-    if (kids.length > WIDE_CHILDREN) return null;
+    if (kids.length > SENTENCE_CHILDREN) return null;
     const raw = elementText(el, TEXT_LIMIT);
     if (raw == null || raw.length > CORE_LIMIT) return null;
     return raw;
+  }
+
+  function classTokens(el) {
+    if (typeof el.className === 'string' && el.className) return el.className.split(/\s+/);
+    const list = el.classList;
+    if (list && typeof list[Symbol.iterator] === 'function') {
+      const tokens = [];
+      for (const name of list) tokens.push(name);
+      return tokens;
+    }
+    return [];
+  }
+
+  function looksLikeBadge(el) {
+    if (!el || el.nodeType !== 1) return false;
+    const testid = el.getAttribute?.('data-testid') || '';
+    if (/badge/i.test(String(testid))) return true;
+    const list = el.classList;
+    if (list && typeof list.contains === 'function') {
+      if (list.contains('badge') || list.contains('pill') || list.contains('cursor-badge')) return true;
+    }
+    const tokens = classTokens(el);
+    for (let i = 0; i < tokens.length; i += 1) {
+      if (/badge|pill/i.test(tokens[i])) return true;
+    }
+    return false;
+  }
+
+  function isBadgeContext(el) {
+    let cur = el;
+    for (let i = 0; i < 4 && cur && cur.nodeType === 1; i += 1) {
+      if (looksLikeBadge(cur)) return true;
+      cur = cur.parentElement || null;
+    }
+    return false;
+  }
+
+  // A New/NEW chip is 新. The same word on a button stays 新建 via the exact map.
+  function badgeLabel(host, compact) {
+    if (compact !== 'New' && compact !== 'NEW') return null;
+    if (!isBadgeContext(host)) return null;
+    return '新';
   }
 
   function translateTextNode(node) {
@@ -317,20 +364,27 @@ export function startDomTranslator(api, env) {
       const raw = narrowText(host);
       if (raw == null) break;
       const compact = normalized(raw);
-      if (compact) {
+      const badge = badgeLabel(host, compact);
+      if (badge) {
+        best = { host, text: badge, inline: false, tier: 'exact' };
+      } else if (compact) {
         const whole = budgetedTranslate(compact);
         const inlineExact = shape === 'inline' && whole.tier === 'exact';
-        if (whole.changed && (shape === 'text' || inlineExact)) {
-          best = { host, text: whole.text, inline: shape === 'inline' };
+        // Open patterns such as "Included in (.+)" stay off inline parents.
+        // Closed ones ("5% used", "$0.00 remaining") may cover split nodes.
+        const inlineClosed = shape === 'inline' && whole.tier === 'regex' && !whole.open;
+        if (whole.changed && (shape === 'text' || inlineExact || inlineClosed)) {
+          best = { host, text: whole.text, inline: shape === 'inline' && whole.tier === 'exact', tier: whole.tier };
         }
       }
       if (shape === 'inline') break;
       host = host.parentElement || null;
     }
 
-    if (best && best.inline) {
-      if (applyInline(best.host, best.text)) return;
-    } else if (best) {
+    if (best) {
+      // Keep slash-command spans when the translation still contains them.
+      // Otherwise the parent sentence replaces every inner label.
+      if (best.inline && applyInline(best.host, best.text)) return;
       const compact = normalized(narrowText(best.host) || '');
       const short = compact.length <= 24 && compact.indexOf(' ') === -1;
       const above = best.host.parentElement;
@@ -342,6 +396,12 @@ export function startDomTranslator(api, env) {
     }
 
     const core = normalized(node.nodeValue);
+    const marked = badgeLabel(parent, core);
+    if (marked) {
+      if (cooled(node)) return;
+      writeText(node, marked);
+      return;
+    }
     const parentText = narrowText(parent);
     if (core && core.indexOf(' ') === -1 && core.length <= 24 && continuesSentence(parentText, core)) {
       textMemo.set(node, node.nodeValue);
@@ -441,8 +501,10 @@ export function startDomTranslator(api, env) {
       return;
     }
     if (node.nodeType !== 1) return;
-    if (shouldSkipAttributeTarget(node)) return;
-    translateAttrs(node);
+    if (!shouldSkipAttributeTarget(node)) translateAttrs(node);
+    // Chat markdown and editors stop here. A model-picker label is markdown too,
+    // but its text is a control name and still needs a walk.
+    if (shouldSkipElement(node) && !isInlinePhrase(node)) return;
     if (node.shadowRoot) {
       observe(node.shadowRoot);
       enqueue(node.shadowRoot);
@@ -557,9 +619,9 @@ export function startDomTranslator(api, env) {
     runChunk();
   }
 
-  // Never translate inside the observer callback. A macrotask lets ProseMirror's
-  // own observer return to the event loop; a synchronous reply livelocks both.
-  // New nodes use setTimeout(0). requestIdleCallback is only the first document walk.
+  // The first document walk stays on requestIdleCallback. Small mutation batches
+  // are translated in the observer, before paint. Larger batches use setTimeout(0).
+  // Editors are still skipped, so a synchronous pass cannot answer ProseMirror.
   function schedulePump(kind) {
     if (killed) return;
     if (kind === 'soon') preferSoon = true;
@@ -583,8 +645,53 @@ export function startDomTranslator(api, env) {
     })) pump();
   }
 
+  // Process only the items pushed after floor. Leave an idle document walk queued.
+  function drainNewWork(floor) {
+    const start = now();
+    let steps = 0;
+    while (queue.length > floor) {
+      if (killed) return true;
+      const t = now();
+      if (steps >= SYNC_NODE_LIMIT || t - start >= SYNC_MS) {
+        charge(t - start);
+        return false;
+      }
+      if (budgetMs <= 0 || burstSteps > BURST_STEP_CAP || spent + (t - start) > budgetMs) {
+        charge(t - start);
+        kill();
+        return true;
+      }
+      steps += 1;
+      burstSteps += 1;
+      burst += 1;
+      const item = queue.pop();
+      try {
+        visit(item);
+      } catch {
+        // One bad node must not wedge the observer.
+      }
+    }
+    charge(now() - start);
+    if (!queue.length) burstSteps = 0;
+    return true;
+  }
+
+  function flushMutations(floor) {
+    if (killed || pumping || draining) return;
+    draining = true;
+    let done = false;
+    try {
+      done = drainNewWork(floor);
+    } finally {
+      draining = false;
+    }
+    if (!done && !killed) schedulePump('soon');
+  }
+
   observer = new MutationObserver((records) => {
     if (killed) return;
+    const floor = queue.length;
+    let added = false;
     for (let i = 0; i < records.length; i += 1) {
       const record = records[i];
       if (record.type === 'characterData') {
@@ -596,8 +703,9 @@ export function startDomTranslator(api, env) {
         if (target && name && attrMemo.get(target)?.[name] === target.getAttribute?.(name)) continue;
       }
       enqueue(record);
+      added = true;
     }
-    schedulePump('soon');
+    if (added) flushMutations(floor);
   });
 
   const options = {
@@ -621,8 +729,9 @@ export function startDomTranslator(api, env) {
       function wrapped(init) {
         const shadow = original.call(this, init);
         observe(shadow);
+        const floor = queue.length;
         enqueue(shadow);
-        schedulePump('soon');
+        flushMutations(floor);
         return shadow;
       }
       wrapped.__cursorZhHans = true;

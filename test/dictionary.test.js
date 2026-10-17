@@ -58,6 +58,36 @@ test('the shipped dictionary compiles and static rules agree with it', () => {
     raw.exact['Use /simplify to have Cursor review all changed files for code quality and efficiency'],
     '使用 /simplify 让 Cursor 审查所有已更改文件的代码质量和效率',
   );
+  assert.equal(
+    raw.exact['Use /cloud to run agents remotely for better parallelization and durable execution'],
+    '使用 /cloud 在远程运行智能体，以便更好地并行并持久执行',
+  );
+  assert.equal(
+    raw.exact['Use /in-cloud to start a subagent in its own cloud VM, keeping your local workspace free'],
+    '使用 /in-cloud 在独立的云端虚拟机中启动子智能体，让本地工作区保持空闲',
+  );
+  assert.equal(
+    raw.exact['Use /review for an agentic code review of your changes'],
+    '使用 /review 对你的更改进行智能体代码审查',
+  );
+  assert.equal(
+    raw.exact['Use /automate to create Cursor Automations without leaving your agent chat'],
+    '使用 /automate 创建 Cursor 自动化，无需离开智能体聊天',
+  );
+  assert.equal(
+    raw.exact['Messages sent while Cursor is working can steer it mid-run without interrupting - turn it on under New Messages in Agent settings'],
+    'Cursor 工作时发送的消息可以在运行中引导它而不打断。在智能体设置的「新消息」里打开。',
+  );
+  assert.equal(raw.exact.Today, '今天');
+  assert.equal(raw.exact.Yesterday, '昨天');
+  assert.equal(raw.exact.Older, '更早');
+  assert.equal(raw.exact['Previous 7 days'], '过去 7 天');
+  assert.equal(raw.exact['Manage Environment'], '管理环境');
+  assert.equal(raw.exact.New, '新建');
+  assert.equal(raw.exact.NEW, '新');
+  assert.equal(translateText('% used', compiled).text, '% 已使用');
+  assert.equal(translateText('5% used', compiled).text, '已使用 5%');
+  assert.equal(translateText('$0.00 remaining', compiled).text, '剩余 $0.00');
   assert.equal(translateText('Weekly usage resets on Oct 24 (7 days left)', compiled).text, '每周用量将于 10 月 24 日重置（还剩 7 天）');
   assert.equal(
     translateText('Included usage with your subscription. Resets Oct 24. Used before your credits.', compiled).text,

@@ -137,6 +137,7 @@ export function compileDictionary(raw) {
       re,
       index: regex.length,
       route: regexRoute(item.pattern),
+      open: patternIsOpen(item.pattern),
     });
   }
 
@@ -160,6 +161,17 @@ export function compileDictionary(raw) {
   }
 
   return { exact, fragments, regex, regexBuckets, placeholders };
+}
+
+function patternIsOpen(pattern) {
+  for (let i = 0; i < pattern.length; i += 1) {
+    if (pattern[i] === '\\') {
+      i += 1;
+      continue;
+    }
+    if (pattern[i] === '.') return true;
+  }
+  return false;
 }
 
 function regexRoute(pattern) {
@@ -262,7 +274,9 @@ export function translateText(input, dictionary) {
     if (!entry.re.test(normalizedCore)) continue;
     entry.re.lastIndex = 0;
     const text = lead + normalizedCore.replace(entry.re, entry.replacement) + tail;
-    return { text, changed: text !== input, tier: 'regex' };
+    const result = { text, changed: text !== input, tier: 'regex' };
+    if (entry.open) result.open = true;
+    return result;
   }
 
   for (const frag of dictionary.fragments) {
@@ -340,8 +354,29 @@ function walkAncestors(el, predicate) {
   return false;
 }
 
+const MODEL_PICKER_LABEL_CLASSES = [
+  'vscode-model-picker__trigger-markdown',
+  'vscode-model-picker__trigger-text',
+  'vscode-model-picker__trigger-variant-suffix',
+  'ui-model-picker__item-content-name',
+  'ui-model-picker__item-content',
+];
+
+function isModelPickerLabel(el) {
+  for (let i = 0; i < MODEL_PICKER_LABEL_CLASSES.length; i += 1) {
+    if (hasClass(el, MODEL_PICKER_LABEL_CLASSES[i])) return true;
+  }
+  return false;
+}
+
 export function shouldSkipElement(el) {
-  return walkAncestors(el, (node) => isProtectedSurface(node) || isEditableControl(node));
+  return walkAncestors(el, (node) => {
+    if (isEditableControl(node)) return true;
+    if (!isProtectedSurface(node)) return false;
+    // Model names are rendered as markdown. That is a label, not a chat message.
+    if (hasClass(node, 'markdown-root') && walkAncestors(node, isModelPickerLabel)) return false;
+    return true;
+  });
 }
 
 export function shouldSkipAttributeTarget(el) {

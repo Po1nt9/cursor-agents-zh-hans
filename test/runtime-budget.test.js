@@ -759,16 +759,18 @@ test('the first document walk waits for idle, and new nodes use the soon schedul
   added.appendChild(archive);
   body.appendChild(added);
   h.observerRef.current.emit([{ type: 'childList', addedNodes: [added] }]);
-  assert.ok(soon.length >= 1);
+  assert.equal(archive.nodeValue, '归档');
+  assert.equal(soon.length, 0);
+  assert.equal(first.nodeValue, 'Cancel');
+  assert.ok(idle.length >= 1);
   let guard = 0;
-  while (soon.length) {
-    const batch = soon.splice(0, soon.length);
+  while (idle.length) {
+    const batch = idle.splice(0, idle.length);
     for (const fn of batch) fn();
     guard += 1;
-    if (guard > 20) throw new Error('soon walk did not settle');
+    if (guard > 20) throw new Error('idle walk did not settle');
   }
   assert.equal(first.nodeValue, '取消');
-  assert.equal(archive.nodeValue, '归档');
 });
 
 test('every runtime regular expression stays linear on long inputs', () => {
@@ -788,4 +790,284 @@ test('every runtime regular expression stays linear on long inputs', () => {
       assert.ok(elapsed < 30, `${entry.id} took ${elapsed.toFixed(1)}ms`);
     }
   }
+});
+
+function visibleText(el) {
+  let out = '';
+  const children = el.childNodes || [];
+  for (let i = 0; i < children.length; i += 1) {
+    const child = children[i];
+    if (child.nodeType === 3) out += child.nodeValue || '';
+    else if (child.nodeType === 1) out += visibleText(child);
+  }
+  return out;
+}
+
+function renderTip(h, sentence) {
+  const tip = h.makeElement('P');
+  const parts = sentence.split(/(\s+)/);
+  for (let i = 0; i < parts.length; i += 1) {
+    const part = parts[i];
+    if (!part) continue;
+    if (part.startsWith('/') || part.startsWith('@')) {
+      const span = h.makeElement('SPAN');
+      span.appendChild(h.makeText(part));
+      tip.appendChild(span);
+    } else {
+      tip.appendChild(h.makeText(part));
+    }
+  }
+  return tip;
+}
+
+function translateTree(nodes, dictionary) {
+  const h = harness();
+  const { root, body } = mount(nodes, h);
+  startDomTranslator({
+    translateText,
+    shouldSkipElement,
+    shouldSkipAttributeTarget,
+    dictionary,
+    version: 'budget',
+  }, {
+    document: { body, documentElement: root },
+    MutationObserver: h.MockObserver,
+    Element: class {},
+    window: {},
+    now: () => 0,
+    budgetMs: 2000,
+  });
+  return h;
+}
+
+test('every rotating tip renders with its slash token kept', () => {
+  const { compiled } = loadDictionary();
+  const tips = [
+    'Use /goal to set an objective that Cursor keeps pursuing until it is complete',
+    'Use /cloud to run agents remotely for better parallelization and durable execution',
+    'Use /in-cloud to start a subagent in its own cloud VM, keeping your local workspace free',
+    'Use /review for an agentic code review of your changes',
+    'Use /automate to create Cursor Automations without leaving your agent chat',
+    'Use /add-plugin to install a plugin from the Cursor Marketplace',
+    'Use /simplify to have Cursor review all changed files for code quality and efficiency',
+    'Use /in-cloud for cloud subagents',
+    'Use /review to have Cursor find bugs, regressions, security issues, and missing tests',
+    'Use /create-subagent to set up specialized agents that Cursor can use to parallelize work',
+    'Use /plan to improve agent execution with Plan Mode',
+    'Use /shell to run commands in the terminal',
+    'Use /canvas to get interactive visualizations like dashboards from Cursor',
+    'Use @browser to inspect page elements, view console logs, and analyze network traffic',
+    'After long sessions, use /split-to-prs to turn your work into small, reviewable PRs',
+  ];
+  const h = harness();
+  const rendered = tips.map((sentence) => renderTip(h, sentence));
+  assert.ok(rendered[0].childNodes.length > 24, `goal tip has ${rendered[0].childNodes.length} nodes`);
+  translateTree(rendered, compiled);
+  for (let i = 0; i < tips.length; i += 1) {
+    const expected = compiled.exact.get(tips[i]);
+    assert.ok(expected, tips[i]);
+    const token = tips[i].match(/\/[a-z-]+|@[a-z-]+/)[0];
+    assert.equal(visibleText(rendered[i]), expected, tips[i]);
+    assert.ok(visibleText(rendered[i]).includes(token), tips[i]);
+  }
+});
+
+test('a parent sentence wins over short labels inside it', () => {
+  const { compiled } = loadDictionary();
+  const english = 'Messages sent while Cursor is working can steer it mid-run without interrupting - turn it on under New Messages in Agent settings';
+  const h = harness();
+  const tip = h.makeElement('P');
+  const parts = english.split(/(\s+)/);
+  for (let i = 0; i < parts.length; i += 1) {
+    const part = parts[i];
+    if (!part) continue;
+    if (part === 'New' || part === 'Agent') {
+      const span = h.makeElement('SPAN');
+      span.appendChild(h.makeText(part));
+      tip.appendChild(span);
+    } else {
+      tip.appendChild(h.makeText(part));
+    }
+  }
+  assert.ok(tip.childNodes.length > 24);
+  translateTree([tip], compiled);
+  const text = visibleText(tip);
+  assert.equal(text, compiled.exact.get(english));
+  assert.equal(text.includes('新建'), false);
+  assert.ok(text.includes('新消息'));
+});
+
+test('split usage phrases translate without swallowing sibling labels', () => {
+  const { compiled } = loadDictionary();
+  const h = harness();
+  const used = h.makeElement('SPAN');
+  used.appendChild(h.makeText('5'));
+  used.appendChild(h.makeText('% used'));
+  const money = h.makeElement('SPAN');
+  const amount = h.makeElement('SPAN');
+  amount.appendChild(h.makeText('$0.00'));
+  const rest = h.makeElement('SPAN');
+  rest.appendChild(h.makeText(' remaining'));
+  money.appendChild(amount);
+  money.appendChild(rest);
+  const lone = h.makeElement('SPAN');
+  lone.appendChild(h.makeText('% used'));
+  const row = h.makeElement('DIV');
+  const included = h.makeElement('SPAN');
+  included.appendChild(h.makeText('Included in Ultra'));
+  const weekly = h.makeElement('SPAN');
+  weekly.appendChild(h.makeText('Weekly usage limit'));
+  row.appendChild(included);
+  row.appendChild(h.makeText('x'));
+  row.appendChild(weekly);
+  row.appendChild(h.makeText('x'));
+  row.appendChild(used);
+  translateTree([money, lone, row], compiled);
+  assert.equal(visibleText(used), '已使用 5%');
+  assert.equal(visibleText(money), '剩余 $0.00');
+  assert.equal(visibleText(lone), '% 已使用');
+  assert.equal(visibleText(included), '已包含在 Ultra 中');
+  assert.equal(visibleText(weekly), '每周用量上限');
+  assert.equal(visibleText(row).includes('已包含在 Ultrax'), false);
+});
+
+test('Browse Marketplace split across a span uses the parent sentence', () => {
+  const { compiled } = loadDictionary();
+  const h = harness();
+  const button = h.makeElement('BUTTON');
+  button.appendChild(h.makeText('Browse'));
+  const span = h.makeElement('SPAN');
+  span.appendChild(h.makeText(' Marketplace'));
+  button.appendChild(span);
+  translateTree([button], compiled);
+  assert.equal(visibleText(button), '浏览市场');
+});
+
+test('a New badge is 新 and a New button stays 新建', () => {
+  const { compiled } = loadDictionary();
+  const h = harness();
+  const badge = h.makeElement('SPAN', { attrs: { 'data-testid': 'model-picker-badge' } });
+  badge.appendChild(h.makeText('New'));
+  const chip = h.makeElement('SPAN', { classes: ['cursor-badge'] });
+  chip.appendChild(h.makeText('New'));
+  const button = h.makeElement('BUTTON');
+  button.appendChild(h.makeText('New'));
+  const picker = h.makeElement('DIV', { classes: ['ui-model-picker__item-content-name'] });
+  const markdown = h.makeElement('DIV', { classes: ['markdown-root'] });
+  markdown.appendChild(h.makeText('Inherit from parent'));
+  picker.appendChild(markdown);
+  const chat = h.makeElement('DIV', { classes: ['markdown-root'] });
+  chat.appendChild(h.makeText('Inherit from parent'));
+  translateTree([badge, chip, button, picker, chat], compiled);
+  assert.equal(visibleText(badge), '新');
+  assert.equal(visibleText(chip), '新');
+  assert.equal(visibleText(button), '新建');
+  assert.equal(visibleText(picker), '继承自父级');
+  assert.equal(visibleText(chat), 'Inherit from parent');
+});
+
+test('a large mutation stays on the soon scheduler', () => {
+  const dictionary = {
+    exact: new Map([['Cancel', '取消']]),
+    fragments: [],
+    regex: [],
+  };
+  const h = harness();
+  const { root, body } = mount([], h);
+  const soon = [];
+  startDomTranslator({
+    translateText,
+    shouldSkipElement,
+    shouldSkipAttributeTarget,
+    dictionary,
+    version: 'budget',
+  }, {
+    document: { body, documentElement: root },
+    MutationObserver: h.MockObserver,
+    Element: class {},
+    window: {},
+    now: () => 0,
+    budgetMs: 2000,
+    scheduleSoon(fn) {
+      soon.push(fn);
+    },
+    scheduleIdle(fn) {
+      soon.push(fn);
+    },
+  });
+  const added = h.makeElement('DIV');
+  const texts = [];
+  for (let i = 0; i < 250; i += 1) {
+    const node = h.makeText('Cancel');
+    texts.push(node);
+    added.appendChild(node);
+  }
+  body.appendChild(added);
+  h.observerRef.current.emit([{ type: 'childList', addedNodes: [added] }]);
+  assert.equal(texts.some((node) => node.nodeValue === 'Cancel'), true);
+  assert.equal(texts.some((node) => node.nodeValue === '取消'), true);
+  assert.ok(soon.length >= 1);
+  let guard = 0;
+  while (soon.length) {
+    const batch = soon.splice(0, soon.length);
+    for (const fn of batch) fn();
+    guard += 1;
+    if (guard > 20) throw new Error('large batch did not settle');
+  }
+  for (const node of texts) assert.equal(node.nodeValue, '取消');
+});
+
+test('a mutation that exceeds the sync time budget defers the rest', () => {
+  const dictionary = {
+    exact: new Map([['Save', '保存']]),
+    fragments: [],
+    regex: [],
+  };
+  const h = harness();
+  const { root, body } = mount([], h);
+  const soon = [];
+  let calls = 0;
+  startDomTranslator({
+    translateText,
+    shouldSkipElement,
+    shouldSkipAttributeTarget,
+    dictionary,
+    version: 'budget',
+  }, {
+    document: { body, documentElement: root },
+    MutationObserver: h.MockObserver,
+    Element: class {},
+    window: {},
+    now() {
+      calls += 1;
+      return calls < 12 ? 0 : 10;
+    },
+    budgetMs: 2000,
+    scheduleSoon(fn) {
+      soon.push(fn);
+    },
+    scheduleIdle() {},
+  });
+  const added = h.makeElement('DIV');
+  const texts = [];
+  for (let i = 0; i < 30; i += 1) {
+    const node = h.makeText('Save');
+    texts.push(node);
+    added.appendChild(node);
+  }
+  body.appendChild(added);
+  h.observerRef.current.emit([{ type: 'childList', addedNodes: [added] }]);
+  assert.equal(texts.some((node) => node.nodeValue === 'Save'), true);
+  assert.ok(soon.length >= 1);
+  let guard = 0;
+  while (soon.length) {
+    const batch = soon.splice(0, soon.length);
+    for (const fn of batch) {
+      calls = 0;
+      fn();
+    }
+    guard += 1;
+    if (guard > 20) throw new Error('timed batch did not settle');
+  }
+  for (const node of texts) assert.equal(node.nodeValue, '保存');
 });

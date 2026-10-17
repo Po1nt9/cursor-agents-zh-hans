@@ -122,6 +122,14 @@ test('skips editor, terminal, diff, chat, and inputs, and translates other label
   assert.equal(shouldSkipElement(element({ classes: ['terminal-wrapper'] })), true);
   assert.equal(shouldSkipElement(element({ classes: ['diff-line-content'] })), true);
   assert.equal(shouldSkipElement(element({ classes: ['markdown-root'] })), true);
+  const pickerName = element({ classes: ['ui-model-picker__item-content-name'] });
+  const pickerMarkdown = element({ classes: ['markdown-root'], parent: pickerName });
+  assert.equal(shouldSkipElement(pickerMarkdown), false);
+  assert.equal(shouldSkipElement({ nodeType: 3, parentElement: pickerMarkdown }), false);
+  assert.equal(
+    shouldSkipElement(element({ classes: ['markdown-root', 'vscode-model-picker__trigger-markdown'] })),
+    false,
+  );
   assert.equal(shouldSkipElement(element({ classes: ['composer-messages-container'] })), false);
   assert.equal(shouldSkipElement(element({ tag: 'TEXTAREA' })), true);
   assert.equal(shouldSkipElement(element({ editable: true })), true);
