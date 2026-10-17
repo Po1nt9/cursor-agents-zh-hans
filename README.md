@@ -13,7 +13,7 @@ Cursor 3 的智能体窗口和经典窗口加载**同一份** `workbench.html`�
 `apply` 默认做两件事：
 
 1. 在 `workbench.html` 里、`workbench.js` 之前插入一个本地脚本 `cursor-zh-hans.js`。
-2. 脚本在页面里用 `MutationObserver` 翻译**新出现或刚改过**的文本，不用定时器重扫整页。查找表是 `Map`。会处理文本节点，以及 `title`、`placeholder`、`data-placeholder`、`aria-label`、`aria-description`、`aria-placeholder`。编写器占位符写在可编辑区域里的 `data-placeholder` 上，由 CSS `content: attr(data-placeholder)` 显示；输入框里的 `placeholder` 也会翻译，已经键入的文字不会。
+2. 脚本在页面里用 `MutationObserver` 翻译**新出现或刚改过**的文本，不用定时器把整页重扫一遍。首屏和大批量变更切成短片段，用 `requestIdleCallback`（没有则用 `setTimeout`）让出主线程。查找表是 `Map`。正则按首字符分桶。会处理文本节点，以及 `title`、`placeholder`、`data-placeholder`、`aria-label`、`aria-description`、`aria-placeholder`。编写器占位符写在可编辑区域里的 `data-placeholder` 上，由 CSS `content: attr(data-placeholder)` 显示；输入框里的 `placeholder` 也会翻译，已经键入的文字不会。
 
 三层词典：
 

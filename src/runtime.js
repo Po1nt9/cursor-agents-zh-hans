@@ -50,6 +50,17 @@ startDomTranslator({
   shouldSkipAttributeTarget: shouldSkipAttributeTarget,
   dictionary: compileDictionary(${payload}),
   version: ${JSON.stringify(version)}
-}, { document: document, MutationObserver: MutationObserver, Element: Element, window: window });
+}, {
+  document: document,
+  MutationObserver: MutationObserver,
+  Element: Element,
+  window: window,
+  now: function () { return Date.now(); },
+  budgetMs: 2000,
+  schedule: function (fn) {
+    if (typeof requestIdleCallback === 'function') requestIdleCallback(fn, { timeout: 40 });
+    else setTimeout(fn, 1);
+  }
+});
 `;
 }

@@ -133,10 +133,63 @@ export function compileDictionary(raw) {
       flags,
       replacement: item.replacement,
       re,
+      index: regex.length,
+      route: regexRoute(item.pattern),
     });
   }
 
-  return { exact, fragments, regex };
+  const regexBuckets = new Map();
+  for (const entry of regex) {
+    let list = regexBuckets.get(entry.route);
+    if (!list) {
+      list = [];
+      regexBuckets.set(entry.route, list);
+    }
+    list.push(entry);
+  }
+
+  return { exact, fragments, regex, regexBuckets };
+}
+
+function regexRoute(pattern) {
+  if (pattern.startsWith('^(\\d') || pattern.startsWith('^\\d')) return 'digit';
+  let i = 1;
+  let prefix = '';
+  while (i < pattern.length) {
+    const ch = pattern[i];
+    if (ch === '\\') {
+      const next = pattern[i + 1];
+      if (next === 'd' || next === 'w' || next === 's' || next === 'D' || next === 'W' || next === 'S') break;
+      if (next === '(' || next === ')' || next === '.' || next === '$' || next === '^' || next === '\\') {
+        prefix += next;
+        i += 2;
+        continue;
+      }
+      break;
+    }
+    if (ch === '(' || ch === '.' || ch === '[' || ch === '|' || ch === '+' || ch === '*' || ch === '?' || ch === '$') break;
+    prefix += ch;
+    i += 1;
+  }
+  return prefix ? prefix[0] : 'any';
+}
+
+function regexCandidates(core, dictionary) {
+  const buckets = dictionary.regexBuckets;
+  if (!buckets) return dictionary.regex;
+  const first = core[0];
+  const parts = [];
+  if (first >= '0' && first <= '9') {
+    const digit = buckets.get('digit');
+    if (digit) parts.push(digit);
+  }
+  const keyed = first ? buckets.get(first) : null;
+  if (keyed) parts.push(keyed);
+  const any = buckets.get('any');
+  if (any) parts.push(any);
+  if (parts.length === 0) return [];
+  if (parts.length === 1) return parts[0];
+  return parts.flat().sort((a, b) => a.index - b.index);
 }
 
 function isWordChar(ch) {
@@ -191,7 +244,9 @@ export function translateText(input, dictionary) {
     return { text, changed: text !== input, tier: 'exact' };
   }
 
-  for (const entry of dictionary.regex) {
+  const candidates = regexCandidates(normalizedCore, dictionary);
+  for (let i = 0; i < candidates.length; i += 1) {
+    const entry = candidates[i];
     entry.re.lastIndex = 0;
     if (!entry.re.test(normalizedCore)) continue;
     entry.re.lastIndex = 0;

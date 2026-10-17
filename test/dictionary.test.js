@@ -35,6 +35,8 @@ test('the shipped dictionary compiles and static rules agree with it', () => {
   assert.equal(translateText('26m ago', compiled).text, '26 分钟前');
   assert.equal(translateText('4h ago', compiled).text, '4 小时前');
   assert.equal(translateText('4h\u202fago', compiled).text, '4 小时前');
+  assert.equal(translateText('2m ago', compiled).text, '2 分钟前');
+  assert.equal(translateText('2mo ago', compiled).text, '2 个月前');
   assert.equal(translateText('12s ago', compiled).text, '12 秒前');
   assert.equal(translateText('3% used', compiled).text, '已使用 3%');
   assert.equal(translateText('$0.00 remaining', compiled).text, '剩余 $0.00');
@@ -59,6 +61,9 @@ test('generated runtime is plain script and passes node --check', () => {
   assert.doesNotMatch(script, /^export\s/m);
   assert.match(script, /新建智能体/);
   assert.match(script, /MutationObserver/);
+  assert.match(script, /requestIdleCallback/);
+  assert.match(script, /budgetMs:\s*2000/);
+  assert.doesNotMatch(script, /textContent/);
   assertJavaScriptSyntax(script, 'cursor-zh-hans.js');
 });
 
