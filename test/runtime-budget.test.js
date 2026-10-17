@@ -1290,3 +1290,94 @@ test('report skips css-covered composer placeholders and hidden nodes', () => {
   assert.equal(visible.entries.some((entry) => entry.text === 'Zzzz zero english'), false);
   assert.equal(visible.entries.some((entry) => entry.text === 'Zzzz still english'), true);
 });
+
+test('effort, usage, and timestamp labels stay in their own slots', () => {
+  const { compiled } = loadDictionary();
+  const h = harness();
+  const picker = h.makeElement('DIV', { classes: ['ui-model-picker__menu'] });
+  const effort = h.makeElement('SPAN');
+  effort.appendChild(h.makeText('High Fast\u200b\u200b'));
+  const medium = h.makeElement('SPAN');
+  medium.appendChild(h.makeText('Medium'));
+  picker.appendChild(effort);
+  picker.appendChild(medium);
+  const modelName = h.makeElement('SPAN');
+  modelName.appendChild(h.makeText('High'));
+  const usage = h.makeElement('DIV');
+  const percent = h.makeElement('SPAN');
+  percent.appendChild(h.makeText('12%'));
+  const used = h.makeElement('SPAN');
+  used.appendChild(h.makeText('used'));
+  usage.appendChild(percent);
+  usage.appendChild(used);
+  const lone = h.makeElement('CODE');
+  lone.appendChild(h.makeText('used'));
+  const side = h.makeElement('SPAN', { classes: ['agent-tab-timestamp'] });
+  side.appendChild(h.makeText('7h'));
+  const palette = h.makeElement('DIV', { attrs: { 'data-component': 'palette-item' } });
+  const title = h.makeElement('SPAN');
+  title.appendChild(h.makeText('Fix the build'));
+  const age = h.makeElement('SPAN');
+  age.appendChild(h.makeText('4m'));
+  palette.appendChild(title);
+  palette.appendChild(age);
+  const file = h.makeElement('DIV', { attrs: { 'data-component': 'palette-item' } });
+  file.appendChild(h.makeText('1m'));
+  const loose = h.makeElement('SPAN');
+  loose.appendChild(h.makeText('2d'));
+  translateTree([picker, modelName, usage, lone, side, palette, file, loose], compiled);
+  assert.equal(effort.childNodes[0].nodeValue, '高·快速');
+  assert.equal(medium.childNodes[0].nodeValue, '中');
+  assert.equal(modelName.childNodes[0].nodeValue, 'High');
+  assert.equal(used.childNodes[0].nodeValue, '已使用');
+  assert.equal(lone.childNodes[0].nodeValue, 'used');
+  assert.equal(side.childNodes[0].nodeValue, '7小时');
+  assert.equal(age.childNodes[0].nodeValue, '4分钟');
+  assert.equal(file.childNodes[0].nodeValue, '1m');
+  assert.equal(loose.childNodes[0].nodeValue, '2d');
+});
+
+test('shadow menus and zero-size portals are translated and reported', () => {
+  const { compiled } = loadDictionary();
+  const h = harness();
+  const author = h.makeElement('SPAN');
+  author.appendChild(h.makeText('Author'));
+  const shadow = h.makeElement('DIV');
+  shadow.appendChild(author);
+  shadow.appendChild(h.makeText('Zzzz shadow english'));
+  const host = h.makeElement('DIV', { shadowRoot: shadow });
+  const portal = h.makeElement('DIV');
+  portal.getBoundingClientRect = () => ({ width: 0, height: 0 });
+  const menu = h.makeElement('DIV');
+  menu.getBoundingClientRect = () => ({ width: 160, height: 28 });
+  menu.appendChild(h.makeText('Filter By'));
+  menu.appendChild(h.makeText('Zzzz portal english'));
+  portal.appendChild(menu);
+  const outside = h.makeElement('DIV', { classes: ['context-view'] });
+  outside.appendChild(h.makeText('Most Used'));
+  const { root, body } = mount([host, portal], h);
+  root.appendChild(outside);
+  const windowHost = {};
+  startDomTranslator({
+    translateText,
+    shouldSkipElement,
+    shouldSkipAttributeTarget,
+    skipReason,
+    dictionary: compiled,
+    version: 'budget',
+  }, {
+    document: { body, documentElement: root },
+    MutationObserver: h.MockObserver,
+    Element: class {},
+    window: windowHost,
+    now: () => 0,
+    budgetMs: 2000,
+  });
+  assert.equal(author.childNodes[0].nodeValue, '作者');
+  assert.equal(menu.childNodes[0].nodeValue, '筛选');
+  assert.equal(outside.childNodes[0].nodeValue, '最常使用');
+  const visible = windowHost.__cursorZhHans.report({ visibleOnly: true });
+  assert.equal(visible.entries.some((entry) => entry.text === 'Zzzz portal english'), true);
+  assert.equal(visible.entries.some((entry) => entry.text === 'Zzzz shadow english'), true);
+  assert.equal(visible.entries.some((entry) => entry.text === 'Filter By'), false);
+});

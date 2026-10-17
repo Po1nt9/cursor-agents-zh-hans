@@ -65,6 +65,7 @@ const EDITABLE_CLASSES = new Set([
 const PROTECTED_MESSAGE_KINDS = new Set(['assistant', 'human']);
 
 const MATCH_SPACES = /[\u00a0\u202f\u2007\u2009\u200a\ufeff]/g;
+const ZERO_WIDTH = /[\u200b\u200c\u200d\ufeff]/g;
 
 export function isSafeFragment(text) {
   if (typeof text !== 'string') return false;
@@ -253,7 +254,9 @@ export function translateText(input, dictionary) {
   if (typeof input !== 'string' || input.length === 0 || input.length > MAX_TEXT_LENGTH) {
     return { text: input, changed: false, tier: null };
   }
-  const match = /^(\s*)([\s\S]*?)(\s*)$/.exec(input);
+  // Zero-width characters sit on labels such as "High Fast". They are not part of the key.
+  const source = input.replace(ZERO_WIDTH, '');
+  const match = /^(\s*)([\s\S]*?)(\s*)$/.exec(source);
   const lead = match[1];
   const core = match[2];
   const tail = match[3];

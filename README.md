@@ -13,7 +13,7 @@ Cursor 3 的智能体窗口和经典窗口加载**同一份** `workbench.html`�
 `apply` 默认做两件事：
 
 1. 在 `workbench.html` 里、`workbench.js` 之前插入一个本地脚本 `cursor-zh-hans.js`。
-2. 脚本在页面里用 `MutationObserver` 记录变更。第一次扫整页文档用 `requestIdleCallback`（超时约 50ms，没有则用 `setTimeout`）。小批量新节点（约 1500 个节点或 8ms 以内）在观察者回调里同步翻译，从设置回到主页时不必先画一帧英文；更大的批次仍用 `setTimeout(0)`。`window.__cursorZhHans.report()` 会列出仍含英文的文本和占位符，并说明原因（跳过、词表没有、已锁住或预算用完）。`report({visibleOnly:true})` 会跳过 `display:none`、`visibility:hidden` 和零尺寸节点。编写器占位符已由注入样式覆盖时，报告不再把它们记成跳过。首页提示如果每个词各占一个 span，会先拼成整句再翻译。查找表是 `Map`。正则按首字符分桶。会处理文本节点，以及普通控件上的 `title`、`placeholder`、`aria-label`、`aria-description`、`aria-placeholder`。编写器（`contenteditable`、`.ProseMirror`、`.tiptap`）里面不写入文字，也不写入 `placeholder`、`data-placeholder`、`aria-placeholder`。编写器上的其他标签（例如 `aria-label` 的 Prompt）仍会翻译。空编写器的占位符仍由 CSS `content: attr(data-placeholder)` 显示，补丁另注入样式，按原文精确覆盖 `::before` / `::after`。输入框自己的 `placeholder` 会翻译，已经键入的文字不会。`window.__cursorZhHans.disconnect()` 可以关掉观察者并撤掉这段样式。
+2. 脚本在页面里用 `MutationObserver` 记录变更。第一次扫整页文档用 `requestIdleCallback`（超时约 50ms，没有则用 `setTimeout`）。小批量新节点（约 1500 个节点或 8ms 以内）在观察者回调里同步翻译，从设置回到主页时不必先画一帧英文；更大的批次仍用 `setTimeout(0)`。`window.__cursorZhHans.report()` 会列出仍含英文的文本和占位符，并说明原因（跳过、词表没有、已锁住或预算用完）。`report({visibleOnly:true})` 会跳过 `display:none`、`visibility:hidden`，也会跳过零尺寸节点自己的文字；零尺寸包装里面如果还有可见菜单，仍会走进去。开放的 shadow root，以及挂在 `documentElement` 上、不在 `body` 里的弹出层，观察者和报告都会走到。编写器占位符已由注入样式覆盖时，报告不再把它们记成跳过。首页提示如果每个词各占一个 span，会先拼成整句再翻译。查找表是 `Map`。正则按首字符分桶。会处理文本节点，以及普通控件上的 `title`、`placeholder`、`aria-label`、`aria-description`、`aria-placeholder`。编写器（`contenteditable`、`.ProseMirror`、`.tiptap`）里面不写入文字，也不写入 `placeholder`、`data-placeholder`、`aria-placeholder`。编写器上的其他标签（例如 `aria-label` 的 Prompt）仍会翻译。空编写器的占位符仍由 CSS `content: attr(data-placeholder)` 显示，补丁另注入样式，按原文精确覆盖 `::before` / `::after`。输入框自己的 `placeholder` 会翻译，已经键入的文字不会。`window.__cursorZhHans.disconnect()` 可以关掉观察者并撤掉这段样式。
 
 三层词典：
 
@@ -81,7 +81,14 @@ node bin/cursor-zh.js apply --static --update-checksums
 | Windows | `%LOCALAPPDATA%\Programs\cursor\resources\app`（也会看 `Cursor` 和 Program Files） |
 | Linux | `/usr/share/cursor/resources/app`、`/usr/lib/cursor/resources/app`、`/opt/Cursor/resources/app`、`~/.local/share/cursor/resources/app` |
 
-`--app-path` 可以传 `resources/app`，也可以直接传 `Cursor.app`。AppImage 没有固定解压目录，请先解压再把里面的 `resources/app` 传给 `--app-path`。
+`--app-path` 可以传 `resources/app`，也可以直接传 `Cursor.app`。不在默认位置时要自己带上，例如装在 `/Applications/Agent/Cursor.app`：
+
+```bash
+node bin/cursor-zh.js apply --app-path /Applications/Agent/Cursor.app --update-checksums
+node bin/cursor-zh.js restore --app-path /Applications/Agent/Cursor.app
+```
+
+AppImage 没有固定解压目录，请先解压再把里面的 `resources/app` 传给 `--app-path`。
 
 `/Applications` 下的 Cursor 往往没有写权限。本工具不会自己调用 sudo。需要时请自行用 sudo 运行，并确认你信任当前这份代码。
 
@@ -100,6 +107,20 @@ node bin/cursor-zh.js restore
 写回之后，被备份过的文件与打补丁前字节相同。若还执行过校验和更新，`product.json` 也会回到备份。语言包扩展不在此列，不受影响。
 
 找不到当前版本的备份时，命令会停下来，不会拿旧版本的文件覆盖新安装。那种情况要回到干净的界面，请重新安装 Cursor。
+
+## 实机验证
+
+Cursor 3.25.6 的已登录智能体窗口上对过这一版：抽到的首页提示都是整句中文，`report()` 的预算条目是 0，没有半句中文半句英文，空闲时渲染进程 CPU 大约 1.4%，设置项在打开菜单前后没有变化。这里的自动化测试不打开真正的 Cursor。
+
+## 反馈还没译的字
+
+界面上还剩英文时，在那个窗口打开开发者工具（Help → Toggle Developer Tools），在 Console 里执行：
+
+```js
+copy(JSON.stringify(window.__cursorZhHans.report({ visibleOnly: true }), null, 2))
+```
+
+`copy` 会把结果放进剪贴板。不传 `visibleOnly` 时会连隐藏节点一起列。每条有原文、大致路径，以及原因：`skipped`（哪条规则）、`no dictionary match`、`latched` 或 `budget`。把这份 JSON 连同 Cursor 版本发回来即可。`window.__cursorZhHans.disconnect()` 可以关掉翻译。
 
 ## Cursor 更新之后
 

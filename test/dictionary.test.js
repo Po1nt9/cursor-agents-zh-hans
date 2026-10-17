@@ -132,6 +132,11 @@ test('the shipped dictionary compiles and static rules agree with it', () => {
   assert.equal(translateText('Start with Find critical bugs', compiled).text, '从「查找严重缺陷」开始');
   assert.equal(translateText('Grok 4.7 enabled', compiled).text, 'Grok 4.7 已启用');
   assert.equal(translateText('Configure gmail', compiled).text, '配置 gmail');
+  assert.equal(translateText('Close bash', compiled).text, '关闭 bash');
+  assert.equal(translateText('Filter By', compiled).text, '筛选');
+  assert.equal(translateText('System font\u200b\u200b', compiled).text, '系统字体');
+  assert.equal(translateText('High', compiled).changed, false);
+  assert.equal(translateText('High Fast\u200b\u200b', compiled).changed, false);
   assert.equal(
     translateText('Drag and drop agent chats to split your view into tiled panes', compiled).text,
     '拖放智能体聊天，把视图拆成平铺窗格',

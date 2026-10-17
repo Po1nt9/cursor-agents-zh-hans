@@ -29,6 +29,7 @@ const WORD_SPAN_CAP = 200;
 const SYNC_NODE_LIMIT = 1500;
 const SYNC_MS = 8;
 const REPORT_LIMIT = 800;
+const REPORT_NODE_CAP = 60000;
 const ANCESTOR_DEPTH = 6;
 const NODE_TRANSLATE_BUDGET = 12;
 const BURST_STEP_CAP = 2000000;
@@ -542,6 +543,116 @@ export function startDomTranslator(api, env) {
     return true;
   }
 
+  function classBlob(el) {
+    if (!el || el.nodeType !== 1) return '';
+    if (typeof el.className === 'string' && el.className) return el.className;
+    const list = el.classList;
+    if (!list || typeof list[Symbol.iterator] !== 'function') return '';
+    const names = [];
+    for (const name of list) names.push(name);
+    return names.join(' ');
+  }
+
+  function classHas(el, needle) {
+    const blob = classBlob(el);
+    if (!blob) return false;
+    const parts = blob.split(/\s+/);
+    for (let i = 0; i < parts.length; i += 1) {
+      if (parts[i].includes(needle)) return true;
+    }
+    return false;
+  }
+
+  function stripMarks(text) {
+    return String(text || '').replace(/[\u200b\u200c\u200d\ufeff]/g, '');
+  }
+
+  // Effort names share words with model names. Only the picker suffix and menu use them.
+  function effortTranslation(el, raw) {
+    const core = normalized(stripMarks(raw));
+    const to = core === 'High' ? '高'
+      : core === 'Medium' ? '中'
+        : core === 'Low' ? '低'
+          : core === 'High Fast' ? '高·快速'
+            : '';
+    if (!to) return '';
+    let cur = el;
+    for (let depth = 0; depth < 8 && cur; depth += 1) {
+      if (classHas(cur, 'variant-suffix') || classHas(cur, 'model-picker')) return to;
+      cur = cur.parentElement || null;
+    }
+    return '';
+  }
+
+  function usedBesidePercent(node) {
+    if (normalized(stripMarks(node.nodeValue)) !== 'used') return false;
+    let el = node.parentElement;
+    for (let depth = 0; depth < 3 && el; depth += 1) {
+      const parent = el.parentElement;
+      if (!parent) break;
+      const kids = parent.childNodes || [];
+      for (let i = 0; i < kids.length; i += 1) {
+        const kid = kids[i];
+        if (kid === el) continue;
+        let text = '';
+        if (kid.nodeType === 3) text = kid.nodeValue || '';
+        else if (kid.nodeType === 1) text = elementText(kid, 40) || '';
+        if (/^\d+(?:\.\d+)?%$/.test(normalized(text))) return true;
+      }
+      el = parent;
+    }
+    return false;
+  }
+
+  function otherLabelIn(root, token) {
+    const stack = [root];
+    let seen = 0;
+    while (stack.length && seen < 40) {
+      const node = stack.pop();
+      seen += 1;
+      if (!node) continue;
+      if (node.nodeType === 3) {
+        const core = normalized(stripMarks(node.nodeValue));
+        if (!core || core === token) continue;
+        if (/[A-Za-z\u4e00-\u9fff]/.test(core)) return true;
+        continue;
+      }
+      if (node.nodeType !== 1 && node.nodeType !== 11) continue;
+      const kids = node.childNodes || [];
+      for (let i = 0; i < kids.length; i += 1) stack.push(kids[i]);
+    }
+    return false;
+  }
+
+  // Compact ages are one token. Only the sidebar timestamp and a palette row that
+  // also has a title, so a file named "1m" is left alone.
+  function relativeTimeTranslation(el, raw) {
+    const core = normalized(stripMarks(raw));
+    const match = /^(\d{1,4})([mhd])$/.exec(core);
+    if (!match) return '';
+    let cur = el;
+    let slot = false;
+    for (let depth = 0; depth < 8 && cur; depth += 1) {
+      if (
+        classHas(cur, 'agent-tab-timestamp')
+        || classHas(cur, 'bc-instance-header-timestamp')
+      ) {
+        slot = true;
+        break;
+      }
+      if (cur.getAttribute?.('data-component') === 'palette-item' && otherLabelIn(cur, core)) {
+        slot = true;
+        break;
+      }
+      cur = cur.parentElement || null;
+    }
+    if (!slot) return '';
+    const n = match[1];
+    if (match[2] === 'm') return `${n}分钟`;
+    if (match[2] === 'h') return `${n}小时`;
+    return `${n}天`;
+  }
+
   function wordSpanHost(start) {
     let host = start;
     for (let depth = 0; depth < ANCESTOR_DEPTH && host; depth += 1) {
@@ -566,6 +677,21 @@ export function startDomTranslator(api, env) {
       if (whole.changed && whole.tier === 'exact' && applyWordSpanSentence(sentenceHost, whole.text)) return;
       // A single word such as New, Plan, or Use must not translate inside the carousel.
       latchWordSpan(sentenceHost);
+      return;
+    }
+
+    const effort = effortTranslation(parent, node.nodeValue);
+    if (effort) {
+      if (!cooled(node)) writeText(node, effort);
+      return;
+    }
+    if (usedBesidePercent(node)) {
+      if (!cooled(node)) writeText(node, '已使用');
+      return;
+    }
+    const age = relativeTimeTranslation(parent, node.nodeValue);
+    if (age) {
+      if (!cooled(node)) writeText(node, age);
       return;
     }
 
@@ -1092,16 +1218,27 @@ export function startDomTranslator(api, env) {
     return false;
   }
 
+  function pushReportChildren(stack, node) {
+    if (node.shadowRoot) stack.push(node.shadowRoot);
+    const children = node.childNodes || [];
+    for (let i = children.length - 1; i >= 0; i -= 1) stack.push(children[i]);
+  }
+
   function report(options) {
     const visibleOnly = Boolean(options && options.visibleOnly);
     const entries = [];
-    const root = document.body || document.documentElement;
+    const root = document.documentElement || document.body;
     const stack = root ? [root] : [];
     let seen = 0;
-    while (stack.length && entries.length < REPORT_LIMIT && seen < 20000) {
+    while (stack.length && entries.length < REPORT_LIMIT && seen < REPORT_NODE_CAP) {
       const node = stack.pop();
       if (!node) continue;
       seen += 1;
+      if (node.nodeType === 11) {
+        const children = node.childNodes || [];
+        for (let i = children.length - 1; i >= 0; i -= 1) stack.push(children[i]);
+        continue;
+      }
       if (node.nodeType === 3) {
         const value = node.nodeValue || '';
         if (!mostlyEnglish(value)) continue;
@@ -1119,32 +1256,35 @@ export function startDomTranslator(api, env) {
         continue;
       }
       if (node.nodeType !== 1) continue;
-      if (visibleOnly && (styleHidden(node) || boxHidden(node))) continue;
       const tag = String(node.tagName || '').toUpperCase();
-      if (tag === 'SCRIPT' || tag === 'STYLE' || tag === 'NOSCRIPT') continue;
-      for (let i = 0; i < TRANSLATABLE_ATTRS.length; i += 1) {
-        const name = TRANSLATABLE_ATTRS[i];
-        const value = node.getAttribute?.(name);
-        if (!value || !mostlyEnglish(value)) continue;
-        if (placeholderAttr(name) && coveredByPlaceholderCss(value)) continue;
-        const skipped = shouldSkipAttributeTarget(node) ? (skipReason(node) || 'attribute target') : null;
-        const why = explainEnglish(value, skipped, suppressedAttrs.has(node), suppressedAttrs.has(node) || false);
-        pushReport(entries, {
-          kind: name,
-          text: normalized(value).slice(0, 240),
-          path: ancestorPath(node),
-          reason: why.reason,
-          detail: why.detail,
-        });
+      if (tag === 'HEAD' || tag === 'SCRIPT' || tag === 'STYLE' || tag === 'NOSCRIPT') continue;
+      if (visibleOnly && styleHidden(node)) continue;
+      // A zero-size portal wrapper can hold a visible menu. Keep walking.
+      const zero = visibleOnly && boxHidden(node);
+      if (!zero) {
+        for (let i = 0; i < TRANSLATABLE_ATTRS.length; i += 1) {
+          const name = TRANSLATABLE_ATTRS[i];
+          const value = node.getAttribute?.(name);
+          if (!value || !mostlyEnglish(value)) continue;
+          if (placeholderAttr(name) && coveredByPlaceholderCss(value)) continue;
+          const skipped = shouldSkipAttributeTarget(node) ? (skipReason(node) || 'attribute target') : null;
+          const why = explainEnglish(value, skipped, suppressedAttrs.has(node), suppressedAttrs.has(node) || false);
+          pushReport(entries, {
+            kind: name,
+            text: normalized(value).slice(0, 240),
+            path: ancestorPath(node),
+            reason: why.reason,
+            detail: why.detail,
+          });
+        }
       }
-      const children = node.childNodes || [];
-      for (let i = children.length - 1; i >= 0; i -= 1) stack.push(children[i]);
+      pushReportChildren(stack, node);
     }
     return {
       version: version || '0.1.0',
       killed,
       count: entries.length,
-      truncated: entries.length >= REPORT_LIMIT,
+      truncated: entries.length >= REPORT_LIMIT || (seen >= REPORT_NODE_CAP && stack.length > 0),
       entries,
     };
   }
@@ -1178,6 +1318,18 @@ export function startDomTranslator(api, env) {
   const target = document.documentElement || document.body;
   if (target) observe(target);
   if (document.body) enqueue(document.body);
+  // Context views and portals can be siblings of body, or already inside a shadow root.
+  const rootEl = document.documentElement;
+  if (rootEl && rootEl !== document.body) {
+    const kids = rootEl.childNodes || [];
+    for (let i = kids.length - 1; i >= 0; i -= 1) {
+      const kid = kids[i];
+      if (kid === document.body || kid === document.head) continue;
+      const tag = String(kid.tagName || '').toUpperCase();
+      if (tag === 'HEAD' || tag === 'SCRIPT' || tag === 'STYLE') continue;
+      enqueue(kid);
+    }
+  }
   if (queue.length) schedulePump('idle');
 
   return {
