@@ -33,11 +33,19 @@ export function runMacPostProcess(appPath, options = {}) {
     }
   }
   if (options.codesign !== false) {
+    const preserved = ['--force', '--deep', '--preserve-metadata=entitlements,requirements,flags', '--sign', '-', bundle];
+    const plain = ['--force', '--deep', '--sign', '-', bundle];
     try {
-      execFile('codesign', ['--force', '--deep', '--sign', '-', bundle], { stdio: 'pipe' });
-      steps.push({ name: 'codesign', args: ['--force', '--deep', '--sign', '-', bundle] });
+      execFile('codesign', preserved, { stdio: 'pipe' });
+      steps.push({ name: 'codesign', args: preserved, preservedMetadata: true });
     } catch (error) {
-      warnings.push(`ad-hoc 重签名失败（codesign）: ${error.message}。Apple Silicon 上未签名的改动可能被系统直接杀掉。`);
+      try {
+        execFile('codesign', plain, { stdio: 'pipe' });
+        steps.push({ name: 'codesign', args: plain, preservedMetadata: false });
+        warnings.push(`已 ad-hoc 重签名，但未能保留 entitlements（${error.message}）。JIT、摄像头、麦克风或 Apple Events 可能不可用。重新安装 Cursor 才能恢复原来的 Developer ID 签名。`);
+      } catch (fallbackError) {
+        warnings.push(`ad-hoc 重签名失败（codesign）: ${fallbackError.message}。Apple Silicon 上未签名的改动可能被系统直接杀掉。`);
+      }
     }
   }
   return { performed: steps.length > 0, reason: 'darwin', bundle, steps, warnings };

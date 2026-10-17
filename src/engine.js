@@ -5,8 +5,6 @@
 
 export const MAX_TEXT_LENGTH = 2000;
 export const MAX_CORE_LENGTH = 500;
-/** Exact entries at least this long (and containing a space) also act as fragments. */
-export const FRAGMENT_AUTO_MIN = 16;
 
 const SKIP_TAGS = new Set([
   'SCRIPT',
@@ -84,11 +82,6 @@ export function compileDictionary(raw) {
   }
 
   const fragMap = new Map();
-  for (const [from, to] of exact) {
-    if (from.length >= FRAGMENT_AUTO_MIN && isSafeFragment(from)) {
-      fragMap.set(from, to);
-    }
-  }
   const explicit = Array.isArray(raw.fragments) ? raw.fragments : [];
   for (const item of explicit) {
     if (!item || typeof item !== 'object') {
@@ -194,12 +187,10 @@ export function translateText(input, dictionary) {
     return { text, changed: text !== input, tier: 'regex' };
   }
 
-  if (dictionary.fragments.length > 0) {
-    const next = applyFragments(core, dictionary.fragments);
-    if (next !== core) {
-      const text = lead + next + tail;
-      return { text, changed: text !== input, tier: 'fragment' };
-    }
+  for (const frag of dictionary.fragments) {
+    if (frag.from !== core) continue;
+    const text = lead + frag.to + tail;
+    return { text, changed: text !== input, tier: 'fragment' };
   }
 
   return { text: input, changed: false, tier: null };

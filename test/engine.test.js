@@ -41,25 +41,35 @@ test('regex replaces the whole label and leaves other numbers alone', () => {
   assert.equal(translateText('PR #12', dictionary).text, '拉取请求 #12');
 });
 
-test('fragments honor word boundaries and do not rescan translations', () => {
+test('fragments match a whole label and do not leave a mixed sentence', () => {
   assert.equal(applyFragments('New Agents', dictionary.fragments), 'New Agents');
-  assert.equal(translateText('Open New Agent today', dictionary).text, 'Open 新建智能体 today');
+  assert.equal(translateText('Open New Agent today', dictionary).text, 'Open New Agent today');
   assert.equal(translateText('New Agent', dictionary).tier, 'exact');
+  const whole = compileDictionary({
+    exact: {},
+    fragments: [{ from: 'New Agent', to: '新建智能体' }],
+    regex: [],
+  });
+  assert.equal(translateText('New Agent', whole).text, '新建智能体');
+  assert.equal(translateText('New Agent', whole).tier, 'fragment');
+  assert.equal(translateText('Open New Agent today', whole).text, 'Open New Agent today');
 });
 
-test('long auto-promoted phrases win over a shorter fragment at the same index', () => {
+test('longer exact labels are not auto-applied inside a larger sentence', () => {
   const compiled = compileDictionary({
     exact: {
       'New Agents Window': '新建智能体窗口',
       'Agents Window': '智能体窗口',
+      'Cloud Agent': '云端智能体',
     },
-    fragments: [],
+    fragments: [{ from: 'Cloud Agent', to: '云端智能体' }],
     regex: [],
   });
   assert.equal(translateText('New Agents Window', compiled).tier, 'exact');
+  assert.equal(translateText('Use New Agents Window now', compiled).text, 'Use New Agents Window now');
   assert.equal(
-    translateText('Use New Agents Window now', compiled).text,
-    'Use 新建智能体窗口 now',
+    translateText('Cloud Agent Approval Banners While Focused', compiled).text,
+    'Cloud Agent Approval Banners While Focused',
   );
 });
 
@@ -218,4 +228,91 @@ test('mutation observer translates added nodes and attributes, not a later full 
   assert.equal(cancel.nodeValue, before);
 
   handle.disconnect();
+});
+
+test('split sentence is translated as a whole and a lone short label still changes', () => {
+  function makeElement(tag = 'DIV') {
+    const el = {
+      nodeType: 1,
+      tagName: tag,
+      classList: { contains: () => false },
+      parentElement: null,
+      childNodes: [],
+      attrs: {},
+      isContentEditable: false,
+      shadowRoot: null,
+      getAttribute(name) { return Object.prototype.hasOwnProperty.call(this.attrs, name) ? this.attrs[name] : null; },
+      setAttribute(name, value) { this.attrs[name] = value; },
+      hasAttribute(name) { return Object.prototype.hasOwnProperty.call(this.attrs, name); },
+      appendChild(child) {
+        child.parentElement = this;
+        this.childNodes.push(child);
+        return child;
+      },
+      getRootNode() { return { host: null }; },
+    };
+    return el;
+  }
+  function makeText(value) {
+    return { nodeType: 3, nodeValue: value, parentElement: null };
+  }
+  class MockObserver {
+    constructor() {}
+    observe() {}
+    disconnect() {}
+  }
+
+  const compiled = compileDictionary({
+    exact: {
+      Voice: '语音',
+      'Voice mode lets you dictate better prompts for your agents': '语音模式可以让你口述出更好的智能体提示',
+      'Plan New Idea': '计划新想法',
+      'Cloud Agent Approval Banners While Focused': '聚焦时显示云端智能体批准横幅',
+    },
+    fragments: [{ from: 'Cloud Agent', to: '云端智能体' }],
+    regex: [],
+  });
+
+  const body = makeElement('BODY');
+  const root = makeElement('HTML');
+  root.appendChild(body);
+  const sentence = makeElement('P');
+  const voice = makeText('Voice');
+  const rest = makeText(' mode lets you dictate better prompts for your agents');
+  sentence.appendChild(voice);
+  sentence.appendChild(rest);
+  body.appendChild(sentence);
+  const idea = makeElement('BUTTON');
+  const ideaText = makeText('Plan New Idea');
+  const shortcut = makeText('Tab');
+  idea.appendChild(ideaText);
+  idea.appendChild(shortcut);
+  body.appendChild(idea);
+  const title = makeElement('DIV');
+  const titleText = makeText('Cloud Agent Approval Banners While Focused');
+  title.appendChild(titleText);
+  body.appendChild(title);
+  const nav = makeElement('BUTTON');
+  const navText = makeText('Voice');
+  nav.appendChild(navText);
+  body.appendChild(nav);
+
+  startDomTranslator({
+    translateText,
+    shouldSkipElement,
+    dictionary: compiled,
+    version: 'test',
+  }, {
+    document: { body, documentElement: root },
+    MutationObserver: MockObserver,
+    Element: class {},
+    window: {},
+  });
+
+  assert.equal(voice.nodeValue, '语音模式可以让你口述出更好的智能体提示');
+  assert.equal(rest.nodeValue, '');
+  assert.equal(ideaText.nodeValue, '计划新想法');
+  assert.equal(shortcut.nodeValue, 'Tab');
+  assert.equal(titleText.nodeValue, '聚焦时显示云端智能体批准横幅');
+  assert.equal(navText.nodeValue, '语音');
 });

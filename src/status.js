@@ -147,9 +147,11 @@ export function formatDoctor(report) {
     lines.push(`macOS 应用包: ${report.bundlePath || '（未能推断）'}`);
     lines.push('修改 .app 后系统会认为签名失效。apply / restore 默认执行:');
     lines.push('  xattr -dr com.apple.quarantine <Cursor.app>');
-    lines.push('  codesign --force --deep --sign - <Cursor.app>');
-    lines.push('这是 ad-hoc 重签名，不是 Apple 开发者签名。可用 --no-codesign 与 --no-clear-quarantine 跳过。');
-    lines.push('Apple Silicon 上，未重签的修改版可能被系统直接结束进程。');
+    lines.push('  codesign --force --deep --preserve-metadata=entitlements,requirements,flags --sign - <Cursor.app>');
+    lines.push('这是 ad-hoc 重签名，不是 Apple 开发者签名。它会换掉原来的 Developer ID 签名；要恢复官方签名，请重新安装 Cursor。');
+    lines.push('签名时会尽量保留 entitlements、requirements 和 flags（包括 hardened runtime）。保留失败时才会退回不带这些元数据的签名。');
+    lines.push('可用 --no-codesign 与 --no-clear-quarantine 跳过。Apple Silicon 上，未重签的修改版可能被系统直接结束进程。');
+    lines.push('屏幕顶部的 macOS 菜单栏是系统原生菜单，这份补丁改不到。请从扩展市场安装 MS-CEINTL.vscode-language-pack-zh-hans。');
   } else {
     lines.push('当前不是 macOS，因此不会执行 codesign 或清除 quarantine。');
     lines.push('在 Mac 上，apply / restore 默认会 ad-hoc 重签名并清除隔离属性，可用 --no-codesign 与 --no-clear-quarantine 关闭。');

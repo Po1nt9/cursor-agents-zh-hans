@@ -29,11 +29,96 @@ export function startDomTranslator(api, env) {
   const attrMemo = new WeakMap();
   const observed = new WeakSet();
 
+  function elementText(el, cap) {
+    const limit = cap || 600;
+    if (!el) return '';
+    if (typeof el.textContent === 'string') return el.textContent.slice(0, limit + 1);
+    let out = '';
+    const children = el.childNodes || [];
+    for (let i = 0; i < children.length; i += 1) {
+      const child = children[i];
+      if (child.nodeType === 3) out += child.nodeValue || '';
+      else if (child.nodeType === 1 && !shouldSkipElement(child)) out += elementText(child, limit - out.length);
+      if (out.length > limit) return out;
+    }
+    return out;
+  }
+
+  function normalized(text) {
+    return String(text || '').replace(/\s+/g, ' ').trim();
+  }
+
+  function continuesSentence(hostText, core) {
+    const all = normalized(hostText);
+    if (!all || all === core) return false;
+    const idx = all.indexOf(core);
+    if (idx < 0) return false;
+    return /^\s+[A-Za-z]{2,}/.test(all.slice(idx + core.length));
+  }
+
+  function collectTextNodes(el, into) {
+    const children = el.childNodes || [];
+    for (let i = 0; i < children.length; i += 1) {
+      const child = children[i];
+      if (child.nodeType === 3) into.push(child);
+      else if (child.nodeType === 1 && !shouldSkipElement(child)) collectTextNodes(child, into);
+    }
+  }
+
+  function applyWhole(el, translated) {
+    const nodes = [];
+    collectTextNodes(el, nodes);
+    const meaningful = [];
+    for (let i = 0; i < nodes.length; i += 1) {
+      if (nodes[i].nodeValue && String(nodes[i].nodeValue).trim()) meaningful.push(nodes[i]);
+    }
+    if (!meaningful.length) return;
+    meaningful[0].nodeValue = translated;
+    textMemo.set(meaningful[0], translated);
+    for (let i = 1; i < meaningful.length; i += 1) {
+      meaningful[i].nodeValue = '';
+      textMemo.set(meaningful[i], '');
+    }
+  }
+
   function translateTextNode(node) {
     if (!node || node.nodeType !== 3) return;
     const parent = node.parentElement;
     if (!parent || shouldSkipElement(parent)) return;
     if (textMemo.get(node) === node.nodeValue) return;
+
+    let best = null;
+    let host = parent;
+    for (let depth = 0; depth < 6 && host; depth += 1) {
+      if (shouldSkipElement(host)) break;
+      const raw = elementText(host, 600);
+      if (raw.length > 500) break;
+      const compact = normalized(raw);
+      if (compact) {
+        const whole = translateText(compact, dictionary);
+        if (whole.changed) best = { host, text: whole.text };
+      }
+      const kids = host.childNodes || [];
+      if (kids.length > 24) break;
+      host = host.parentElement || null;
+    }
+
+    if (best) {
+      const compact = normalized(elementText(best.host, 600));
+      const short = compact.length <= 24 && compact.indexOf(' ') === -1;
+      const above = best.host.parentElement;
+      if (!(short && above && continuesSentence(elementText(above, 600), compact))) {
+        applyWhole(best.host, best.text);
+        return;
+      }
+    }
+
+    const core = normalized(node.nodeValue);
+    if (core && core.indexOf(' ') === -1 && core.length <= 24 && continuesSentence(elementText(parent, 600), core)) {
+      textMemo.set(node, node.nodeValue);
+      return;
+    }
+
     const result = translateText(node.nodeValue, dictionary);
     if (!result.changed || result.text === node.nodeValue) {
       textMemo.set(node, node.nodeValue);

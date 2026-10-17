@@ -17,9 +17,9 @@ Cursor 3 的智能体窗口和经典窗口加载**同一份** `workbench.html`�
 
 三层词典：
 
-- 完全匹配（`dictionary/exact.json`）
-- 片段（`dictionary/fragments.json`，再加上较长的完全匹配条目）
-- 正则（`dictionary/regex.json`，给带数字或名字的整句用）
+- 完全匹配（`dictionary/exact.json`）：整段可见文字去掉首尾空白后必须完全相等，设置页的标题和说明都走这里
+- 片段（`dictionary/fragments.json`）：只有整段文字正好等于这条短语时才替换，不会再改句子中间的几个词
+- 正则（`dictionary/regex.json`，给带数字或名字的整句用，例如「工作了 2 分 15 秒」「26 分钟前」）
 
 下面这些区域**不会**翻译：代码编辑器、终端、差异内容、聊天记录和模型输出的 Markdown、用户正在输入的内容。消息列表内部的英文也会留下来，以免把模型写的句子改掉。
 
@@ -77,7 +77,7 @@ node bin/cursor-zh.js apply --static --update-checksums
 
 | 系统 | 默认位置 |
 | --- | --- |
-| macOS | `/Applications/Cursor.app/Contents/Resources/app`，以及 `~/Applications` 下的同名路径 |
+| macOS | `/Applications/Cursor.app`，以及 `/Applications/子目录/Cursor.app`、`~/Applications` 下同样的两级路径。若能从正在运行的进程命令行看出安装位置，优先用那个路径 |
 | Windows | `%LOCALAPPDATA%\Programs\cursor\resources\app`（也会看 `Cursor` 和 Program Files） |
 | Linux | `/usr/share/cursor/resources/app`、`/usr/lib/cursor/resources/app`、`/opt/Cursor/resources/app`、`~/.local/share/cursor/resources/app` |
 
@@ -115,10 +115,14 @@ node bin/cursor-zh.js restore
 
 ```bash
 xattr -dr com.apple.quarantine /Applications/Cursor.app
-codesign --force --deep --sign - /Applications/Cursor.app
+codesign --force --deep --preserve-metadata=entitlements,requirements,flags --sign - /Applications/Cursor.app
 ```
 
-这是临时的 ad-hoc 签名，不是 Apple 开发者证书。`--no-codesign` 跳过签名，`--no-clear-quarantine` 跳过隔离属性。两种都关掉时，程序只改文件，签名问题留给你自己处理。非 macOS 系统会跳过这两步，并在输出里说明。
+这是临时的 ad-hoc 签名，不是 Apple 开发者证书。原来的 Developer ID 签名会被换掉；要回到官方签名，重新安装 Cursor。`--preserve-metadata` 用来留下 entitlements、requirements 和 flags（含 hardened runtime，以及 allow-jit、摄像头、麦克风、Apple Events 这些权限）。这一步失败时，才会退回不保留这些元数据的签名，并在输出里说明。
+
+`--no-codesign` 跳过签名，`--no-clear-quarantine` 跳过隔离属性。两种都关掉时，程序只改文件，签名问题留给你自己处理。非 macOS 系统会跳过这两步，并在输出里说明。
+
+屏幕顶部的 macOS 菜单栏是系统原生菜单，不在网页 DOM 里，这个补丁改不到。请从扩展市场安装 `MS-CEINTL.vscode-language-pack-zh-hans`。设置页、侧边栏、主页建议和占位符走的是 DOM，由本词典翻译。
 
 ## 校验和
 
@@ -138,8 +142,8 @@ node bin/cursor-zh.js scan --app-path /path/to/resources/app --limit 200
 
 改译文时：
 
-1. 按钮和菜单放进 `dictionary/exact.json`。
-2. 会嵌在句子里的短语放进 `dictionary/fragments.json`（至少 8 个字符，并且含空格）。
+1. 按钮、菜单、设置项的标题和整句说明放进 `dictionary/exact.json`。一句英文就给一整句中文，不要只译句子里的一两个词。
+2. `dictionary/fragments.json` 只保留整段可见文字正好等于该短语的情况（至少 8 个字符，并且含空格）。它不再改写更长句子的中间部分，以免出现「云端智能体 Approval Banners」这种中英混排。
 3. 带数字或名字的整句放进 `dictionary/regex.json`，模式必须是 `^...$`。
 4. 注入到不了、又足够长的 Glass 字符串，才加进 `dictionary/static-glass.json`，并写上该版本的 `expectedHits`。
 5. 用词跟 [dictionary/GLOSSARY.md](dictionary/GLOSSARY.md) 保持一致。Agent 用「智能体」，不用「代理」。
@@ -166,4 +170,4 @@ node bin/cursor-zh.js apply --update-checksums
 node bin/cursor-zh.js restore
 ```
 
-`restore` writes back byte-for-byte backups for the current `product.json` version and commit. On macOS the default post-step is `xattr -dr com.apple.quarantine` and `codesign --force --deep --sign -` on `Cursor.app`; opt out with `--no-clear-quarantine` and `--no-codesign`. `--update-checksums` rewrites only checksum entries for files this tool actually changed. Install Microsoft's VS Code Chinese language pack from the marketplace for the inherited UI. See the Chinese sections above for paths, updates, and the glossary (`dictionary/GLOSSARY.md`).
+`restore` writes back byte-for-byte backups for the current `product.json` version and commit. On macOS the default post-step is `xattr -dr com.apple.quarantine` and `codesign --force --deep --preserve-metadata=entitlements,requirements,flags --sign -` on `Cursor.app`. That ad-hoc signature replaces the original Developer ID signature; reinstall Cursor to get the official signature back. If preserving entitlements fails, the tool signs again without that metadata and says so. Opt out with `--no-clear-quarantine` and `--no-codesign`. Auto-detect also checks `/Applications/*/Cursor.app`, `~/Applications/*/Cursor.app`, and the running process command line when it contains a path. `--update-checksums` rewrites only checksum entries for files this tool actually changed. The native macOS menu bar is outside the DOM; install Microsoft's VS Code Chinese language pack (`MS-CEINTL.vscode-language-pack-zh-hans`) for it. See the Chinese sections above for paths, updates, and the glossary (`dictionary/GLOSSARY.md`).

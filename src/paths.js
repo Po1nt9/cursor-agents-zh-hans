@@ -1,3 +1,4 @@
+import { execFileSync } from 'node:child_process';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
@@ -23,13 +24,59 @@ export function userDataDir() {
   return path.join(base, 'cursor-zh-hans');
 }
 
+export function macosApplicationCandidates(home = os.homedir(), readDir = fs.readdirSync) {
+  const roots = ['/Applications', path.join(home, 'Applications')];
+  const apps = [];
+  for (const root of roots) {
+    apps.push(path.join(root, 'Cursor.app', 'Contents', 'Resources', 'app'));
+    let names = [];
+    try {
+      names = readDir(root);
+    } catch {
+      continue;
+    }
+    for (const name of names) {
+      if (!name || name.startsWith('.') || name.endsWith('.app')) continue;
+      apps.push(path.join(root, name, 'Cursor.app', 'Contents', 'Resources', 'app'));
+    }
+  }
+  return apps;
+}
+
+export function cursorResourceFromCommand(command) {
+  const text = String(command || '');
+  if (!text) return null;
+  const macRe = /(?:^|[\s"'])(\/.*?Cursor\.app)\/Contents\/MacOS\/Cursor(?=$|[\s"'])/g;
+  let macMatch;
+  let macPath = null;
+  while ((macMatch = macRe.exec(text))) macPath = macMatch[1];
+  if (macPath) return path.join(macPath, 'Contents', 'Resources', 'app');
+
+  const linuxRe = /(?:^|[\s"'])(\/.*?resources\/app)(?=$|[\s"'/])/g;
+  let linuxMatch;
+  let linuxPath = null;
+  while ((linuxMatch = linuxRe.exec(text))) {
+    if (/cursor/i.test(linuxMatch[1])) linuxPath = linuxMatch[1];
+  }
+  return linuxPath;
+}
+
+function runningCursorCommands() {
+  try {
+    const output = execFileSync('ps', ['-ax', '-o', 'command='], {
+      encoding: 'utf8',
+      stdio: ['ignore', 'pipe', 'ignore'],
+    });
+    return String(output).split(/\n/).map((line) => line.trim()).filter(Boolean);
+  } catch {
+    return [];
+  }
+}
+
 export function candidateAppPaths() {
   const home = os.homedir();
   if (process.platform === 'darwin') {
-    return [
-      '/Applications/Cursor.app/Contents/Resources/app',
-      path.join(home, 'Applications', 'Cursor.app', 'Contents', 'Resources', 'app'),
-    ];
+    return macosApplicationCandidates(home, fs.readdirSync);
   }
   if (process.platform === 'win32') {
     const local = process.env.LOCALAPPDATA || path.join(home, 'AppData', 'Local');
@@ -67,20 +114,34 @@ export function isCursorApp(appPath) {
     && fs.existsSync(path.join(appPath, REL_HTML));
 }
 
-export function detectAppPath(explicit) {
+export function detectAppPath(explicit, options = {}) {
+  const isApp = options.isCursorApp ?? isCursorApp;
   if (explicit) {
     const normalized = normalizeAppPath(explicit);
-    if (!isCursorApp(normalized)) {
+    if (!isApp(normalized)) {
       throw new Error(`--app-path 不是 Cursor 安装目录（需要 product.json 与 workbench.html）: ${normalized}`);
     }
     return { appPath: normalized, searched: [normalized] };
   }
-  const searched = candidateAppPaths();
+  const searched = [];
+  const commands = options.commands ?? runningCursorCommands();
+  for (const command of commands) {
+    const fromProcess = cursorResourceFromCommand(command);
+    if (fromProcess) searched.push(fromProcess);
+  }
+  searched.push(...candidateAppPaths());
+  const unique = [];
+  const seen = new Set();
   for (const candidate of searched) {
-    if (isCursorApp(candidate)) return { appPath: candidate, searched };
+    if (seen.has(candidate)) continue;
+    seen.add(candidate);
+    unique.push(candidate);
+  }
+  for (const candidate of unique) {
+    if (isApp(candidate)) return { appPath: candidate, searched: unique };
   }
   throw new Error(
-    `没有找到 Cursor 安装目录。已查找:\n${searched.map((item) => `  - ${item}`).join('\n')}\n请用 --app-path 指定 resources/app（macOS 也可直接传 Cursor.app）。`,
+    `没有找到 Cursor 安装目录。已查找:\n${unique.map((item) => `  - ${item}`).join('\n')}\n请用 --app-path 指定 resources/app（macOS 也可直接传 Cursor.app，包括 /Applications/子目录/Cursor.app）。`,
   );
 }
 

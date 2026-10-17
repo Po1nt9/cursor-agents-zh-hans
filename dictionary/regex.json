@@ -64,5 +64,89 @@
     "pattern": "^Project \"(.+)\" is no longer available$",
     "flags": "",
     "replacement": "项目“$1”已不可用"
+  },
+  {
+    "id": "worked-for-h-m",
+    "pattern": "^Worked for (\\d+)h (\\d+)m$",
+    "flags": "",
+    "replacement": "工作了 $1 小时 $2 分钟"
+  },
+  {
+    "id": "worked-for-h",
+    "pattern": "^Worked for (\\d+)h$",
+    "flags": "",
+    "replacement": "工作了 $1 小时"
+  },
+  {
+    "id": "worked-for-m-s",
+    "pattern": "^Worked for (\\d+)m (\\d+)s$",
+    "flags": "",
+    "replacement": "工作了 $1 分 $2 秒"
+  },
+  {
+    "id": "worked-for-m",
+    "pattern": "^Worked for (\\d+)m$",
+    "flags": "",
+    "replacement": "工作了 $1 分钟"
+  },
+  {
+    "id": "worked-for-s",
+    "pattern": "^Worked for (\\d+)s$",
+    "flags": "",
+    "replacement": "工作了 $1 秒"
+  },
+  {
+    "id": "explored-searches",
+    "pattern": "^Explored (\\d+) searches$",
+    "flags": "",
+    "replacement": "探索了 $1 次搜索"
+  },
+  {
+    "id": "explored-search",
+    "pattern": "^Explored (\\d+) search$",
+    "flags": "",
+    "replacement": "探索了 $1 次搜索"
+  },
+  {
+    "id": "minutes-ago",
+    "pattern": "^(\\d+)m ago$",
+    "flags": "",
+    "replacement": "$1 分钟前"
+  },
+  {
+    "id": "hours-ago",
+    "pattern": "^(\\d+)h ago$",
+    "flags": "",
+    "replacement": "$1 小时前"
+  },
+  {
+    "id": "days-ago",
+    "pattern": "^(\\d+)d ago$",
+    "flags": "",
+    "replacement": "$1 天前"
+  },
+  {
+    "id": "weeks-ago",
+    "pattern": "^(\\d+)w ago$",
+    "flags": "",
+    "replacement": "$1 周前"
+  },
+  {
+    "id": "months-ago",
+    "pattern": "^(\\d+)mo ago$",
+    "flags": "",
+    "replacement": "$1 个月前"
+  },
+  {
+    "id": "years-ago",
+    "pattern": "^(\\d+)y ago$",
+    "flags": "",
+    "replacement": "$1 年前"
+  },
+  {
+    "id": "link-n",
+    "pattern": "^Link (\\d+)$",
+    "flags": "",
+    "replacement": "链接 $1"
   }
 ]
