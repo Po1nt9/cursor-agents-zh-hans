@@ -15,7 +15,7 @@ test('a localized reset date does not leave the credits sentence in English', ()
   const { compiled } = loadDictionary();
   const mixed = 'Included usage with your subscription. Resets 10月24日. Used before your credits.';
   const text = translateText(mixed, compiled).text;
-  assert.equal(text, '订阅内含用量，10月24日重置，优先于额度扣除。');
+  assert.equal(text, '订阅内含用量，10月24日重置，会先于额度使用。');
   assert.equal(text.includes('Used'), false);
   assert.equal(lintChinese(mixed, text).includes('mixed-english'), false);
 });

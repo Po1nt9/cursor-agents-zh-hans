@@ -10,10 +10,11 @@ The percentages below use only real UI and real messages. Noise and intentionall
 | --- | ---: | ---: | ---: | ---: |
 | Glass UI | 4394 | 4394 | 0 | 100% |
 | Core nls in the Agents window | 85 | 85 | 0 | 100% |
-| Errors, toasts, dialogs | 1071 | 1071 | 0 | 100% |
 | macOS-only | 4 | 4 | 0 | 100% |
 
-Real UI (Glass, core nls, and macOS sentences together) is 4483 / 4483. Real errors, toasts, dialogs, banners, and empty states are 1071 / 1071.
+The Glass UI, core nls, and macOS rows above are the quote-scanner pass. They were not remeasured with the AST extractor.
+
+Error, toast, and dialog copy is counted with acorn on `workbench.glass.main.js` (the same literals and `classify.mjs` rules as the 73e441a check: notify + keyword + nls-keyword, `{n}` filled with `foo` and `3`). That set is 3,107 strings. This tree translates all 3,107, with no partials. Inside notification, toast, and dialog calls only, it is 557 / 557. `throw` / `new Error` strings are outside that headline: 202 covered, 14 partial, 781 uncovered. The old “1,071 / 1,071” row was the quote scanner, which misses template literals, and is not the number to use.
 
 Excluded from those denominators: 187 noise strings and 72 intentionally English names. The previous table counted both, which is why Glass was 4543 candidates at 28.9% and errors were 1159 at 24.3%. Error-shaped nls strings stay in the error row, so the core-nls row is smaller than the old 108.
 

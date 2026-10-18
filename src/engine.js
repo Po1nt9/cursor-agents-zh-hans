@@ -488,10 +488,45 @@ function isModelPickerLabel(el) {
 }
 
 // Hover cards are portaled out of the picker, so the markdown is not a label child.
+// Live cards use ui-preview-card-layer / ui-menu__tooltip, not role=tooltip.
 function isModelTooltip(el) {
   if (!el || el.nodeType === 3) return false;
   if (el.getAttribute?.('role') === 'tooltip') return true;
-  return el.getAttribute?.('data-component') === 'tooltip-popup';
+  if (el.getAttribute?.('data-component') === 'tooltip-popup') return true;
+  return hasClass(el, 'ui-menu__tooltip') || hasClass(el, 'ui-preview-card-layer');
+}
+
+// Buttons and chips inside a human or assistant bubble are chrome.
+// The typed message stays skipped; the controls around it do not.
+function isMessageChrome(el) {
+  if (!el || el.nodeType !== 1) return false;
+  const tag = tagNameOf(el);
+  if (tag === 'BUTTON' || tag === 'A' || tag === 'SELECT' || tag === 'SUMMARY') return true;
+  const role = el.getAttribute?.('role');
+  if (role === 'button' || role === 'menuitem' || role === 'tab' || role === 'option' || role === 'switch') {
+    return true;
+  }
+  if (hasClass(el, 'ui-button') || hasClass(el, 'ui-icon-button')
+    || hasClass(el, 'ui-prompt-input-toolbar') || hasClass(el, 'ui-prompt-input-submit-button')
+    || hasClass(el, 'vscode-model-picker__trigger') || hasClass(el, 'vscode-model-picker__trigger-text')
+    || hasClass(el, 'vscode-model-picker__trigger-markdown')) return true;
+  return isModelPickerLabel(el);
+}
+
+function chromeInsideMessage(origin, boundary) {
+  let cur = origin;
+  const seen = new Set();
+  while (cur && cur !== boundary && !seen.has(cur)) {
+    seen.add(cur);
+    if (cur.nodeType !== 3 && isMessageChrome(cur)) return true;
+    if (cur.parentElement) {
+      cur = cur.parentElement;
+      continue;
+    }
+    const root = cur.getRootNode?.();
+    cur = root && root.host ? root.host : null;
+  }
+  return false;
 }
 
 function markdownInModelPicker(node) {
@@ -504,6 +539,8 @@ export function shouldSkipElement(el) {
     if (!isProtectedSurface(node)) return false;
     // Model names and the Auto row are markdown. That is a label, not a chat message.
     if (markdownInModelPicker(node)) return false;
+    const kind = node.getAttribute?.('data-message-kind');
+    if (kind && PROTECTED_MESSAGE_KINDS.has(String(kind)) && chromeInsideMessage(el, node)) return false;
     return true;
   });
 }
@@ -543,6 +580,10 @@ export function skipReason(el) {
         cur = cur.parentElement || null;
         continue;
       }
+      if (reason.startsWith('message-kind:') && chromeInsideMessage(el, cur)) {
+        cur = cur.parentElement || null;
+        continue;
+      }
       return reason;
     }
     if (cur.parentElement) {
@@ -566,6 +607,8 @@ export function shouldSkipAttributeTarget(el) {
     // Anything inside a contenteditable, ProseMirror, or tiptap editor is.
     const tag = tagNameOf(node);
     if ((tag === 'INPUT' || tag === 'TEXTAREA') && node === el) return false;
+    const kind = node.getAttribute?.('data-message-kind');
+    if (kind && PROTECTED_MESSAGE_KINDS.has(String(kind)) && chromeInsideMessage(el, node)) return false;
     return true;
   });
 }

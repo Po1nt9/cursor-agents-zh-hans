@@ -45,13 +45,13 @@
     "id": "nls-abstractExtensionManagementService-malicious-extension",
     "pattern": "^Can't install '(.+)' extension since it was reported to be problematic\\.$",
     "flags": "",
-    "replacement": "无法安装“$1”扩展，因为它被报告为有问题。"
+    "replacement": "无法安装“$1”扩展，因为有报告指出它存在问题。"
   },
   {
     "id": "nls-abstractExtensionManagementService-notFoundReleaseExtension",
     "pattern": "^Can't install release version of '(.+)' extension because it has no release version\\.$",
     "flags": "",
-    "replacement": " “$1” 扩展没有发布版本，无法安装。"
+    "replacement": "“$1”扩展没有正式版，无法安装。"
   },
   {
     "id": "nls-extensionManagementService-invalidManifest",
@@ -81,7 +81,7 @@
     "id": "nls-externalTerminalService-ext-term-app-not-found",
     "pattern": "^can't find terminal application '(.+)'$",
     "flags": "",
-    "replacement": "找不到终端应用程序 “$1”"
+    "replacement": "找不到终端应用程序“$1”"
   },
   {
     "id": "nls-fileService-invalidPath",
@@ -93,7 +93,7 @@
     "id": "nls-fileService-fileNotFoundError",
     "pattern": "^Unable to resolve nonexistent file '(.+)'$",
     "flags": "",
-    "replacement": "无法解析不存在的文件 “$1”"
+    "replacement": "无法解析不存在的文件“$1”"
   },
   {
     "id": "nls-fileService-fileExists",
@@ -129,13 +129,13 @@
     "id": "nls-fileService-fileIsDirectoryWriteError",
     "pattern": "^Unable to write file '(.+)' that is actually a directory$",
     "flags": "",
-    "replacement": "无法写入“$1”：它其实是目录"
+    "replacement": "无法写入“$1”，因为它是目录"
   },
   {
     "id": "nls-fileService-fileIsDirectoryReadError",
     "pattern": "^Unable to read file '(.+)' that is actually a directory$",
     "flags": "",
-    "replacement": "无法读取“$1”：它其实是目录"
+    "replacement": "无法读取“$1”，因为它是目录"
   },
   {
     "id": "nls-fileService-fileTooLargeError",
@@ -171,7 +171,7 @@
     "id": "nls-fileService-deleteFailedNotFound",
     "pattern": "^Unable to delete nonexistent file '(.+)'$",
     "flags": "",
-    "replacement": "无法删除不存在的文件 “$1”"
+    "replacement": "无法删除不存在的文件“$1”"
   },
   {
     "id": "nls-fileService-deleteFailedNonEmptyFolder",
@@ -189,7 +189,7 @@
     "id": "nls-nativeHostMainService-sourceMissing",
     "pattern": "^Unable to find shell script in '(.+)'$",
     "flags": "",
-    "replacement": "在 “$1” 中找不到 shell 脚本"
+    "replacement": "在“$1”中找不到 shell 脚本"
   },
   {
     "id": "nls-nativeHostMainService-cantCreateBinFolder",
@@ -213,13 +213,13 @@
     "id": "nls-undoRedoService-cannotWorkspaceUndoDueToInMeantimeUndoRedo",
     "pattern": "^Could not undo '(.+)' across all files because an undo or redo operation occurred in the meantime$",
     "flags": "",
-    "replacement": "无法跨所有文件撤销“$1”，因为同时发生了一项撤消或重做操作"
+    "replacement": "无法跨所有文件撤消“$1”，因为期间发生了撤消或重做操作"
   },
   {
     "id": "nls-undoRedoService-cannotResourceUndoDueToInProgressUndoRedo",
     "pattern": "^Could not undo '(.+)' because there is already an undo or redo operation running\\.$",
     "flags": "",
-    "replacement": "无法撤销“$1”，因为已有一项撤消或重做操作正在运行。"
+    "replacement": "无法撤消“$1”，因为已有撤消或重做操作正在运行。"
   },
   {
     "id": "nls-undoRedoService-cannotWorkspaceRedoDueToInMeantimeUndoRedo",
@@ -243,13 +243,13 @@
     "id": "nls-mainThreadCLICommands-cannot-be-installed",
     "pattern": "^Cannot install the '(.+)' extension because it is declared to not run in this setup\\.$",
     "flags": "",
-    "replacement": "无法安装“$1”扩展，因为它被声明为不在此安装程序中运行。"
+    "replacement": "无法安装“$1”扩展，因为它声明不在当前环境中运行。"
   },
   {
     "id": "nls-mainThreadWebviews-errorMessage",
     "pattern": "^An error occurred while loading view: (.+)$",
     "flags": "",
-    "replacement": "还原视图时出错：$1"
+    "replacement": "加载视图时出错：$1"
   },
   {
     "id": "nls-viewsExtensionPoint-duplicateView1",
@@ -267,13 +267,13 @@
     "id": "nls-configurationExtensionPoint-config-property-defaultConfiguration-warning",
     "pattern": "^Cannot register configuration defaults for '(.+)'\\. Only defaults for machine-overridable, window, resource and language overridable scoped settings are supported\\.$",
     "flags": "",
-    "replacement": "无法注册“$1”的配置默认值。仅支持可重写计算机、窗口、资源和可重写语言范围设置的默认值。"
+    "replacement": "无法注册“$1”的配置默认值。仅支持可按计算机覆盖、窗口、资源和可按语言覆盖作用域的设置。"
   },
   {
     "id": "nls-extHostTerminalService-launchFail-idMissingOnExtHost",
     "pattern": "^Could not find the terminal with id (.+) on the extension host$",
     "flags": "",
-    "replacement": "在扩展主机上找不到 ID 为 $1 的终端"
+    "replacement": "在扩展宿主上找不到 ID 为 $1 的终端"
   },
   {
     "id": "nls-editorPanes-editorOpenErrorDialog",
@@ -429,7 +429,7 @@
     "id": "nls-extensionsWorkbenchService-cannot-be-installed",
     "pattern": "^Cannot install the '(.+)' extension because it is not available in this setup\\.$",
     "flags": "",
-    "replacement": "无法安装“$1”扩展，因为它在此安装程序中不可用。"
+    "replacement": "无法安装“$1”扩展，因为它在当前环境中不可用。"
   },
   {
     "id": "nls-extensionsWorkbenchService-incompatible",
@@ -621,13 +621,13 @@
     "id": "nls-taskConfiguration-ConfigurationParser-noTypeDefinition",
     "pattern": "^Error: there is no registered task type '(.+)'\\. Did you miss installing an extension that provides a corresponding task provider\\?$",
     "flags": "",
-    "replacement": "错误：没有已注册的任务类型“$1”。是否没有安装提供该任务提供程序的扩展？"
+    "replacement": "错误：没有已注册的任务类型“$1”。是否忘了安装提供相应任务提供程序的扩展？"
   },
   {
     "id": "nls-taskConfiguration-ConfigurationParser-missingType",
     "pattern": "^Error: the task configuration '(.+)' is missing the required property 'type'\\. The task configuration will be ignored\\.$",
     "flags": "",
-    "replacement": "错误：任务配置“$1”缺失必要属性 “type”。将忽略该配置。"
+    "replacement": "错误：任务配置“$1”缺少必需属性“type”。将忽略该配置。"
   },
   {
     "id": "nls-taskConfiguration-ConfigurationParser-incorrectType",
@@ -771,13 +771,13 @@
     "id": "nls-extensionEnablementService-cannot-change-enablement-environment",
     "pattern": "^Cannot change enablement of (.+) extension because it is enabled in environment$",
     "flags": "",
-    "replacement": "无法更改 $1 扩展的启用，因为它已在环境中启用"
+    "replacement": "无法更改 $1 扩展的启用状态，因为它已在环境中启用"
   },
   {
     "id": "nls-extensionEnablementService-cannot-change-disablement-environment",
     "pattern": "^Cannot change enablement of (.+) extension because it is disabled in environment$",
     "flags": "",
-    "replacement": "无法更改 $1 扩展的启用，因为它在环境中被禁用"
+    "replacement": "无法更改 $1 扩展的启用状态，因为它已在环境中禁用"
   },
   {
     "id": "nls-extensionEnablementService-cannot-change-enablement-malicious",
@@ -789,25 +789,25 @@
     "id": "nls-extensionEnablementService-cannot-change-enablement-virtual-workspace",
     "pattern": "^Cannot change enablement of (.+) extension because it does not support virtual workspaces$",
     "flags": "",
-    "replacement": "无法更改 $1 扩展的启用，因为它不支持虚拟工作区"
+    "replacement": "无法更改 $1 扩展的启用状态，因为它不支持虚拟工作区"
   },
   {
     "id": "nls-extensionEnablementService-cannot-change-enablement-extension-kind",
     "pattern": "^Cannot change enablement of (.+) extension because of its extension kind$",
     "flags": "",
-    "replacement": "由于扩展类型，$1 扩展的启用无法更改"
+    "replacement": "由于扩展类型的限制，无法更改 $1 扩展的启用状态"
   },
   {
     "id": "nls-extensionEnablementService-cannot-change-disallowed-extension-enablement",
     "pattern": "^Cannot change enablement of (.+) extension because it is disallowed$",
     "flags": "",
-    "replacement": "无法更改 $1 扩展的启用，因为它是不允许的"
+    "replacement": "无法更改 $1 扩展的启用状态，因为该扩展已被禁止"
   },
   {
     "id": "nls-extensionEnablementService-cannot-change-invalid-extension-enablement",
     "pattern": "^Cannot change enablement of (.+) extension because of it is invalid$",
     "flags": "",
-    "replacement": "$1 扩展的启用无法更改，因为它无效"
+    "replacement": "无法更改 $1 扩展的启用状态，因为它无效"
   },
   {
     "id": "nls-extensionManagementService-main-notFound",

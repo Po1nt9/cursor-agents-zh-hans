@@ -130,6 +130,12 @@ test('skips editor, terminal, diff, chat, and inputs, and translates other label
   const popupMarkdown = element({ classes: ['markdown-root'], parent: popup });
   assert.equal(shouldSkipElement(popupMarkdown), false);
   assert.equal(skipReason(popupMarkdown), null);
+  const card = element({ classes: ['ui-preview-card-layer', 'ui-menu__tooltip'] });
+  const cardMarkdown = element({ classes: ['markdown-root'], parent: card });
+  assert.equal(shouldSkipElement(cardMarkdown), false);
+  assert.equal(skipReason(cardMarkdown), null);
+  const chatMarkdown = element({ classes: ['markdown-root'] });
+  assert.equal(shouldSkipElement(chatMarkdown), true);
   const pickerName = element({ classes: ['ui-model-picker__item-content-name'] });
   const pickerMarkdown = element({ classes: ['markdown-root'], parent: pickerName });
   assert.equal(shouldSkipElement(pickerMarkdown), false);
@@ -152,6 +158,14 @@ test('skips editor, terminal, diff, chat, and inputs, and translates other label
   assert.equal(shouldSkipElement(element({ tag: 'OPTION' })), false);
   assert.equal(shouldSkipElement(element({ attrs: { 'data-message-kind': 'assistant' } })), true);
   assert.equal(shouldSkipElement(element({ attrs: { 'data-message-kind': 'tool' } })), false);
+  const human = element({ attrs: { 'data-message-kind': 'human' } });
+  const chip = element({ tag: 'BUTTON', parent: human });
+  const chipLabel = element({ classes: ['vscode-model-picker__trigger-text'], parent: chip });
+  assert.equal(shouldSkipElement(chipLabel), false);
+  assert.equal(skipReason(chipLabel), null);
+  assert.equal(shouldSkipAttributeTarget(chip), false);
+  const typed = element({ classes: ['human-message'], parent: human });
+  assert.equal(shouldSkipElement(typed), true);
   assert.equal(shouldSkipAttributeTarget(element({ tag: 'INPUT' })), false);
   assert.equal(shouldSkipAttributeTarget(element({ tag: 'TEXTAREA' })), false);
   assert.equal(shouldSkipAttributeTarget(element({ editable: true })), true);

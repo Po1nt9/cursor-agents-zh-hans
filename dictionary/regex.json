@@ -1,5 +1,5477 @@
 [
   {
+    "id": "save-newer-overwrite",
+    "pattern": "^Failed to save '([\\s\\S]+?)': The content of the file is newer\\. Do you want to overwrite the file with your changes\\?$",
+    "flags": "",
+    "replacement": "无法保存“$1”：文件内容已更新。要用你的更改覆盖文件吗？"
+  },
+  {
+    "id": "save-newer-compare",
+    "pattern": "^Failed to save '([\\s\\S]+?)': The content of the file is newer\\. Please compare your version with the file contents or overwrite the content of the file with your changes\\.$",
+    "flags": "",
+    "replacement": "无法保存“$1”：文件内容已更新。请对比你的版本和文件内容，或用你的更改覆盖文件。"
+  },
+  {
+    "id": "save-ro-admin",
+    "pattern": "^Failed to save '([\\s\\S]+?)': File is read-only\\. Select 'Overwrite as Admin' to retry as administrator\\.$",
+    "flags": "",
+    "replacement": "无法保存“$1”：文件为只读。选择“以管理员身份覆盖”后以管理员重试。"
+  },
+  {
+    "id": "save-ro-sudo",
+    "pattern": "^Failed to save '([\\s\\S]+?)': File is read-only\\. Select 'Overwrite as Sudo' to retry as superuser\\.$",
+    "flags": "",
+    "replacement": "无法保存“$1”：文件为只读。选择“以超级用户身份覆盖”后以超级用户重试。"
+  },
+  {
+    "id": "save-ro-overwrite",
+    "pattern": "^Failed to save '([\\s\\S]+?)': File is read-only\\. Select 'Overwrite' to attempt to make it writeable\\.$",
+    "flags": "",
+    "replacement": "无法保存“$1”：文件为只读。选择“覆盖”以尝试使其可写。"
+  },
+  {
+    "id": "save-perm-admin",
+    "pattern": "^Failed to save '([\\s\\S]+?)': Insufficient permissions\\. Select 'Retry as Admin' to retry as administrator\\.$",
+    "flags": "",
+    "replacement": "无法保存“$1”：权限不足。选择“以管理员身份重试”。"
+  },
+  {
+    "id": "save-perm-sudo",
+    "pattern": "^Failed to save '([\\s\\S]+?)': Insufficient permissions\\. Select 'Retry as Sudo' to retry as superuser\\.$",
+    "flags": "",
+    "replacement": "无法保存“$1”：权限不足。选择“以超级用户身份重试”。"
+  },
+  {
+    "id": "rules-index",
+    "pattern": "^Failed to write rules-index\\.mdc for '([\\s\\S]+?)' in '([\\s\\S]+?)': ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法为“$1”把规则索引写入“$2”：$3"
+  },
+  {
+    "id": "worker-offline",
+    "pattern": "^The self-hosted worker went offline\\. Run `agent worker start` on that machine, or open the Cursor desktop app, to reconnect\\. ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "自托管工作节点已离线。请在那台计算机上启动工作节点（依次运行 agent 与 worker），或打开 Cursor 桌面应用以重新连接。$1"
+  },
+  {
+    "id": "inject-sockets",
+    "pattern": "^Injected cursor-socket failure into ([\\s\\S]+?) client socket\\(s\\) and ([\\s\\S]+?) server connection\\(s\\)\\.$",
+    "flags": "",
+    "replacement": "已向 $1 个客户端套接字和 $2 个服务器连接注入套接字故障。"
+  },
+  {
+    "id": "menu-proposed",
+    "pattern": "^([\\s\\S]+?) is a proposed menu identifier\\. It requires 'package\\.json#enabledApiProposals: \\[\"([\\s\\S]+?)\"\\]' and is only available when running out of dev or with the following command line switch: --enable-proposed-api ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "$1 是提议的菜单标识符。需要在 package.json 的 enabledApiProposals 中列入 $2，并且仅在开发环境中运行，或打开提议 API 开关时可用。"
+  },
+  {
+    "id": "fs-provider",
+    "pattern": "^Unable to resolve filesystem provider with relative file path '([\\s\\S]+)'$",
+    "flags": "",
+    "replacement": "无法用相对路径“$1”解析文件系统提供程序"
+  },
+  {
+    "id": "nonexistent-file",
+    "pattern": "^Unable to resolve nonexistent file '([\\s\\S]+)'$",
+    "flags": "",
+    "replacement": "无法解析不存在的文件“$1”"
+  },
+  {
+    "id": "glass-2262",
+    "pattern": "^The\\ folder\\ you\\ opened\\ \\('([\\s\\S]+)'\\)\\ is\\ located\\ in\\ the\\ Windows\\ Subsystem\\ for\\ Linux\\ filesystem\\.\\ Opening\\ WSL\\ folders\\ directly\\ from\\ Windows\\ can\\ be\\ significantly\\ slower\\ and\\ some\\ features\\ may\\ not\\ work\\ correctly\\.\\\n\\\nYou\\ have\\ the\\ WSL\\ extension\\ installed\\.\\ For\\ best\\ results,\\ use\\ the\\ command\\ 'WSL:\\ Connect\\ to\\ WSL'\\ or\\ open\\ this\\ folder\\ from\\ within\\ WSL\\ using\\ 'cursor\\ \\.'\\ in\\ the\\ WSL\\ terminal\\.$",
+    "flags": "",
+    "replacement": "打开的文件夹（“$1”）位于适用于 Linux 的 Windows 子系统的文件系统中。直接从 Windows 打开 WSL 文件夹可能会慢很多，部分功能也可能无法正常工作。\n\n你已安装 WSL 扩展。为获得最佳效果，请使用命令“WSL：连接到 WSL”，或在 WSL 终端中运行 `cursor .` 打开此文件夹。"
+  },
+  {
+    "id": "glass-2260",
+    "pattern": "^The\\ folder\\ you\\ opened\\ \\('([\\s\\S]+)'\\)\\ is\\ located\\ in\\ the\\ Windows\\ Subsystem\\ for\\ Linux\\ filesystem\\.\\ Opening\\ WSL\\ folders\\ directly\\ from\\ Windows\\ can\\ be\\ significantly\\ slower\\ and\\ some\\ features\\ may\\ not\\ work\\ correctly\\.\\\n\\\nFor\\ best\\ results,\\ install\\ the\\ WSL\\ extension\\ and\\ use\\ it\\ to\\ open\\ your\\ WSL\\ folders\\.\\ This\\ will\\ give\\ you\\ full\\ access\\ to\\ the\\ Linux\\ filesystem\\ with\\ better\\ performance\\.$",
+    "flags": "",
+    "replacement": "打开的文件夹（“$1”）位于适用于 Linux 的 Windows 子系统的文件系统中。直接从 Windows 打开 WSL 文件夹可能会慢很多，部分功能也可能无法正常工作。\n\n为获得最佳效果，请安装 WSL 扩展并用它打开 WSL 文件夹。这样可以完整访问 Linux 文件系统，而且性能更好。"
+  },
+  {
+    "id": "glass-2257",
+    "pattern": "^The\\ folder\\ you\\ opened\\ resolves\\ to\\ '([\\s\\S]+)',\\ which\\ is\\ a\\ mounted\\ Windows\\ filesystem\\.\\ This\\ can\\ be\\ significantly\\ slower\\ than\\ the\\ Linux\\ filesystem\\ and\\ some\\ features\\ may\\ not\\ work\\ correctly\\.\\\n\\\nFor\\ best\\ results,\\ either\\ move\\ your\\ project\\ into\\ your\\ WSL\\ home\\ directory\\ \\(for\\ example:\\ \\~/projects\\),\\ or\\ open\\ the\\ Windows\\ directory\\ directly\\ in\\ Cursor\\.$",
+    "flags": "",
+    "replacement": "打开的文件夹解析为“$1”，这是挂载的 Windows 文件系统。它可能比 Linux 文件系统慢很多，部分功能也可能无法正常工作。\n\n为获得最佳效果，请将项目移到 WSL 主目录（例如：~/projects），或直接在 Cursor 中打开 Windows 目录。"
+  },
+  {
+    "id": "glass-817",
+    "pattern": "^The\\ task\\ was\\ not\\ sent:\\ request\\ exceeds\\ ([\\s\\S]+)\\ characters\\.\\ Reformulate\\ it\\ within\\ the\\ limit\\ while\\ preserving\\ every\\ constraint,\\ especially\\ prohibitions\\ and\\ approval\\ requirements\\.\\ Do\\ not\\ drop\\ constraints\\ or\\ split\\ the\\ task\\ into\\ executable\\ pieces\\.\\ Ask\\ the\\ caller\\ to\\ clarify\\ if\\ it\\ cannot\\ fit\\ safely\\.$",
+    "flags": "",
+    "replacement": "任务未发送：请求超过 $1 个字符。请在限制内重新表述，并保留每一项约束，尤其是禁止事项和批准要求。不要丢掉约束，也不要把任务拆成可执行的片段。如果无法安全地放进限制内，请让调用方澄清。"
+  },
+  {
+    "id": "glass-2250",
+    "pattern": "^Issue\\ troubleshooting\\ is\\ a\\ process\\ to\\ help\\ you\\ identify\\ the\\ cause\\ for\\ an\\ issue\\.\\ The\\ cause\\ for\\ an\\ issue\\ can\\ be\\ a\\ misconfiguration,\\ due\\ to\\ an\\ extension,\\ or\\ be\\ ([\\s\\S]+)\\ itself\\.\\\n\\\nDuring\\ the\\ process\\ the\\ window\\ reloads\\ repeatedly\\.\\ Each\\ time\\ you\\ must\\ confirm\\ if\\ you\\ are\\ still\\ seeing\\ the\\ issue\\.$",
+    "flags": "",
+    "replacement": "问题排查可以帮助你找出问题原因。原因可能是配置错误、由扩展引起，或是 $1 本身。\n\n排查过程中窗口会反复重新加载。每次都必须确认是否仍能看到该问题。"
+  },
+  {
+    "id": "glass-341",
+    "pattern": "^Reminder:\\ you\\ are\\ still\\ in\\ ([\\s\\S]+?)\\ mode\\.\\ Follow\\ that\\ mode's\\ skill\\ on\\ this\\ turn\\.\\ Do\\ not\\ drop\\ it\\ because\\ the\\ request\\ looks\\ small\\ or\\ you\\ already\\ have\\ context\\.\\ Do\\ not\\ drift\\ back\\ to\\ default\\ agent\\ behavior\\.\\ If\\ you\\ cannot\\ state\\ the\\ mode's\\ hard\\ rules,\\ read\\ ([\\s\\S]+)\\ before\\ acting\\.$",
+    "flags": "",
+    "replacement": "提醒：你仍处于 $1 模式。这一轮请遵循该模式的技能。不要因为请求看起来很小，或你已经有上下文，就丢掉该模式。不要退回默认的智能体行为。如果你无法说清该模式的硬性规则，请先阅读 $2 再行动。"
+  },
+  {
+    "id": "glass-1890",
+    "pattern": "^Task\\ detection\\ for\\ ([\\s\\S]+?)\\ tasks\\ causes\\ files\\ in\\ any\\ workspace\\ you\\ open\\ to\\ be\\ run\\ as\\ code\\.\\ Enabling\\ ([\\s\\S]+?)\\ task\\ detection\\ is\\ a\\ user\\ setting\\ and\\ will\\ apply\\ to\\ any\\ workspace\\ you\\ open\\.\\ \\\n\\\n\\ Do\\ you\\ want\\ to\\ enable\\ ([\\s\\S]+)\\ task\\ detection\\ for\\ all\\ workspaces\\?$",
+    "flags": "",
+    "replacement": "对 $1 任务的检测会使你打开的任何工作区中的文件被当作代码运行。启用 $1 任务检测是用户设置，将应用于你打开的任何工作区。\n\n是否要为所有工作区启用 $1 任务检测？"
+  },
+  {
+    "id": "glass-1611",
+    "pattern": "^([\\s\\S]+)\\\n\\\nPlease\\ check\\ the\\ \\[NDJSON\\ port\\ setting\\]\\(command:workbench\\.action\\.openWorkspaceSettings\\?%5B%22ndjson\\.port%22%5D\\)\\ and\\ ensure:\\\n\\-\\ The\\ port\\ is\\ not\\ already\\ in\\ use\\ by\\ another\\ service\\\n\\-\\ You\\ have\\ permission\\ to\\ use\\ the\\ port\\ \\(try\\ a\\ port\\ above\\ 1024\\)$",
+    "flags": "",
+    "replacement": "$1\n\n请检查 [NDJSON 端口设置](command:workbench.action.openWorkspaceSettings?%5B%22ndjson.port%22%5D)，并确认：\n- 端口未被其他服务占用\n- 你有权使用该端口（可尝试 1024 以上的端口）"
+  },
+  {
+    "id": "glass-1409",
+    "pattern": "^The\\ file\\ '([\\s\\S]+)'\\ contains\\ one\\ or\\ more\\ unusual\\ line\\ terminator\\ characters,\\ like\\ Line\\ Separator\\ \\(LS\\)\\ or\\ Paragraph\\ Separator\\ \\(PS\\)\\.\\\n\\\nIt\\ is\\ recommended\\ to\\ remove\\ them\\ from\\ the\\ file\\.\\ This\\ can\\ be\\ configured\\ via\\ `editor\\.unusualLineTerminators`\\.$",
+    "flags": "",
+    "replacement": "文件“$1”包含一个或多个异常行终止符，例如行分隔符（LS）或段落分隔符（PS）。\n\n建议从文件中移除它们。可通过 `editor.unusualLineTerminators` 进行配置。"
+  },
+  {
+    "id": "glass-81",
+    "pattern": "^([\\s\\S]+)\\ from\\ the\\ source\\-control\\ provider\\.\\ The\\ provider\\ \\(for\\ example\\ GitHub\\)\\ may\\ be\\ down\\ or\\ unreachable,\\ or\\ Cursor's\\ access\\ to\\ the\\ repository\\ may\\ not\\ be\\ working\\.\\ Check\\ the\\ provider's\\ status\\ and\\ Cursor's\\ repository\\ access,\\ then\\ try\\ again\\.$",
+    "flags": "",
+    "replacement": "$1 来自源代码管理提供程序。该提供程序（例如 GitHub）可能已中断或无法访问，Cursor 对仓库的访问也可能失效。请检查提供程序的状态和 Cursor 的仓库访问，然后重试。"
+  },
+  {
+    "id": "glass-1478",
+    "pattern": "^([\\s\\S]+?)\\ is\\ a\\ proposed\\ menu\\ identifier\\.\\ It\\ requires\\ 'package\\.json\\#enabledApiProposals:\\ \\[\"([\\s\\S]+?)\"\\]'\\ and\\ is\\ only\\ available\\ when\\ running\\ out\\ of\\ dev\\ or\\ with\\ the\\ following\\ command\\ line\\ switch:\\ \\-\\-enable\\-proposed\\-api\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "$1 是提议的菜单标识符。需要在 package.json 的 enabledApiProposals 中列入 $2，并且仅在开发环境中运行，或打开提议 API 开关时可用。"
+  },
+  {
+    "id": "glass-1441",
+    "pattern": "^Local\\ port\\ ([\\s\\S]+?)\\ could\\ not\\ be\\ used\\ for\\ forwarding\\ to\\ remote\\ port\\ ([\\s\\S]+?)\\.\\\n\\\nThis\\ usually\\ happens\\ when\\ there\\ is\\ already\\ another\\ process\\ using\\ local\\ port\\ ([\\s\\S]+?)\\.\\\n\\\nPort\\ number\\ ([\\s\\S]+)\\ has\\ been\\ used\\ instead\\.$",
+    "flags": "",
+    "replacement": "无法使用本地端口 $1 转发到远程端口 $2。\n\n这通常是因为已有其他进程占用本地端口 $1。\n\n已改用端口号 $4。"
+  },
+  {
+    "id": "glass-1001",
+    "pattern": "^Couldn't\\ publish\\ \"([\\s\\S]+)\"\\ because\\ a\\ skill\\ with\\ that\\ name\\ appeared\\ in\\ \\~/\\.cursor/skills\\ first,\\ and\\ it\\ has\\ to\\ unsync\\ there\\ on\\ its\\ way\\ to\\ being\\ published\\.\\ Remove\\ or\\ rename\\ that\\ one\\ and\\ try\\ again\\.$",
+    "flags": "",
+    "replacement": "无法发布“$1”，因为 ~/.cursor/skills 中已先出现同名技能，发布前必须先在那里取消同步。请移除或重命名该技能后重试。"
+  },
+  {
+    "id": "glass-2296",
+    "pattern": "^Saved\\ to:\\ \"([\\s\\S]+)\"\\\n\\\nSending\\ this\\ snapshot\\ to\\ Cursor\\ will\\ help\\ us\\ diagnose\\ and\\ fix\\ memory\\ issues\\.\\ Please\\ note\\ that\\ the\\ snapshot\\ may\\ include\\ file\\ contents,\\ conversations,\\ and\\ other\\ workspace\\ data\\.$",
+    "flags": "",
+    "replacement": "已保存到：“$1”\n\n将此快照发送到 Cursor 有助于我们诊断并修复内存问题。请注意，快照可能包含文件内容、对话和其他工作区数据。"
+  },
+  {
+    "id": "glass-2157",
+    "pattern": "^Your\\ local\\ \"([\\s\\S]+)\"\\ has\\ commits\\ the\\ agent's\\ version\\ doesn't\\ include,\\ so\\ the\\ agent's\\ version\\ of\\ the\\ branch\\ was\\ opened\\ instead\\.\\ Your\\ local\\ branch\\ is\\ untouched\\ —\\ merge\\ or\\ switch\\ back\\ when\\ ready\\.$",
+    "flags": "",
+    "replacement": "本地“$1”包含智能体版本中没有的提交，因此改为打开了智能体版本的分支。本地分支未被改动，准备好后可以合并或切换回去。"
+  },
+  {
+    "id": "glass-1430",
+    "pattern": "^Cannot\\ activate\\ the\\ '([\\s\\S]+?)'\\ extension\\ because\\ it\\ depends\\ on\\ the\\ '([\\s\\S]+?)'\\ extension\\ from\\ '([\\s\\S]+)',\\ which\\ is\\ not\\ installed\\.\\ Would\\ you\\ like\\ to\\ install\\ the\\ extension\\ and\\ reload\\ the\\ window\\?$",
+    "flags": "",
+    "replacement": "无法激活“$1”扩展，因为它依赖于“$2”扩展（来自“$3”），而该扩展尚未安装。是否安装该扩展并重新加载窗口？"
+  },
+  {
+    "id": "glass-1624",
+    "pattern": "^You're\\ on\\ ([\\s\\S]+)\\.\\ We'll\\ create\\ a\\ new\\ branch,\\ generate\\ a\\ commit\\ message,\\ stage\\ and\\ commit\\ your\\ changes,\\ push\\ the\\ branch\\ to\\ origin,\\ and\\ open\\ the\\ GitHub\\ compare\\ view\\ to\\ create\\ a\\ PR\\.\\ Continue\\?$",
+    "flags": "",
+    "replacement": "你当前在 $1。我们将新建分支、生成提交消息、暂存并提交更改、把分支推送到 origin，然后打开 GitHub 比较视图以创建 PR。是否继续？"
+  },
+  {
+    "id": "glass-83",
+    "pattern": "^([\\s\\S]+)\\ the\\ source\\-control\\ provider\\ for\\ this\\ repository\\.\\ Its\\ stored\\ access\\ may\\ have\\ been\\ revoked,\\ expired,\\ or\\ lost\\.\\ Reconnect\\ the\\ integration\\ for\\ this\\ repository,\\ then\\ start\\ the\\ agent\\ again\\.$",
+    "flags": "",
+    "replacement": "$1 此仓库的源代码管理提供程序。保存的访问权限可能已被收回、过期或丢失。请重新连接此仓库的集成，然后重新启动智能体。"
+  },
+  {
+    "id": "glass-2113",
+    "pattern": "^Code\\ is\\ about\\ to\\ connect\\ to\\ '([\\s\\S]+?):([\\s\\S]+)'\\ to\\ host\\ a\\ remote\\ extension\\ host\\.\\ Only\\ continue\\ if\\ you\\ trust\\ this\\ server,\\ as\\ it\\ will\\ be\\ able\\ to\\ run\\ code\\ and\\ access\\ files\\ on\\ your\\ behalf\\.$",
+    "flags": "",
+    "replacement": "Code 即将连接到“$1:$2”以托管远程扩展宿主。仅在信任此服务器时继续，因为它能够代表你运行代码并访问文件。"
+  },
+  {
+    "id": "glass-1058",
+    "pattern": "^Skipped\\ a\\ \"([\\s\\S]+)\"\\ schedule:\\ the\\ target's\\ anchor\\ node\\ is\\ disconnected\\ or\\ has\\ no\\ owner\\ window,\\ so\\ no\\ scheduling\\ window\\ can\\ be\\ derived\\.\\ Deferred\\ tiers\\ never\\ fall\\ back\\ to\\ the\\ main\\ window\\.$",
+    "flags": "",
+    "replacement": "已跳过“$1”调度：目标的锚点节点已断开，或没有所属窗口，因此无法得出调度窗口。延迟层级绝不会回退到主窗口。"
+  },
+  {
+    "id": "glass-2251",
+    "pattern": "^This\\ likely\\ means\\ that\\ the\\ issue\\ has\\ been\\ addressed\\ already\\ and\\ will\\ be\\ available\\ in\\ an\\ upcoming\\ release\\.\\ You\\ can\\ safely\\ use\\ ([\\s\\S]+)\\ insiders\\ until\\ the\\ new\\ stable\\ version\\ is\\ available\\.$",
+    "flags": "",
+    "replacement": "这通常表示问题已经修复，并将在即将发布的版本中提供。在新的稳定版可用之前，可以放心使用 $1 Insiders。"
+  },
+  {
+    "id": "glass-1374",
+    "pattern": "^Cursor\\ couldn’t\\ transfer\\ local\\ Git\\ state([\\s\\S]+?)\\.\\\n\\\n([\\s\\S]+)\\\n\\\nLocal\\ branches,\\ commits,\\ and\\ uncommitted\\ changes\\ will\\ remain\\ on\\ this\\ machine\\ and\\ may\\ not\\ be\\ available\\ to\\ the\\ cloud\\ agent\\.$",
+    "flags": "",
+    "replacement": "Cursor 无法转移本地 Git 状态$1。\n\n$2\n\n本地分支、提交和未提交的更改将保留在这台计算机上，云端智能体可能无法使用。"
+  },
+  {
+    "id": "glass-555",
+    "pattern": "^Our\\ servers\\ are\\ currently\\ overloaded\\ for\\ non\\-pro\\ users,\\ and\\ you've\\ used\\ your\\ free\\ quota\\.\\ Please\\ try\\ again\\ in\\ a\\ few\\ minutes\\.\\ If\\ you\\ think\\ this\\ is\\ a\\ mistake,\\ please\\ contact\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "服务器当前对非 Pro 用户负载过高，而且你已用完免费配额。请过几分钟再试。如果认为这是误判，请联系 $1"
+  },
+  {
+    "id": "glass-1635",
+    "pattern": "^This\\ link\\ is\\ for\\ ([\\s\\S]+?)/([\\s\\S]+),\\ but\\ Cursor\\ doesn't\\ have\\ a\\ local\\ workspace\\ open\\ for\\ that\\ repository\\ yet\\.\\\n\\\nAdd\\ this\\ repository\\ from\\ the\\ sidebar,\\ then\\ try\\ the\\ link\\ again\\.$",
+    "flags": "",
+    "replacement": "此链接对应 $1/$2，但 Cursor 尚未为该仓库打开本地工作区。\n\n请从侧边栏添加此仓库，然后重新打开链接。"
+  },
+  {
+    "id": "glass-996",
+    "pattern": "^Published\\ skill\\ \"([\\s\\S]+)\"\\ to\\ your\\ team,\\ but\\ refused\\ to\\ remove\\ the\\ local\\ copy\\ because\\ it\\ is\\ not\\ a\\ skill\\ in\\ \\~/\\.cursor/skills\\.\\ Remove\\ it\\ yourself\\ if\\ you\\ no\\ longer\\ want\\ it\\.$",
+    "flags": "",
+    "replacement": "已将技能“$1”发布给你的团队，但未删除本地副本，因为它不是 ~/.cursor/skills 中的技能。如果不再需要，请自行删除。"
+  },
+  {
+    "id": "glass-1634",
+    "pattern": "^This\\ link\\ is\\ for\\ ([\\s\\S]+?)/([\\s\\S]+),\\ but\\ Cursor\\ doesn't\\ have\\ a\\ local\\ workspace\\ open\\ for\\ that\\ repository\\ yet\\.\\\n\\\nOpen\\ the\\ folder\\ where\\ you\\ cloned\\ this\\ repository\\ to\\ continue\\.$",
+    "flags": "",
+    "replacement": "此链接对应 $1/$2，但 Cursor 尚未为该仓库打开本地工作区。\n\n请打开克隆了此仓库的文件夹以继续。"
+  },
+  {
+    "id": "glass-1425",
+    "pattern": "^Cannot\\ activate\\ the\\ '([\\s\\S]+?)'\\ extension\\ because\\ it\\ depends\\ on\\ the\\ '([\\s\\S]+)'\\ extension,\\ which\\ is\\ not\\ loaded\\.\\ Would\\ you\\ like\\ to\\ reload\\ the\\ window\\ to\\ load\\ the\\ extension\\?$",
+    "flags": "",
+    "replacement": "无法激活“$1”扩展，因为它依赖于尚未加载的“$2”扩展。是否重新加载窗口以加载该扩展？"
+  },
+  {
+    "id": "glass-1428",
+    "pattern": "^Cannot\\ activate\\ the\\ '([\\s\\S]+?)'\\ extension\\ because\\ it\\ depends\\ on\\ the\\ '([\\s\\S]+)'\\ extension\\ which\\ is\\ disabled\\.\\ Would\\ you\\ like\\ to\\ enable\\ the\\ extension\\ and\\ reload\\ the\\ window\\?$",
+    "flags": "",
+    "replacement": "无法激活“$1”扩展，因为它依赖于已禁用的“$2”扩展。是否启用该扩展并重新加载窗口？"
+  },
+  {
+    "id": "glass-169",
+    "pattern": "^A\\ component\\ is\\ changing\\ the\\ default\\ ([\\s\\S]+?)\\ state\\ of\\ an\\ uncontrolled\\ ([\\s\\S]+?)\\ after\\ being\\ initialized\\.\\ To\\ suppress\\ this\\ warning\\ opt\\ to\\ use\\ a\\ controlled\\ ([\\s\\S]+)\\.$",
+    "flags": "",
+    "replacement": "组件在初始化后更改了默认 $1 状态，而 $2 是非受控的。要抑制此警告，请改用受控的 $3。"
+  },
+  {
+    "id": "glass-819",
+    "pattern": "^([\\s\\S]+?)\\ If\\ you\\ are\\ missing\\ a\\ fact\\ about\\ ([\\s\\S]+?)\\ that\\ is\\ not\\ in\\ that\\ chat,\\ ([\\s\\S]+)\\.\\ Do\\ not\\ guess,\\ do\\ not\\ say\\ you\\ cannot,\\ and\\ do\\ not\\ ask\\ whether\\ to\\ look\\.$",
+    "flags": "",
+    "replacement": "$1 如果你缺少关于 $2 的事实，且该聊天中没有，$3。不要猜测，不要说你无法做到，也不要询问要不要去查看。"
+  },
+  {
+    "id": "glass-1713",
+    "pattern": "^This\\ setting\\ cannot\\ be\\ applied\\ because\\ it\\ is\\ configured\\ to\\ be\\ applied\\ in\\ all\\ profiles\\ using\\ setting\\ ([\\s\\S]+)\\.\\ Value\\ from\\ the\\ default\\ profile\\ will\\ be\\ used\\ instead\\.$",
+    "flags": "",
+    "replacement": "无法应用此设置，因为它已配置为使用设置 $1 在所有配置文件中应用。将改用默认配置文件中的值。"
+  },
+  {
+    "id": "glass-1462",
+    "pattern": "^Terminal\\ sandbox\\ is\\ not\\ supported\\ on\\ Linux\\ kernel\\ ([\\s\\S]+?)\\.([\\s\\S]+)\\.\\ Kernel\\ 6\\.2\\ or\\ later\\ is\\ required\\ for\\ sandboxing\\.\\ See\\ the\\ documentation\\ for\\ more\\ details\\.$",
+    "flags": "",
+    "replacement": "Linux 内核 $1.$2 不支持终端沙箱。沙箱需要 6.2 或更高版本的内核。请参阅文档了解详情。"
+  },
+  {
+    "id": "glass-556",
+    "pattern": "^We're\\ currently\\ recieving\\ a\\ large\\ number\\ of\\ slow\\ requests\\ and\\ could\\ not\\ queue\\ yours\\.\\ Please\\ try\\ again\\.\\ If\\ you\\ see\\ this\\ message\\ often,\\ please\\ contact\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "当前收到大量慢速请求，无法将你的请求加入队列。请重试。如果经常看到此消息，请联系 $1"
+  },
+  {
+    "id": "glass-63",
+    "pattern": "^([\\s\\S]+)\\ is\\ free\\ SQLite\\ pages\\ or\\ WAL\\.\\ Incremental\\ vacuum\\ and\\ a\\ WAL\\ checkpoint\\ return\\ that\\ space\\ to\\ the\\ OS,\\ and\\ a\\ rewrite\\ is\\ offered\\ for\\ what\\ they\\ can't\\.$",
+    "flags": "",
+    "replacement": "$1 是空闲的 SQLite 页或 WAL。增量清理和 WAL 检查点会把这些空间还给操作系统，还不上的部分则会提供重写。"
+  },
+  {
+    "id": "glass-1000",
+    "pattern": "^Couldn't\\ publish\\ \"([\\s\\S]+)\"\\ because\\ syncing\\ isn't\\ available\\ right\\ now,\\ and\\ a\\ synced\\ skill\\ has\\ to\\ be\\ unsynced\\ before\\ it\\ can\\ be\\ published\\.\\ It\\ is\\ unchanged\\.$",
+    "flags": "",
+    "replacement": "无法发布“$1”，因为当前无法同步，而已同步的技能必须先取消同步才能发布。它没有更改。"
+  },
+  {
+    "id": "glass-1839",
+    "pattern": "^Cannot\\ uninstall\\ '([\\s\\S]+?)'\\ extension\\ alone\\.\\ '([\\s\\S]+?)',\\ '([\\s\\S]+)'\\ and\\ other\\ extensions\\ depend\\ on\\ this\\.\\ Do\\ you\\ want\\ to\\ uninstall\\ all\\ these\\ extensions\\?$",
+    "flags": "",
+    "replacement": "无法单独卸载扩展“$1”。扩展“$2”、“$3”及其他扩展依赖于它。是否要卸载所有这些扩展？"
+  },
+  {
+    "id": "glass-553",
+    "pattern": "^It\\ seems\\ like\\ you're\\ making\\ an\\ too\\ many\\ requests\\ too\\ quickly\\.\\ Please\\ try\\ again\\ in\\ a\\ minute\\.\\ If\\ you\\ think\\ this\\ is\\ a\\ mistake,\\ please\\ contact\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "你的请求似乎过于频繁。请一分钟后再试。如果认为这是误判，请联系 $1"
+  },
+  {
+    "id": "glass-1610",
+    "pattern": "^([\\s\\S]+)\\\n\\\nReload\\ the\\ window\\ and\\ try\\ again\\.\\ If\\ this\\ keeps\\ happening,\\ disable\\ recently\\ added\\ extensions\\ or\\ others\\ that\\ may\\ slow\\ extension\\ host\\ startup\\.$",
+    "flags": "",
+    "replacement": "$1\n\n请重新加载窗口并重试。如果问题持续出现，请禁用最近添加的扩展，或其他可能拖慢扩展宿主启动的扩展。"
+  },
+  {
+    "id": "glass-1844",
+    "pattern": "^Cannot\\ disable\\ '([\\s\\S]+?)'\\ extension\\ alone\\.\\ '([\\s\\S]+?)',\\ '([\\s\\S]+)'\\ and\\ other\\ extensions\\ depend\\ on\\ this\\.\\ Do\\ you\\ want\\ to\\ disable\\ all\\ these\\ extensions\\?$",
+    "flags": "",
+    "replacement": "无法单独禁用扩展“$1”。扩展“$2”、“$3”及其他扩展依赖于它。是否要禁用所有这些扩展？"
+  },
+  {
+    "id": "glass-1966",
+    "pattern": "^Grok\\ Bot,\\ web\\ and\\ iOS:\\ Cursor's\\ servers\\ can't\\ reach\\ ([\\s\\S]+)\\ now,\\ and\\ after\\ this\\ nobody\\ on\\ your\\ team\\ can\\ sign\\ in\\ to\\ it\\ there,\\ even\\ once\\ they\\ can\\.$",
+    "flags": "",
+    "replacement": "Grok Bot、网页和 iOS：Cursor 的服务器目前无法访问 $1，此后团队中的任何人都无法在那里登录，即使以后能够访问也不行。"
+  },
+  {
+    "id": "glass-2121",
+    "pattern": "^Can't\\ install\\ '([\\s\\S]+?)'\\ extension\\ because\\ it\\ is\\ not\\ compatible\\ with\\ the\\ current\\ version\\ of\\ ([\\s\\S]+?)\\ \\(version\\ ([\\s\\S]+?),\\ VSCode\\ version\\ ([\\s\\S]+)\\)\\.$",
+    "flags": "",
+    "replacement": "无法安装“$1”扩展，因为它与 $2 的当前版本不兼容（版本 $3，VSCode 版本 $4）。"
+  },
+  {
+    "id": "glass-2129",
+    "pattern": "^Cannot\\ uninstall\\ '([\\s\\S]+?)'\\ extension\\.\\ It\\ includes\\ uninstalling\\ '([\\s\\S]+?)'\\ extension\\ and\\ '([\\s\\S]+?)',\\ '([\\s\\S]+)'\\ and\\ other\\ extensions\\ depend\\ on\\ this\\.$",
+    "flags": "",
+    "replacement": "无法卸载“$1”扩展。这会一并卸载“$2”扩展，而“$3”、“$4”和其他扩展依赖于此。"
+  },
+  {
+    "id": "glass-1838",
+    "pattern": "^Cannot\\ uninstall\\ '([\\s\\S]+?)'\\ extension\\ alone\\.\\ '([\\s\\S]+?)'\\ and\\ '([\\s\\S]+)'\\ extensions\\ depend\\ on\\ this\\.\\ Do\\ you\\ want\\ to\\ uninstall\\ all\\ these\\ extensions\\?$",
+    "flags": "",
+    "replacement": "无法单独卸载扩展“$1”。扩展“$2”和“$3”依赖于它。是否要卸载所有这些扩展？"
+  },
+  {
+    "id": "glass-915",
+    "pattern": "^This\\ background\\ agent\\ is\\ for\\ repository\\ \"([\\s\\S]+?)\",\\ but\\ your\\ current\\ workspace\\ is\\ on\\ ([\\s\\S]+)\\.\\\n\\\nPlease\\ open\\ the\\ correct\\ repository\\ and\\ try\\ again$",
+    "flags": "",
+    "replacement": "此云端智能体用于仓库“$1”，但当前工作区位于 $2。\n\n请打开正确的仓库，然后重试。"
+  },
+  {
+    "id": "glass-554",
+    "pattern": "^It\\ seems\\ like\\ you're\\ making\\ an\\ unusual\\ number\\ of\\ AI\\ requests\\.\\ Please\\ try\\ again\\ later\\.\\ If\\ you\\ think\\ this\\ is\\ a\\ mistake,\\ please\\ contact\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "你的 AI 请求数量似乎异常。请稍后再试。如果认为这是误判，请联系 $1"
+  },
+  {
+    "id": "glass-2287",
+    "pattern": "^Cursor\\ is\\ using\\ a\\ lot\\ of\\ memory\\ \\(([\\s\\S]+)\\ MB\\)\\.\\ We\\ can\\ capture\\ a\\ snapshot\\ for\\ debugging,\\ and\\ attempt\\ to\\ free\\ up\\ some\\ memory\\ in\\ the\\ process\\.$",
+    "flags": "",
+    "replacement": "Cursor 正在占用大量内存（$1 MB）。我们可以捕获快照用于调试，并在此过程中尝试释放一些内存。"
+  },
+  {
+    "id": "glass-914",
+    "pattern": "^This\\ background\\ agent\\ is\\ for\\ repository\\ \"([\\s\\S]+)\",\\ but\\ you\\ don't\\ have\\ any\\ repository\\ open\\.\\\n\\\nPlease\\ open\\ the\\ correct\\ repository\\ and\\ try\\ again\\.$",
+    "flags": "",
+    "replacement": "此云端智能体用于仓库“$1”，但你没有打开任何仓库。\n\n请打开正确的仓库，然后重试。"
+  },
+  {
+    "id": "glass-1843",
+    "pattern": "^Cannot\\ disable\\ '([\\s\\S]+?)'\\ extension\\ alone\\.\\ '([\\s\\S]+?)'\\ and\\ '([\\s\\S]+)'\\ extensions\\ depend\\ on\\ this\\.\\ Do\\ you\\ want\\ to\\ disable\\ all\\ these\\ extensions\\?$",
+    "flags": "",
+    "replacement": "无法单独禁用扩展“$1”。扩展“$2”和“$3”依赖于它。是否要禁用所有这些扩展？"
+  },
+  {
+    "id": "glass-1882",
+    "pattern": "^Task\\ version\\ 2\\.0\\.0\\ doesn't\\ support\\ global\\ OS\\ specific\\ tasks\\.\\ Convert\\ them\\ to\\ a\\ task\\ with\\ a\\ OS\\ specific\\ command\\.\\ Affected\\ tasks\\ are:\\\n([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "任务版本 2.0.0 不支持全局操作系统专属任务。请将它们转换为带有操作系统专属命令的任务。受影响的任务有：\n$1"
+  },
+  {
+    "id": "glass-2011",
+    "pattern": "^You\\ are\\ running\\ an\\ emulated\\ version\\ of\\ ([\\s\\S]+?)\\.\\ For\\ better\\ performance\\ download\\ the\\ native\\ arm64\\ version\\ of\\ ([\\s\\S]+)\\ build\\ for\\ your\\ machine\\.$",
+    "flags": "",
+    "replacement": "你正在运行 $1 的模拟版本。为获得更好的性能，请下载适用于本机的 $1 原生 arm64 版本。"
+  },
+  {
+    "id": "glass-2128",
+    "pattern": "^Cannot\\ uninstall\\ '([\\s\\S]+?)'\\ extension\\.\\ It\\ includes\\ uninstalling\\ '([\\s\\S]+?)'\\ extension\\ and\\ '([\\s\\S]+?)'\\ and\\ '([\\s\\S]+)'\\ extensions\\ depend\\ on\\ this\\.$",
+    "flags": "",
+    "replacement": "无法卸载“$1”扩展。这会一并卸载“$2”扩展，而“$3”和“$4”扩展依赖于此。"
+  },
+  {
+    "id": "glass-1699",
+    "pattern": "^Tool\\ blocked\\ because\\ this\\ hook\\ is\\ configured\\ to\\ fail\\ closed\\ \\(block\\ when\\ it\\ fails\\)\\.\\ Hook\\ \"([\\s\\S]+?)\"\\ failed\\ with\\ exit\\ code\\ ([\\s\\S]+?)([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "工具已被阻止，因为此钩子配置为失败即阻止（失败时拦截）。钩子“$1”失败，退出码为 $2$3"
+  },
+  {
+    "id": "glass-567",
+    "pattern": "^File\\ reading\\ was\\ blocked\\ by\\ a\\ security\\ hook:\\ ([\\s\\S]+)\\.\\ Do\\ not\\ attempt\\ to\\ work\\ around\\ this\\ restriction\\ using\\ alternative\\ methods\\ or\\ commands\\.$",
+    "flags": "",
+    "replacement": "安全钩子已阻止读取文件：$1。请勿尝试用其他方法或命令绕过此限制。"
+  },
+  {
+    "id": "glass-1977",
+    "pattern": "^\"([\\s\\S]+)\"\\ is\\ in\\ your\\ Cursor\\ account,\\ but\\ Cursor\\ could\\ not\\ remove\\ it\\ from\\ \\~/\\.cursor/mcp\\.json\\.\\ Remove\\ it\\ there\\ so\\ it\\ does\\ not\\ run\\ twice\\.$",
+    "flags": "",
+    "replacement": "“$1”已在 Cursor 账户中，但 Cursor 无法从 ~/.cursor/mcp.json 中移除它。请在该文件中删除，以免运行两次。"
+  },
+  {
+    "id": "glass-183",
+    "pattern": "^Number\\ of\\ lines\\ in\\ code\\ element\\ \\(([\\s\\S]+?)\\)\\ does\\ not\\ match\\ the\\ number\\ of\\ lines\\ in\\ the\\ source\\ \\(([\\s\\S]+)\\)\\.\\ Failed\\ to\\ apply\\ decorations\\.$",
+    "flags": "",
+    "replacement": "代码元素的行数（$1）与源文本的行数（$2）不一致。无法应用装饰。"
+  },
+  {
+    "id": "glass-770",
+    "pattern": "^This\\ terminal\\ profile\\ uses\\ a\\ potentially\\ unsafe\\ path\\ that\\ can\\ be\\ modified\\ by\\ another\\ user:\\ ([\\s\\S]+)\\.\\ Are\\ you\\ sure\\ you\\ want\\ to\\ use\\ it\\?$",
+    "flags": "",
+    "replacement": "此终端配置文件使用的路径可能不安全，且其他用户可以修改：$1。确定要使用它吗？"
+  },
+  {
+    "id": "glass-1880",
+    "pattern": "^Error:\\ the\\ task\\ '([\\s\\S]+?)'\\ neither\\ specifies\\ a\\ command\\ nor\\ a\\ dependsOn\\ property\\.\\ The\\ task\\ will\\ be\\ ignored\\.\\ Its\\ definition\\ is:\\\n([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "错误：任务“$1”既没有指定命令，也没有指定 dependsOn 属性。将忽略该任务。其定义如下：\n$2"
+  },
+  {
+    "id": "glass-1968",
+    "pattern": "^Grok\\ Bot,\\ web\\ and\\ iOS:\\ you\\ can't\\ sign\\ in\\ to\\ ([\\s\\S]+)\\ there\\ while\\ it\\ runs\\ from\\ your\\ computer,\\ even\\ once\\ Cursor's\\ servers\\ can\\ reach\\ it\\.$",
+    "flags": "",
+    "replacement": "Grok Bot、网页和 iOS：当它在这台计算机上运行时，你无法在那里登录 $1，即使 Cursor 的服务器以后能够访问它也不行。"
+  },
+  {
+    "id": "glass-1637",
+    "pattern": "^This\\ link\\ refers\\ to\\ branch\\ \"([\\s\\S]+?)\",\\ but\\ your\\ current\\ workspace\\ is\\ on\\ ([\\s\\S]+)\\.\\\n\\\nPlease\\ checkout\\ the\\ correct\\ branch\\ and\\ try\\ again\\.$",
+    "flags": "",
+    "replacement": "此链接指向分支“$1”，但当前工作区在 $2 上。\n\n请检出正确的分支，然后重试。"
+  },
+  {
+    "id": "glass-2148",
+    "pattern": "^This\\ conversation\\ was\\ just\\ moved\\ here\\ from\\ a\\ cloud\\ agent,\\ but\\ the\\ workspace\\ could\\ not\\ be\\ switched\\ to\\ the\\ agent's\\ ([\\s\\S]+)\\ automatically:$",
+    "flags": "",
+    "replacement": "此对话刚刚从云端智能体移到此处，但无法自动将工作区切换到该智能体的 $1："
+  },
+  {
+    "id": "glass-1335",
+    "pattern": "^The\\ self\\-hosted\\ worker\\ went\\ offline\\.\\ Run\\ `agent\\ worker\\ start`\\ on\\ that\\ machine,\\ or\\ open\\ the\\ Cursor\\ desktop\\ app,\\ to\\ reconnect\\.\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "自托管工作节点已离线。请在那台计算机上运行 `agent worker start`，或打开 Cursor 桌面应用以重新连接。$1"
+  },
+  {
+    "id": "glass-1426",
+    "pattern": "^Cannot\\ activate\\ the\\ '([\\s\\S]+?)'\\ extension\\ because\\ it\\ depends\\ on\\ the\\ '([\\s\\S]+)'\\ extension\\ which\\ is\\ not\\ supported\\ in\\ the\\ current\\ workspace$",
+    "flags": "",
+    "replacement": "无法激活“$1”扩展，因为它依赖于当前工作区不支持的“$2”扩展"
+  },
+  {
+    "id": "glass-1547",
+    "pattern": "^Invalid\\ value\\ in\\ `contributes\\.([\\s\\S]+?)\\.embeddedLanguages`\\.\\ Must\\ be\\ an\\ object\\ map\\ from\\ scope\\ name\\ to\\ language\\.\\ Provided\\ value:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "`contributes.$1.embeddedLanguages` 中的值无效。必须是从作用域名称到语言的对象映射。提供的值：$2"
+  },
+  {
+    "id": "glass-1725",
+    "pattern": "^A\\ file\\ or\\ folder\\ with\\ the\\ name\\ '([\\s\\S]+?)'\\ already\\ exists\\ in\\ the\\ folder\\ '([\\s\\S]+)'\\.\\ Replacing\\ it\\ will\\ overwrite\\ its\\ current\\ contents\\.$",
+    "flags": "",
+    "replacement": "名为“$1”的文件或文件夹已存在于文件夹“$2”中。替换后将覆盖其当前内容。"
+  },
+  {
+    "id": "glass-2021",
+    "pattern": "^Files\\ you\\ store\\ within\\ the\\ installation\\ folder\\ \\('([\\s\\S]+)'\\)\\ may\\ be\\ OVERWRITTEN\\ or\\ DELETED\\ IRREVERSIBLY\\ without\\ warning\\ at\\ update\\ time\\.$",
+    "flags": "",
+    "replacement": "安装文件夹（“$1”）中存放的文件可能会在更新时被覆盖或永久删除，且不会发出警告。"
+  },
+  {
+    "id": "glass-1876",
+    "pattern": "^Error:\\ there\\ is\\ no\\ registered\\ task\\ type\\ '([\\s\\S]+)'\\.\\ Did\\ you\\ miss\\ installing\\ an\\ extension\\ that\\ provides\\ a\\ corresponding\\ task\\ provider\\?$",
+    "flags": "",
+    "replacement": "错误：没有已注册的任务类型“$1”。是否忘记安装提供相应任务提供程序的扩展？"
+  },
+  {
+    "id": "glass-15",
+    "pattern": "^Event\\ processing\\ pipeline\\ threw\\ an\\ error,\\ original\\ event\\ will\\ not\\ be\\ sent\\.\\ Details\\ have\\ been\\ sent\\ as\\ a\\ new\\ event\\.\\\nReason:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "事件处理管道抛出了错误，原始事件不会发送。详情已作为新事件发送。\n原因：$1"
+  },
+  {
+    "id": "glass-1548",
+    "pattern": "^Invalid\\ value\\ in\\ `contributes\\.([\\s\\S]+?)\\.tokenTypes`\\.\\ Must\\ be\\ an\\ object\\ map\\ from\\ scope\\ name\\ to\\ token\\ type\\.\\ Provided\\ value:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "`contributes.$1.tokenTypes` 中的值无效。必须是从作用域名称到令牌类型的对象映射。提供的值：$2"
+  },
+  {
+    "id": "glass-1837",
+    "pattern": "^Cannot\\ uninstall\\ '([\\s\\S]+?)'\\ extension\\ alone\\.\\ '([\\s\\S]+)'\\ extension\\ depends\\ on\\ this\\.\\ Do\\ you\\ want\\ to\\ uninstall\\ all\\ these\\ extensions\\?$",
+    "flags": "",
+    "replacement": "无法单独卸载扩展“$1”。扩展“$2”依赖于它。是否要卸载所有这些扩展？"
+  },
+  {
+    "id": "glass-1698",
+    "pattern": "^Tool\\ blocked\\ because\\ this\\ hook\\ is\\ configured\\ to\\ fail\\ closed\\ \\(block\\ when\\ it\\ fails\\)\\.\\ Hook\\ \"([\\s\\S]+?)\"\\ timed\\ out\\ after\\ ([\\s\\S]+)s\\.$",
+    "flags": "",
+    "replacement": "工具已被阻止，因为此钩子配置为失败即阻止（失败时拦截）。钩子“$1”在 $2 秒后超时。"
+  },
+  {
+    "id": "glass-1427",
+    "pattern": "^Cannot\\ activate\\ the\\ '([\\s\\S]+?)'\\ extension\\ because\\ it\\ depends\\ on\\ the\\ '([\\s\\S]+)'\\ extension\\ which\\ is\\ not\\ supported\\ in\\ Restricted\\ Mode$",
+    "flags": "",
+    "replacement": "无法激活“$1”扩展，因为它依赖于受限模式不支持的“$2”扩展"
+  },
+  {
+    "id": "glass-1961",
+    "pattern": "^Saved\\ ([\\s\\S]+)\\.\\ Cursor's\\ servers\\ signed\\ you\\ out\\ of\\ it\\ because\\ its\\ URL\\ or\\ OAuth\\ client\\ changed,\\ so\\ sign\\ in\\ again\\ from\\ its\\ row\\.$",
+    "flags": "",
+    "replacement": "已保存 $1。由于其 URL 或 OAuth 客户端已更改，Cursor 的服务器已将你登出。请在该行重新登录。"
+  },
+  {
+    "id": "glass-1703",
+    "pattern": "^Tool\\ blocked\\ because\\ this\\ hook\\ is\\ configured\\ to\\ fail\\ closed\\ \\(block\\ when\\ it\\ fails\\)\\.\\ Hook\\ \"([\\s\\S]+?)\"\\ execution\\ failed:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "工具已被阻止，因为此钩子配置为失败即阻止（失败时拦截）。钩子“$1”执行失败：$2"
+  },
+  {
+    "id": "glass-1902",
+    "pattern": "^Error:\\ The\\ ([\\s\\S]+?)\\ task\\ detection\\ didn't\\ contribute\\ a\\ task\\ for\\ the\\ following\\ configuration:\\\n([\\s\\S]+)\\\nThe\\ task\\ will\\ be\\ ignored\\.$",
+    "flags": "",
+    "replacement": "错误：$1 任务检测没有为以下配置提供任务：\n$2\n将忽略该任务。"
+  },
+  {
+    "id": "glass-2127",
+    "pattern": "^Cannot\\ uninstall\\ '([\\s\\S]+?)'\\ extension\\ \\.\\ It\\ includes\\ uninstalling\\ '([\\s\\S]+?)'\\ extension\\ and\\ '([\\s\\S]+)'\\ extension\\ depends\\ on\\ this\\.$",
+    "flags": "",
+    "replacement": "无法卸载“$1”扩展。这会一并卸载“$2”扩展，而“$3”扩展依赖于此。"
+  },
+  {
+    "id": "glass-1842",
+    "pattern": "^Cannot\\ disable\\ '([\\s\\S]+?)'\\ extension\\ alone\\.\\ '([\\s\\S]+)'\\ extension\\ depends\\ on\\ this\\.\\ Do\\ you\\ want\\ to\\ disable\\ all\\ these\\ extensions\\?$",
+    "flags": "",
+    "replacement": "无法单独禁用扩展“$1”。扩展“$2”依赖于它。是否要禁用所有这些扩展？"
+  },
+  {
+    "id": "glass-2002",
+    "pattern": "^This\\ folder\\ contains\\ a\\ workspace\\ file\\ '([\\s\\S]+?)'\\.\\ Do\\ you\\ want\\ to\\ open\\ it\\?\\ \\[Learn\\ more\\]\\(([\\s\\S]+)\\)\\ about\\ workspace\\ files\\.$",
+    "flags": "",
+    "replacement": "此文件夹包含工作区文件“$1”。要打开它吗？关于工作区文件，请[了解更多]($2)。"
+  },
+  {
+    "id": "glass-2108",
+    "pattern": "^The\\ following\\ extension\\(s\\)\\ were\\ blocked\\ due\\ to\\ signature\\ verification:\\ ([\\s\\S]+)\\.\\ Please\\ reinstall\\ them\\ from\\ a\\ trusted\\ source\\.$",
+    "flags": "",
+    "replacement": "以下扩展因签名验证被阻止：$1。请从受信任的来源重新安装。"
+  },
+  {
+    "id": "glass-1696",
+    "pattern": "^Tool\\ blocked\\ because\\ this\\ hook\\ is\\ configured\\ to\\ fail\\ closed\\ \\(block\\ when\\ it\\ fails\\)\\.\\ Prompt\\ hook\\ timed\\ out\\ after\\ ([\\s\\S]+)s\\.$",
+    "flags": "",
+    "replacement": "工具已被阻止，因为此钩子配置为失败即阻止（失败时拦截）。提示词钩子在 $1 秒后超时。"
+  },
+  {
+    "id": "glass-763",
+    "pattern": "^Access\\ was\\ denied\\ to\\ the\\ path\\ containing\\ your\\ executable\\ \"([\\s\\S]+)\"\\.\\ Manage\\ and\\ change\\ your\\ permissions\\ to\\ get\\ this\\ to\\ work$",
+    "flags": "",
+    "replacement": "对包含可执行文件“$1”的路径的访问被拒绝。请管理并更改权限，以使其正常工作"
+  },
+  {
+    "id": "glass-2130",
+    "pattern": "^Can't\\ install\\ '([\\s\\S]+?)'\\ extension\\ because\\ it\\ is\\ not\\ compatible\\ with\\ the\\ current\\ version\\ of\\ ([\\s\\S]+?)\\ \\(version\\ ([\\s\\S]+)\\)\\.$",
+    "flags": "",
+    "replacement": "无法安装“$1”扩展，因为它与 $2 的当前版本不兼容（版本 $3）。"
+  },
+  {
+    "id": "glass-1681",
+    "pattern": "^Hook\\ ([\\s\\S]+?)\\ ([\\s\\S]+?)\\.\\ The\\ action\\ was\\ blocked\\ for\\ safety\\.\\ Check\\ Cursor\\ Settings\\ →\\ Hooks\\ and\\ fix\\ hook\\ script:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "钩子 $1 $2。为安全起见已阻止该操作。请检查 Cursor 设置 → 钩子，并修复钩子脚本：$3"
+  },
+  {
+    "id": "glass-1700",
+    "pattern": "^Tool\\ blocked\\ because\\ this\\ hook\\ is\\ configured\\ to\\ fail\\ closed\\ \\(block\\ when\\ it\\ fails\\)\\.\\ Hook\\ \"([\\s\\S]+)\"\\ returned\\ no\\ output\\.$",
+    "flags": "",
+    "replacement": "工具已被阻止，因为此钩子配置为失败即阻止（失败时拦截）。钩子“$1”没有返回输出。"
+  },
+  {
+    "id": "glass-2003",
+    "pattern": "^This\\ folder\\ contains\\ multiple\\ workspace\\ files\\.\\ Do\\ you\\ want\\ to\\ open\\ one\\?\\ \\[Learn\\ more\\]\\(([\\s\\S]+)\\)\\ about\\ workspace\\ files\\.$",
+    "flags": "",
+    "replacement": "此文件夹包含多个工作区文件。要打开其中一个吗？关于工作区文件，请[了解更多]($1)。"
+  },
+  {
+    "id": "glass-2317",
+    "pattern": "^Crashed\\ browser\\ view\\(s\\):\\ ([\\s\\S]+)\\.\\ Store\\ entries\\ were\\ kept\\ —\\ try\\ browser_tabs\\ /\\ browser_navigate\\ /\\ browser_snapshot\\ next\\.$",
+    "flags": "",
+    "replacement": "已崩溃的浏览器视图：$1。已保留存储项，接下来请尝试 browser_tabs、browser_navigate 或 browser_snapshot。"
+  },
+  {
+    "id": "glass-428",
+    "pattern": "^([\\s\\S]+)\\ can\\ reach\\ it,\\ but\\ the\\ sign\\-in\\ stored\\ there\\ can't\\ be\\ renewed\\ without\\ you,\\ so\\ tool\\ calls\\ stay\\ on\\ this\\ machine\\.$",
+    "flags": "",
+    "replacement": "$1 可以访问它，但没有你就无法续期保存在那里的登录，因此工具调用会留在这台计算机上。"
+  },
+  {
+    "id": "glass-801",
+    "pattern": "^Error:\\ the\\ task\\ identifier\\ '([\\s\\S]+?)'\\ is\\ missing\\ the\\ required\\ property\\ '([\\s\\S]+)'\\.\\ The\\ task\\ identifier\\ will\\ be\\ ignored\\.$",
+    "flags": "",
+    "replacement": "错误：任务标识符“$1”缺少必需属性“$2”。将忽略该任务标识符。"
+  },
+  {
+    "id": "glass-1666",
+    "pattern": "^Bulk\\ Commit\\ Scoring\\ Results\\ \\(([\\s\\S]+?)\\ commits\\ selected\\)\\\n([\\s\\S]+?)\\\nSummary:\\\n\\ \\ Successful:\\ ([\\s\\S]+?)\\\n\\ \\ Failed:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "批量提交评分结果（已选择 $1 个提交）\n$2\n摘要：\n 成功：$3\n 失败：$4"
+  },
+  {
+    "id": "glass-1877",
+    "pattern": "^Error:\\ the\\ task\\ configuration\\ '([\\s\\S]+)'\\ is\\ missing\\ the\\ required\\ property\\ 'type'\\.\\ The\\ task\\ configuration\\ will\\ be\\ ignored\\.$",
+    "flags": "",
+    "replacement": "错误：任务配置“$1”缺少必需属性 type。将忽略该任务配置。"
+  },
+  {
+    "id": "glass-997",
+    "pattern": "^Published\\ skill\\ \"([\\s\\S]+)\"\\ to\\ your\\ team,\\ but\\ kept\\ your\\ local\\ skill\\ because\\ it\\ couldn't\\ be\\ confirmed\\ loaded\\ locally\\ yet\\.$",
+    "flags": "",
+    "replacement": "已将技能“$1”发布给你的团队，但保留了本地技能，因为尚无法确认它已在本地加载。"
+  },
+  {
+    "id": "glass-2239",
+    "pattern": "^This\\ is\\ a\\ reminder\\ to\\ make\\ sure\\ that\\ you\\ have\\ not\\ forgotten\\ to\\ attach\\ '([\\s\\S]+)'\\ to\\ the\\ issue\\ you\\ have\\ just\\ created\\.$",
+    "flags": "",
+    "replacement": "请确认已将“$1”附加到刚刚创建的问题。"
+  },
+  {
+    "id": "glass-1442",
+    "pattern": "^The\\ extension\\ ([\\s\\S]+?)\\ has\\ forwarded\\ port\\ ([\\s\\S]+?)\\.\\ You'll\\ need\\ to\\ run\\ as\\ superuser\\ to\\ use\\ port\\ ([\\s\\S]+)\\ locally\\.$",
+    "flags": "",
+    "replacement": "扩展 $1 已转发端口 $2。要在本地使用端口 $3，需要以超级用户身份运行。"
+  },
+  {
+    "id": "glass-1546",
+    "pattern": "^Invalid\\ value\\ in\\ `contributes\\.([\\s\\S]+?)\\.injectTo`\\.\\ Must\\ be\\ an\\ array\\ of\\ language\\ scope\\ names\\.\\ Provided\\ value:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "`contributes.$1.injectTo` 中的值无效。必须是语言作用域名称的数组。提供的值：$2"
+  },
+  {
+    "id": "glass-1313",
+    "pattern": "^Cursor\\ will\\ start\\ tracking\\ pull\\ request\\ branch\\ \"([\\s\\S]+)\"\\ for\\ this\\ agent\\.\\ The\\ PR\\ itself\\ is\\ not\\ affected\\ on\\ GitHub\\.$",
+    "flags": "",
+    "replacement": "Cursor 将开始为此智能体跟踪拉取请求分支“$1”。GitHub 上的 PR 本身不受影响。"
+  },
+  {
+    "id": "glass-2240",
+    "pattern": "^This\\ is\\ a\\ reminder\\ to\\ make\\ sure\\ that\\ you\\ have\\ not\\ forgotten\\ to\\ attach\\ '([\\s\\S]+)'\\ to\\ an\\ existing\\ performance\\ issue\\.$",
+    "flags": "",
+    "replacement": "请确认已将“$1”附加到现有的性能问题。"
+  },
+  {
+    "id": "glass-1500",
+    "pattern": "^Could\\ not\\ undo\\ '([\\s\\S]+?)'\\ across\\ all\\ files\\ because\\ there\\ is\\ already\\ an\\ undo\\ or\\ redo\\ operation\\ running\\ on\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法跨所有文件撤消“$1”，因为 $2 上已有撤消或恢复操作正在运行"
+  },
+  {
+    "id": "glass-1506",
+    "pattern": "^Could\\ not\\ redo\\ '([\\s\\S]+?)'\\ across\\ all\\ files\\ because\\ there\\ is\\ already\\ an\\ undo\\ or\\ redo\\ operation\\ running\\ on\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法跨所有文件恢复“$1”，因为 $2 上已有撤消或恢复操作正在运行"
+  },
+  {
+    "id": "glass-1728",
+    "pattern": "^Extension\\ '([\\s\\S]+)'\\ is\\ configured\\ as\\ formatter\\ but\\ not\\ available\\.\\ Select\\ a\\ different\\ default\\ formatter\\ to\\ continue\\.$",
+    "flags": "",
+    "replacement": "扩展“$1”已配置为格式化程序，但当前不可用。请选择其他默认格式化程序以继续。"
+  },
+  {
+    "id": "glass-2120",
+    "pattern": "^Can't\\ install\\ '([\\s\\S]+?)'\\ extension\\ since\\ it\\ was\\ deprecated\\ and\\ the\\ replacement\\ extension\\ '([\\s\\S]+)'\\ can't\\ be\\ found\\.$",
+    "flags": "",
+    "replacement": "无法安装“$1”扩展，因为它已弃用，且找不到替换扩展“$2”。"
+  },
+  {
+    "id": "glass-1438",
+    "pattern": "^Extension\\ '([\\s\\S]+)'\\ is\\ not\\ loaded\\.\\ Would\\ you\\ like\\ to\\ reload\\ the\\ window\\ to\\ load\\ the\\ extension\\ and\\ open\\ the\\ URL\\?$",
+    "flags": "",
+    "replacement": "扩展“$1”尚未加载。是否重新加载窗口以加载该扩展并打开 URL？"
+  },
+  {
+    "id": "glass-1903",
+    "pattern": "^Error:\\ The\\ content\\ of\\ the\\ tasks\\ json\\ in\\ ([\\s\\S]+)\\ has\\ syntax\\ errors\\.\\ Please\\ correct\\ them\\ before\\ executing\\ a\\ task\\.$",
+    "flags": "",
+    "replacement": "错误：$1 中的任务 JSON 有语法错误。请先更正，再执行任务。"
+  },
+  {
+    "id": "glass-579",
+    "pattern": "^'([\\s\\S]+)'\\ mode\\ couldn't\\ be\\ applied\\ —\\ its\\ skill\\ file\\ may\\ have\\ been\\ renamed\\ or\\ removed\\.\\ Message\\ sent\\ without\\ it\\.$",
+    "flags": "",
+    "replacement": "无法应用“$1”模式 — 其技能文件可能已重命名或移除。消息已在未使用该模式的情况下发送。"
+  },
+  {
+    "id": "glass-1484",
+    "pattern": "^Unable\\ to\\ forward\\ ([\\s\\S]+?):([\\s\\S]+)\\.\\ The\\ host\\ may\\ not\\ be\\ available\\ or\\ that\\ remote\\ port\\ may\\ already\\ be\\ forwarded$",
+    "flags": "",
+    "replacement": "无法转发 $1:$2。主机可能不可用，或该远程端口可能已被转发"
+  },
+  {
+    "id": "glass-1697",
+    "pattern": "^Tool\\ blocked\\ because\\ this\\ hook\\ is\\ configured\\ to\\ fail\\ closed\\ \\(block\\ when\\ it\\ fails\\)\\.\\ Prompt\\ hook\\ failed:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "工具已被阻止，因为此钩子配置为失败即阻止（失败时拦截）。提示词钩子失败：$1"
+  },
+  {
+    "id": "glass-1626",
+    "pattern": "^For\\ the\\ code\\ present,\\ we\\ get\\ this\\ error:\\\n```\\\n([\\s\\S]+)\\\n```\\\nFix\\ it,\\ verify,\\ and\\ then\\ give\\ a\\ concise\\ explanation\\.$",
+    "flags": "",
+    "replacement": "对于当前代码，出现了此错误：\n```\n$1\n```\n请修复并验证，然后给出简明说明。"
+  },
+  {
+    "id": "glass-820",
+    "pattern": "^([\\s\\S]+?)\\ If\\ you\\ are\\ missing\\ a\\ fact\\ about\\ ([\\s\\S]+?)\\ that\\ is\\ not\\ in\\ that\\ chat,\\ ([\\s\\S]+)\\.\\ Do\\ not\\ invent\\ it\\.$",
+    "flags": "",
+    "replacement": "$1 如果你缺少关于 $2 的事实，且该聊天中没有，$3。不要编造。"
+  },
+  {
+    "id": "glass-2173",
+    "pattern": "^Cannot\\ substitute\\ input\\ variable\\ '([\\s\\S]+?)'\\ because\\ command\\ '([\\s\\S]+)'\\ did\\ not\\ return\\ a\\ result\\ of\\ type\\ string\\.$",
+    "flags": "",
+    "replacement": "无法替换输入变量“$1”，因为命令“$2”未返回字符串类型的结果。"
+  },
+  {
+    "id": "glass-1480",
+    "pattern": "^Error\\ running\\ command\\ ([\\s\\S]+?):\\ ([\\s\\S]+?)\\.\\ This\\ is\\ likely\\ caused\\ by\\ the\\ extension\\ that\\ contributes\\ ([\\s\\S]+)\\.$",
+    "flags": "",
+    "replacement": "运行命令 $1 时出错：$2。这很可能是贡献 $1 的扩展引起的。"
+  },
+  {
+    "id": "glass-2007",
+    "pattern": "^Screen\\ reader\\ usage\\ detected\\.\\ Do\\ you\\ want\\ to\\ enable\\ ([\\s\\S]+)\\ to\\ optimize\\ the\\ editor\\ for\\ screen\\ reader\\ usage\\?$",
+    "flags": "",
+    "replacement": "检测到正在使用屏幕阅读器。是否启用 $1，以便为屏幕阅读器优化编辑器？"
+  },
+  {
+    "id": "glass-2244",
+    "pattern": "^In\\ order\\ to\\ profile\\ the\\ remote\\ extension\\ host\\ a\\ restart\\ is\\ required\\.\\ Do\\ you\\ want\\ to\\ restart\\ '([\\s\\S]+)'\\ now\\?$",
+    "flags": "",
+    "replacement": "分析远程扩展宿主需要重新启动。是否立即重新启动“$1”？"
+  },
+  {
+    "id": "placeholder-5",
+    "pattern": "^Can't\\ open\\ ([\\s\\S]+)\\ in\\ the\\ browser\\ because\\ the\\ remote\\ machine\\ isn't\\ connected\\.\\ Try\\ again\\ once\\ it\\ reconnects\\.$",
+    "flags": "",
+    "replacement": "无法在浏览器中打开 $1，因为远程计算机未连接。请在重新连接后再试。"
+  },
+  {
+    "id": "glass-407",
+    "pattern": "^Creating\\ a\\ socket\\ \\(([\\s\\S]+?)\\)\\ finished\\ after\\ ([\\s\\S]+)\\ ms,\\ but\\ this\\ is\\ too\\ late\\ and\\ has\\ timed\\ out\\ already\\.$",
+    "flags": "",
+    "replacement": "创建套接字（$1）在 $2 ms 后才完成，但此时已经超时。"
+  },
+  {
+    "id": "glass-1168",
+    "pattern": "^Can't\\ open\\ ([\\s\\S]+)\\ in\\ the\\ browser\\ because\\ the\\ remote\\ machine\\ isn't\\ connected\\.\\ Try\\ again\\ once\\ it\\ reconnects\\.$",
+    "flags": "",
+    "replacement": "无法在浏览器中打开 $1，因为远程计算机未连接。请在重新连接后重试。"
+  },
+  {
+    "id": "glass-1881",
+    "pattern": "^Error:\\ the\\ task\\ '([\\s\\S]+?)'\\ doesn't\\ define\\ a\\ command\\.\\ The\\ task\\ will\\ be\\ ignored\\.\\ Its\\ definition\\ is:\\\n([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "错误：任务“$1”没有定义命令。将忽略该任务。其定义如下：\n$2"
+  },
+  {
+    "id": "glass-1059",
+    "pattern": "^Skipped\\ a\\ \"([\\s\\S]+)\"\\ action\\ at\\ fire\\ time:\\ the\\ live\\ target's\\ anchor\\ is\\ disconnected\\ or\\ has\\ no\\ owner\\ window\\.$",
+    "flags": "",
+    "replacement": "触发时已跳过“$1”操作：当前目标的锚点已断开，或没有所属窗口。"
+  },
+  {
+    "id": "glass-1429",
+    "pattern": "^Cannot\\ activate\\ the\\ '([\\s\\S]+?)'\\ extension\\ because\\ it\\ depends\\ on\\ the\\ '([\\s\\S]+)'\\ extension\\ which\\ is\\ disabled\\.$",
+    "flags": "",
+    "replacement": "无法激活“$1”扩展，因为它依赖于已禁用的“$2”扩展。"
+  },
+  {
+    "id": "glass-1857",
+    "pattern": "^This\\ browser\\ doesn't\\ support\\ the\\ clipboard\\.readText\\ API\\ needed\\ to\\ trigger\\ a\\ paste,\\ try\\ ([\\s\\S]+)\\+V\\ instead\\.$",
+    "flags": "",
+    "replacement": "此浏览器不支持触发粘贴所需的 clipboard.readText API，请改用 $1+V。"
+  },
+  {
+    "id": "glass-1878",
+    "pattern": "^Error:\\ the\\ task\\ configuration\\ '([\\s\\S]+)'\\ is\\ using\\ an\\ unknown\\ type\\.\\ The\\ task\\ configuration\\ will\\ be\\ ignored\\.$",
+    "flags": "",
+    "replacement": "错误：任务配置“$1”使用了未知类型。将忽略该任务配置。"
+  },
+  {
+    "id": "glass-1795",
+    "pattern": "^Are\\ you\\ sure\\ you\\ want\\ to\\ permanently\\ delete\\ the\\ following\\ ([\\s\\S]+)\\ files/directories\\ and\\ their\\ contents\\?$",
+    "flags": "",
+    "replacement": "是否确定要永久删除以下 $1 个文件或文件夹（包括其内容）？"
+  },
+  {
+    "id": "glass-1845",
+    "pattern": "^Skipping\\ migrating\\ '([\\s\\S]+?)'\\ extension\\ because,\\ the\\ comaptible\\ target\\ '([\\s\\S]+)'\\ extension\\ is\\ not\\ found$",
+    "flags": "",
+    "replacement": "跳过迁移扩展“$1”，因为找不到兼容的目标扩展“$2”"
+  },
+  {
+    "id": "glass-365",
+    "pattern": "^Hook\\ \"([\\s\\S]+)\"\\ returned\\ an\\ invalid\\ response\\ for\\ this\\ hook\\ step\\.\\ The\\ command\\ was\\ blocked\\ for\\ safety\\.$",
+    "flags": "",
+    "replacement": "钩子“$1”对此钩子步骤返回了无效响应。出于安全考虑，已阻止该命令。"
+  },
+  {
+    "id": "glass-1766",
+    "pattern": "^Could\\ not\\ tell\\ whether\\ plugin\\ \"([\\s\\S]+)\"\\ was\\ installed\\.\\ Ask\\ the\\ user\\ instead\\ of\\ assuming\\ either\\ way\\.$",
+    "flags": "",
+    "replacement": "无法判断插件“$1”是否已安装。请询问用户，不要自行假设。"
+  },
+  {
+    "id": "glass-1935",
+    "pattern": "^Updates\\ are\\ disabled\\ because\\ you\\ are\\ running\\ the\\ user\\-scope\\ installation\\ of\\ ([\\s\\S]+)\\ as\\ Administrator\\.$",
+    "flags": "",
+    "replacement": "由于你正在以管理员身份运行 $1 的用户级安装，更新已禁用。"
+  },
+  {
+    "id": "glass-1829",
+    "pattern": "^The\\ extension\\ '([\\s\\S]+?)'\\ cannot\\ be\\ installed\\ because\\ the\\ requested\\ version\\ '([\\s\\S]+)'\\ was\\ not\\ found\\.$",
+    "flags": "",
+    "replacement": "无法安装扩展“$1”，因为找不到请求的版本“$2”。"
+  },
+  {
+    "id": "glass-1847",
+    "pattern": "^Disabled\\ the\\ pre\\-release\\ extension\\ '([\\s\\S]+?)'\\ because\\ the\\ unsupported\\ extension\\ '([\\s\\S]+)'\\ is\\ disabled$",
+    "flags": "",
+    "replacement": "已禁用预发布扩展“$1”，因为不受支持的扩展“$2”已被禁用"
+  },
+  {
+    "id": "glass-2184",
+    "pattern": "^Cannot\\ uninstall\\ extension\\ '([\\s\\S]+?)'\\.\\ Extensions\\ '([\\s\\S]+?)',\\ '([\\s\\S]+)'\\ and\\ others\\ depend\\ on\\ this\\.$",
+    "flags": "",
+    "replacement": "无法卸载扩展“$1”。扩展“$2”、“$3”以及其他扩展依赖于此。"
+  },
+  {
+    "id": "glass-430",
+    "pattern": "^([\\s\\S]+)\\ can\\ reach\\ it,\\ but\\ can't\\ renew\\ this\\ server's\\ sign\\-in,\\ so\\ tool\\ calls\\ stay\\ on\\ this\\ machine\\.$",
+    "flags": "",
+    "replacement": "$1 可以访问它，但无法续期此服务器的登录，因此工具调用会留在这台计算机上。"
+  },
+  {
+    "id": "glass-865",
+    "pattern": "^Copied\\ ([\\s\\S]+?)\\ to\\ ([\\s\\S]+)\\.\\ It\\ wasn't\\ added\\ because\\ the\\ prompt\\ changed\\ before\\ the\\ copy\\ finished\\.$",
+    "flags": "",
+    "replacement": "已将 $1 复制到 $2。复制完成前提示词已更改，因此没有添加。"
+  },
+  {
+    "id": "glass-2242",
+    "pattern": "^In\\ order\\ to\\ profile\\ extension\\ hosts\\ a\\ restart\\ is\\ required\\.\\ Do\\ you\\ want\\ to\\ restart\\ '([\\s\\S]+)'\\ now\\?$",
+    "flags": "",
+    "replacement": "分析扩展宿主需要重新启动。是否立即重新启动“$1”？"
+  },
+  {
+    "id": "glass-2274",
+    "pattern": "^A\\ final\\ restart\\ is\\ required\\ to\\ continue\\ to\\ use\\ '([\\s\\S]+)'\\.\\ Again,\\ thank\\ you\\ for\\ your\\ contribution\\.$",
+    "flags": "",
+    "replacement": "需要最后一次重新启动才能继续使用“$1”。再次感谢你的贡献。"
+  },
+  {
+    "id": "glass-769",
+    "pattern": "^Cannot\\ launch\\ a\\ terminal\\ process\\ in\\ an\\ untrusted\\ workspace\\ with\\ cwd\\ ([\\s\\S]+?)\\ and\\ userHome\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法在不受信任的工作区中启动终端进程（cwd 为 $1，userHome 为 $2）"
+  },
+  {
+    "id": "glass-1003",
+    "pattern": "^Unpublished\\ \"([\\s\\S]+)\"\\ to\\ \\~/\\.cursor/skills\\.\\ Syncing\\ isn't\\ available\\ right\\ now,\\ so\\ it\\ stayed\\ there\\.$",
+    "flags": "",
+    "replacement": "已将“$1”取消发布到 ~/.cursor/skills。当前无法同步，因此它留在了那里。"
+  },
+  {
+    "id": "glass-1468",
+    "pattern": "^Injected\\ cursor\\-socket\\ failure\\ into\\ ([\\s\\S]+?)\\ client\\ socket\\(s\\)\\ and\\ ([\\s\\S]+)\\ server\\ connection\\(s\\)\\.$",
+    "flags": "",
+    "replacement": "已向 $1 个客户端套接字和 $2 个服务器连接注入 cursor-socket 故障。"
+  },
+  {
+    "id": "glass-1820",
+    "pattern": "^Please\\ check\\ the\\ \\[Cursor\\ Release\\ Notes\\]\\(command:([\\s\\S]+)\\)\\ for\\ changes\\ to\\ the\\ built\\-in\\ extensions\\.$",
+    "flags": "",
+    "replacement": "请查看 [Cursor 发行说明](command:$1)，了解内置扩展的更改。"
+  },
+  {
+    "id": "glass-2126",
+    "pattern": "^Cannot\\ uninstall\\ '([\\s\\S]+?)'\\ extension\\.\\ '([\\s\\S]+?)',\\ '([\\s\\S]+)'\\ and\\ other\\ extension\\ depend\\ on\\ this\\.$",
+    "flags": "",
+    "replacement": "无法卸载“$1”扩展。“$2”、“$3”和其他扩展依赖于此。"
+  },
+  {
+    "id": "glass-2249",
+    "pattern": "^In\\ order\\ to\\ profile\\ the\\ ([\\s\\S]+?)\\ a\\ restart\\ is\\ required\\.\\ Do\\ you\\ want\\ to\\ restart\\ '([\\s\\S]+)'\\ now\\?$",
+    "flags": "",
+    "replacement": "分析 $1 需要重新启动。是否立即重新启动“$2”？"
+  },
+  {
+    "id": "glass-1160",
+    "pattern": "^Turned\\ off\\ LSP\\ for\\ this\\ workspace\\ after\\ inactivity,\\ but\\ unloading\\ language\\ features\\ failed:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "空闲后已关闭此工作区的 LSP，但卸载语言功能失败：$1"
+  },
+  {
+    "id": "glass-1796",
+    "pattern": "^Are\\ you\\ sure\\ you\\ want\\ to\\ permanently\\ delete\\ the\\ following\\ ([\\s\\S]+)\\ directories\\ and\\ their\\ contents\\?$",
+    "flags": "",
+    "replacement": "是否确定要永久删除以下 $1 个目录及其内容？"
+  },
+  {
+    "id": "glass-2067",
+    "pattern": "^Could\\ not\\ open\\ ([\\s\\S]+)\\.\\ It\\ may\\ not\\ be\\ visible\\ to\\ your\\ team,\\ or\\ the\\ fetch\\ failed\\ \\(see\\ logs\\)\\.$",
+    "flags": "",
+    "replacement": "无法打开 $1。团队可能看不到它，或获取失败（请查看日志）。"
+  },
+  {
+    "id": "glass-113",
+    "pattern": "^Cannot\\ register\\ '([\\s\\S]+?)'\\.\\ The\\ associated\\ policy\\ ([\\s\\S]+?)\\ is\\ already\\ registered\\ with\\ ([\\s\\S]+)\\.$",
+    "flags": "",
+    "replacement": "无法注册“$1”。关联的策略 $2 已向 $3 注册。"
+  },
+  {
+    "id": "glass-353",
+    "pattern": "^([\\s\\S]+?)\\ trigger\\ matcher\\ \"([\\s\\S]+)\"\\ is\\ not\\ supported\\ in\\ Cursor,\\ hooks\\ will\\ fire\\ for\\ all\\ triggers$",
+    "flags": "",
+    "replacement": "$1 触发器匹配器“$2”在 Cursor 中不受支持，钩子会对所有触发器运行"
+  },
+  {
+    "id": "glass-1143",
+    "pattern": "^Every\\ candidate\\ repository\\ \\(([\\s\\S]+)\\)\\ denied\\ this\\ account\\ access,\\ so\\ no\\ group\\ reached\\ the\\ model\\.$",
+    "flags": "",
+    "replacement": "每个候选仓库（$1）都拒绝了此账户的访问，因此没有分组到达模型。"
+  },
+  {
+    "id": "glass-1565",
+    "pattern": "^The\\ branch\\ \"([\\s\\S]+)\"\\ is\\ not\\ on\\ the\\ remote\\ repository\\.\\ Push\\ to\\ remote\\ before\\ kicking\\ off\\ agent\\?$",
+    "flags": "",
+    "replacement": "远程仓库中没有分支“$1”。是否在启动智能体之前推送到远程？"
+  },
+  {
+    "id": "glass-1431",
+    "pattern": "^Cannot\\ activate\\ the\\ '([\\s\\S]+?)'\\ extension\\ because\\ it\\ depends\\ on\\ an\\ unknown\\ '([\\s\\S]+)'\\ extension\\.$",
+    "flags": "",
+    "replacement": "无法激活“$1”扩展，因为它依赖于未知的“$2”扩展。"
+  },
+  {
+    "id": "glass-1433",
+    "pattern": "^TestItem\\ with\\ ID\\ \"([\\s\\S]+)\"\\ is\\ invalid\\.\\ Make\\ sure\\ to\\ create\\ it\\ from\\ the\\ createTestItem\\ method\\.$",
+    "flags": "",
+    "replacement": "ID 为“$1”的 TestItem 无效。请通过 createTestItem 方法创建它。"
+  },
+  {
+    "id": "glass-1534",
+    "pattern": "^Profile\\ '([\\s\\S]+)'\\ was\\ created,\\ but\\ some\\ extension\\ entries\\ in\\ the\\ imported\\ profile\\ were\\ skipped\\.$",
+    "flags": "",
+    "replacement": "已创建配置文件“$1”，但跳过了导入的配置文件中的部分扩展项。"
+  },
+  {
+    "id": "glass-1993",
+    "pattern": "^This\\ will\\ permanently\\ delete\\ the\\ folder\\ \\~/\\.cursor/plugins/local/([\\s\\S]+)\\.\\ This\\ cannot\\ be\\ undone\\.$",
+    "flags": "",
+    "replacement": "这将永久删除文件夹 ~/.cursor/plugins/local/$1。此操作无法撤消。"
+  },
+  {
+    "id": "glass-41",
+    "pattern": "^([\\s\\S]+)\\.\\ Please\\ update\\ the\\ 'security\\.allowedUNCHosts'\\ setting\\ if\\ you\\ want\\ to\\ allow\\ this\\ host\\.$",
+    "flags": "",
+    "replacement": "$1。若要允许此主机，请更新“security.allowedUNCHosts”设置。"
+  },
+  {
+    "id": "glass-372",
+    "pattern": "^Invalid\\ hook\\ type:\\ \"([\\s\\S]+)\"\\.\\ Must\\ be\\ \"command\",\\ \"prompt\",\\ or\\ omitted\\ \\(defaults\\ to\\ \"command\"\\)$",
+    "flags": "",
+    "replacement": "钩子类型无效：“$1”。必须是“command”、“prompt”（提示词），或省略（默认为“command”）"
+  },
+  {
+    "id": "glass-381",
+    "pattern": "^The\\ server\\ failed\\ ([\\s\\S]+)\\ times\\.\\ Please\\ try\\ again,\\ or\\ contact\\ support\\ if\\ the\\ issue\\ persists\\.$",
+    "flags": "",
+    "replacement": "服务器失败了 $1 次。请重试。如果问题仍然存在，请联系支持人员。"
+  },
+  {
+    "id": "glass-1671",
+    "pattern": "^Agent\\ AI\\ Stats:\\ ([\\s\\S]+?)\\ accepted\\ out\\ of\\ ([\\s\\S]+?)\\ suggested,\\ ([\\s\\S]+)\\ percent\\ acceptance\\ rate$",
+    "flags": "",
+    "replacement": "智能体 AI 统计：接受 $1 次，共建议 $2 次，接受率为 $3%"
+  },
+  {
+    "id": "glass-1971",
+    "pattern": "^Re\\-enter\\ ([\\s\\S]+)\\ here\\.\\ Your\\ Cursor\\ account\\ doesn't\\ send\\ secret\\ values\\ back\\ to\\ this\\ computer\\.$",
+    "flags": "",
+    "replacement": "请在此重新输入 $1。Cursor 账户不会将机密值发回这台计算机。"
+  },
+  {
+    "id": "glass-2253",
+    "pattern": "^Please\\ try\\ to\\ reproduce\\ the\\ issue\\ in\\ ([\\s\\S]+)\\ insiders\\ and\\ confirm\\ if\\ the\\ issue\\ exists\\ there\\.$",
+    "flags": "",
+    "replacement": "请尝试在 $1 Insiders 中重现此问题，并确认问题是否存在。"
+  },
+  {
+    "id": "glass-363",
+    "pattern": "^Tool\\ blocked\\ because\\ this\\ hook\\ is\\ configured\\ to\\ fail\\ closed\\ \\(block\\ when\\ it\\ fails\\)\\.\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "工具已被阻止，因为此钩子配置为失败即关闭（失败时阻止）。$1"
+  },
+  {
+    "id": "glass-432",
+    "pattern": "^([\\s\\S]+)\\ can\\ reach\\ it,\\ but\\ can't\\ sign\\ in\\ to\\ it\\ yet,\\ so\\ it\\ keeps\\ running\\ from\\ this\\ machine\\.$",
+    "flags": "",
+    "replacement": "$1 可以访问它，但目前还无法登录它，因此会继续在这台计算机上运行。"
+  },
+  {
+    "id": "glass-847",
+    "pattern": "^Couldn't\\ open\\ ([\\s\\S]+)\\.\\ It\\ may\\ not\\ have\\ synced\\ to\\ Context\\ yet,\\ or\\ it\\ was\\ moved\\ or\\ deleted\\.$",
+    "flags": "",
+    "replacement": "无法打开 $1。它可能尚未同步到 Context，也可能已移动或删除。"
+  },
+  {
+    "id": "glass-1919",
+    "pattern": "^Some\\ \\[features\\ are\\ not\\ available\\]\\(([\\s\\S]+)\\)\\ for\\ resources\\ located\\ on\\ a\\ virtual\\ file\\ system\\.$",
+    "flags": "",
+    "replacement": "对于位于虚拟文件系统上的资源，某些[功能不可用]($1)。"
+  },
+  {
+    "id": "glass-1670",
+    "pattern": "^Tab\\ AI\\ Stats:\\ ([\\s\\S]+?)\\ accepted\\ out\\ of\\ ([\\s\\S]+?)\\ suggested,\\ ([\\s\\S]+)\\ percent\\ acceptance\\ rate$",
+    "flags": "",
+    "replacement": "Tab AI 统计：接受 $1 次，共建议 $2 次，接受率为 $3%"
+  },
+  {
+    "id": "glass-1812",
+    "pattern": "^Warning:\\ ([\\s\\S]+?)\\ at\\ line\\ ([\\s\\S]+?)\\ and\\ character\\ ([\\s\\S]+?)\\.([\\s\\S]+?)\\ generated\\ by\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "警告：$1，位于第 $2 行、第 $3 个字符。$4 由 $5 生成"
+  },
+  {
+    "id": "glass-2125",
+    "pattern": "^Cannot\\ uninstall\\ '([\\s\\S]+?)'\\ extension\\.\\ '([\\s\\S]+?)'\\ and\\ '([\\s\\S]+)'\\ extensions\\ depend\\ on\\ this\\.$",
+    "flags": "",
+    "replacement": "无法卸载“$1”扩展。“$2”和“$3”扩展依赖于此。"
+  },
+  {
+    "id": "glass-2183",
+    "pattern": "^Cannot\\ uninstall\\ extension\\ '([\\s\\S]+?)'\\.\\ Extensions\\ '([\\s\\S]+?)'\\ and\\ '([\\s\\S]+)'\\ depend\\ on\\ this\\.$",
+    "flags": "",
+    "replacement": "无法卸载扩展“$1”。扩展“$2”和“$3”依赖于此。"
+  },
+  {
+    "id": "placeholder-4",
+    "pattern": "^Can't\\ open\\ ([\\s\\S]+)\\ in\\ the\\ browser\\ because\\ it's\\ too\\ large\\ to\\ copy\\ from\\ the\\ remote\\ machine\\.$",
+    "flags": "",
+    "replacement": "无法在浏览器中打开 $1，因为它太大，无法从远程计算机复制。"
+  },
+  {
+    "id": "glass-20",
+    "pattern": "^Event\\ dropped\\ due\\ to\\ not\\ having\\ an\\ error\\ message,\\ error\\ type\\ or\\ stacktrace\\.\\\nEvent:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "事件因没有错误消息、错误类型或堆栈跟踪而被丢弃。\n事件：$1"
+  },
+  {
+    "id": "glass-1172",
+    "pattern": "^Can't\\ open\\ ([\\s\\S]+)\\ in\\ the\\ browser\\ because\\ it's\\ too\\ large\\ to\\ copy\\ from\\ the\\ remote\\ machine\\.$",
+    "flags": "",
+    "replacement": "无法在浏览器中打开 $1，因为它太大，无法从远程计算机复制。"
+  },
+  {
+    "id": "glass-1790",
+    "pattern": "^Are\\ you\\ sure\\ you\\ want\\ to\\ delete\\ the\\ following\\ ([\\s\\S]+)\\ files/directories\\ and\\ their\\ contents\\?$",
+    "flags": "",
+    "replacement": "是否确定要删除以下 $1 个文件或文件夹（包括其内容）？"
+  },
+  {
+    "id": "glass-2197",
+    "pattern": "^([\\s\\S]+)\\ is\\ now\\ configured\\ to\\ a\\ different\\ Marketplace\\.\\ Please\\ restart\\ to\\ apply\\ the\\ changes\\.$",
+    "flags": "",
+    "replacement": "$1 现已配置为使用另一个市场。请重新启动以应用更改。"
+  },
+  {
+    "id": "glass-780",
+    "pattern": "^You've\\ run\\ out\\ of\\ your\\ \\$([\\s\\S]+)\\ monthly\\ spend\\ limit\\.\\ Set\\ a\\ higher\\ limit\\ to\\ keep\\ going\\.$",
+    "flags": "",
+    "replacement": "你本月$$1美元的支出上限已用完。请调高上限以继续。"
+  },
+  {
+    "id": "glass-1394",
+    "pattern": "^Cannot\\ change\\ enablement\\ of\\ \"([\\s\\S]+)\":\\ no\\ marketplace\\ info\\ was\\ resolved\\ for\\ this\\ extension\\.$",
+    "flags": "",
+    "replacement": "无法更改“$1”的启用状态：没有解析到此扩展的市场信息。"
+  },
+  {
+    "id": "glass-1414",
+    "pattern": "^Use\\ Intellisense\\ to\\ improve\\ coding\\ efficiency\\ and\\ reduce\\ errors\\.\\ Trigger\\ suggestions([\\s\\S]+)\\.$",
+    "flags": "",
+    "replacement": "使用 IntelliSense 提高编码效率并减少错误。触发建议$1。"
+  },
+  {
+    "id": "glass-1810",
+    "pattern": "^Error:\\ ([\\s\\S]+?)\\ at\\ line\\ ([\\s\\S]+?)\\ and\\ character\\ ([\\s\\S]+?)\\.([\\s\\S]+?)\\ generated\\ by\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "错误：$1，位于第 $2 行、第 $3 个字符。$4 由 $5 生成"
+  },
+  {
+    "id": "glass-1965",
+    "pattern": "^Desktop:\\ this\\ computer\\ has\\ no\\ copy\\ of\\ ([\\s\\S]+)\\ in\\ mcp\\.json,\\ so\\ it\\ doesn't\\ run\\ from\\ here\\.$",
+    "flags": "",
+    "replacement": "桌面版：这台计算机的 mcp.json 中没有 $1 的副本，因此不会从这里运行。"
+  },
+  {
+    "id": "glass-377",
+    "pattern": "^The\\ connection\\ stalled\\ ([\\s\\S]+)\\ times\\.\\ Please\\ check\\ your\\ network\\ connection\\ and\\ try\\ again\\.$",
+    "flags": "",
+    "replacement": "连接已卡住 $1 次。请检查网络连接，然后重试。"
+  },
+  {
+    "id": "glass-767",
+    "pattern": "^Some\\ keybindings\\ don't\\ go\\ to\\ the\\ terminal\\ by\\ default\\ and\\ are\\ handled\\ by\\ ([\\s\\S]+)\\ instead\\.$",
+    "flags": "",
+    "replacement": "默认情况下，某些快捷键不会进入终端，而是由 $1 处理。"
+  },
+  {
+    "id": "glass-1932",
+    "pattern": "^This\\ will\\ install\\ extension\\ '([\\s\\S]+?)'\\ published\\ by\\ '([\\s\\S]+)'\\.\\ Do\\ you\\ want\\ to\\ continue\\?$",
+    "flags": "",
+    "replacement": "这将安装扩展“$1”，发布者是“$2”。是否继续？"
+  },
+  {
+    "id": "glass-379",
+    "pattern": "^The\\ connection\\ failed\\ ([\\s\\S]+)\\ times\\.\\ Please\\ check\\ your\\ network\\ connection\\ and\\ try\\ again\\.$",
+    "flags": "",
+    "replacement": "连接失败了 $1 次。请检查网络连接，然后重试。"
+  },
+  {
+    "id": "glass-999",
+    "pattern": "^Synced\\ skill\\ \"([\\s\\S]+)\"\\ to\\ your\\ team,\\ but\\ couldn't\\ confirm\\ the\\ update\\ loaded\\ locally\\ yet\\.$",
+    "flags": "",
+    "replacement": "已将技能“$1”同步给你的团队，但尚无法确认更新已在本地加载。"
+  },
+  {
+    "id": "glass-1004",
+    "pattern": "^Unpublished\\ \"([\\s\\S]+)\"\\ to\\ \\~/\\.cursor/skills\\.\\ Cursor\\ couldn't\\ sync\\ it,\\ so\\ it\\ stayed\\ there\\.$",
+    "flags": "",
+    "replacement": "已将“$1”取消发布到 ~/.cursor/skills。Cursor 无法同步它，因此它留在了那里。"
+  },
+  {
+    "id": "glass-1981",
+    "pattern": "^Could\\ not\\ read\\ ([\\s\\S]+)\\ from\\ your\\ Cursor\\ account\\.\\ Try\\ again,\\ or\\ edit\\ it\\ on\\ cursor\\.com\\.$",
+    "flags": "",
+    "replacement": "无法从 Cursor 账户读取 $1。请重试，或在 cursor.com 上编辑。"
+  },
+  {
+    "id": "placeholder-2",
+    "pattern": "^Can't\\ open\\ ([\\s\\S]+)\\ in\\ the\\ browser\\ because\\ it\\ couldn't\\ be\\ read\\ from\\ the\\ remote\\ machine\\.$",
+    "flags": "",
+    "replacement": "无法在浏览器中打开 $1，因为无法从远程计算机读取它。"
+  },
+  {
+    "id": "glass-552",
+    "pattern": "^You\\ have\\ exceeded\\ your\\ usage\\ limit\\ for\\ the\\ ([\\s\\S]+)\\ model\\.\\ Please\\ upgrade\\ your\\ account\\.$",
+    "flags": "",
+    "replacement": "你已超出 $1 模型的用量上限。请升级账户。"
+  },
+  {
+    "id": "glass-1173",
+    "pattern": "^Can't\\ open\\ ([\\s\\S]+)\\ in\\ the\\ browser\\ because\\ it\\ couldn't\\ be\\ read\\ from\\ the\\ remote\\ machine\\.$",
+    "flags": "",
+    "replacement": "无法在浏览器中打开 $1，因为无法从远程计算机读取。"
+  },
+  {
+    "id": "glass-1411",
+    "pattern": "^Monthly\\ limit\\ increased\\ to\\ \\$([\\s\\S]+)\\.\\ You\\ can\\ manage\\ this\\ setting\\ at\\ cursor\\.com/settings$",
+    "flags": "",
+    "replacement": "每月上限已提高到 $$$1。可在 cursor.com/settings 管理此设置。"
+  },
+  {
+    "id": "glass-1535",
+    "pattern": "^Profile\\ '([\\s\\S]+)'\\ was\\ created,\\ but\\ no\\ extensions\\ from\\ the\\ imported\\ profile\\ were\\ applied\\.$",
+    "flags": "",
+    "replacement": "已创建配置文件“$1”，但未应用导入的配置文件中的任何扩展。"
+  },
+  {
+    "id": "glass-435",
+    "pattern": "^([\\s\\S]+)\\ ran\\ it\\ but\\ couldn't\\ reach\\ it\\ reliably,\\ so\\ it's\\ back\\ on\\ this\\ machine\\ for\\ now\\.$",
+    "flags": "",
+    "replacement": "$1 已运行它，但无法稳定访问它，因此暂时回到这台计算机上运行。"
+  },
+  {
+    "id": "glass-1848",
+    "pattern": "^The\\ following\\ extensions\\ were\\ found\\ to\\ be\\ problematic\\ and\\ have\\ been\\ uninstalled:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "以下扩展存在问题，已被卸载：$1"
+  },
+  {
+    "id": "glass-1907",
+    "pattern": "^The\\ following\\ workspace\\ folders\\ are\\ ignored\\ since\\ they\\ use\\ task\\ version\\ 0\\.1\\.0:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "以下工作区文件夹使用的任务版本为 0.1.0，因此被忽略：$1"
+  },
+  {
+    "id": "glass-1967",
+    "pattern": "^Cursor's\\ servers\\ can't\\ reach\\ ([\\s\\S]+),\\ so\\ Cursor\\ on\\ desktop\\ runs\\ it\\ from\\ your\\ computer\\.$",
+    "flags": "",
+    "replacement": "Cursor 的服务器无法访问 $1，因此桌面版 Cursor 会在这台计算机上运行它。"
+  },
+  {
+    "id": "glass-2172",
+    "pattern": "^Variable\\ ([\\s\\S]+?)\\ can\\ not\\ be\\ resolved\\ because\\ the\\ extension\\ ([\\s\\S]+)\\ is\\ not\\ installed\\.$",
+    "flags": "",
+    "replacement": "无法解析变量 $1，因为未安装扩展 $2。"
+  },
+  {
+    "id": "glass-2263",
+    "pattern": "^Cannot\\ get\\ default\\ system\\ shell\\ when\\ there\\ is\\ no\\ backend\\ for\\ remote\\ authority\\ '([\\s\\S]+)'$",
+    "flags": "",
+    "replacement": "无法获取默认系统 Shell，因为远程机构“$1”没有后端"
+  },
+  {
+    "id": "glass-803",
+    "pattern": "^Failed\\ to\\ authenticate\\ MCP\\ server\\ for\\ ([\\s\\S]+),\\ please\\ try\\ again\\ or\\ reload\\ the\\ window\\.$",
+    "flags": "",
+    "replacement": "无法为 $1 完成 MCP 服务器身份验证，请重试或重新加载窗口。"
+  },
+  {
+    "id": "glass-1319",
+    "pattern": "^This\\ file\\ can't\\ be\\ attached\\ to\\ a\\ cloud\\ agent\\.\\ Files\\ must\\ be\\ ([\\s\\S]+)\\ MB\\ or\\ smaller\\.$",
+    "flags": "",
+    "replacement": "无法将此文件附加到云端智能体。文件必须为 $1 MB 或更小。"
+  },
+  {
+    "id": "glass-1485",
+    "pattern": "^The\\ local\\ port\\ ([\\s\\S]+?)\\ is\\ not\\ available\\.\\ Port\\ number\\ ([\\s\\S]+)\\ has\\ been\\ used\\ instead$",
+    "flags": "",
+    "replacement": "本地端口 $1 不可用。已改用端口号 $2"
+  },
+  {
+    "id": "glass-1791",
+    "pattern": "^Are\\ you\\ sure\\ you\\ want\\ to\\ delete\\ the\\ following\\ ([\\s\\S]+)\\ directories\\ and\\ their\\ contents\\?$",
+    "flags": "",
+    "replacement": "是否确定要删除以下 $1 个文件夹及其内容？"
+  },
+  {
+    "id": "glass-2165",
+    "pattern": "^Unable\\ to\\ move/copy\\ '([\\s\\S]+?)'\\ because\\ target\\ '([\\s\\S]+)'\\ already\\ exists\\ at\\ destination\\.$",
+    "flags": "",
+    "replacement": "无法移动或复制“$1”，因为目标位置已存在“$2”。"
+  },
+  {
+    "id": "glass-754",
+    "pattern": "^Could\\ not\\ kill\\ process\\ listening\\ on\\ port\\ ([\\s\\S]+?),\\ command\\ exited\\ with\\ error\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法终止监听端口 $1 的进程，命令已退出并返回错误 $2"
+  },
+  {
+    "id": "glass-829",
+    "pattern": "^Plugin\\ \"([\\s\\S]+)\"\\ could\\ not\\ be\\ found\\.\\ It\\ may\\ have\\ been\\ removed\\ from\\ the\\ marketplace\\.$",
+    "flags": "",
+    "replacement": "找不到插件“$1”。它可能已从市场中移除。"
+  },
+  {
+    "id": "glass-1177",
+    "pattern": "^Cannot\\ load\\ system\\ font:\\ ([\\s\\S]+),\\ installing\\ it\\ could\\ help\\ to\\ improve\\ PDF\\ rendering\\.$",
+    "flags": "",
+    "replacement": "无法加载系统字体：$1，安装它可能有助于改善 PDF 渲染。"
+  },
+  {
+    "id": "glass-1567",
+    "pattern": "^Could\\ not\\ push\\ \"([\\s\\S]+)\"\\ to\\ the\\ remote\\.\\ Please\\ push\\ the\\ branch\\ manually\\ and\\ retry\\.$",
+    "flags": "",
+    "replacement": "无法将“$1”推送到远程。请手动推送该分支后重试。"
+  },
+  {
+    "id": "glass-1933",
+    "pattern": "^([\\s\\S]+?)\\ couldn't\\ finish\\ updating\\ to\\ version\\ ([\\s\\S]+)\\.\\ Downloading\\ the\\ update\\ again\\.$",
+    "flags": "",
+    "replacement": "$1 无法完成到版本 $2 的更新。正在重新下载更新。"
+  },
+  {
+    "id": "glass-2131",
+    "pattern": "^Extension\\ '([\\s\\S]+?)'\\ is\\ configured\\ as\\ formatter\\ but\\ it\\ cannot\\ format\\ '([\\s\\S]+)'\\-files$",
+    "flags": "",
+    "replacement": "扩展“$1”已配置为格式化程序，但无法格式化“$2”文件"
+  },
+  {
+    "id": "glass-1035",
+    "pattern": "^Are\\ you\\ sure\\ you\\ want\\ to\\ remove\\ the\\ model\\ \"([\\s\\S]+)\"\\?\\ You\\ can\\ add\\ it\\ back\\ later\\.$",
+    "flags": "",
+    "replacement": "确定要移除模型“$1”吗？以后可以再添加。"
+  },
+  {
+    "id": "glass-1403",
+    "pattern": "^For\\ the\\ code\\ present,\\ we\\ get\\ this\\ error:\\\n```\\\n([\\s\\S]+)\\\n```\\\nHow\\ can\\ I\\ resolve\\ this\\?$",
+    "flags": "",
+    "replacement": "对于当前代码，出现了此错误：\n```\n$1\n```\n如何解决？"
+  },
+  {
+    "id": "glass-1782",
+    "pattern": "^Received\\ ([\\s\\S]+?)\\ subscription\\ ([\\s\\S]+)\\ while\\ this\\ conversation\\ was\\ busy\\ or\\ offline\\.$",
+    "flags": "",
+    "replacement": "此对话忙碌或离线时，收到了 $1 条订阅 $2。"
+  },
+  {
+    "id": "glass-3",
+    "pattern": "^Error\\ while\\ triggering\\ instrumentation\\ handler\\.\\\nType:\\ ([\\s\\S]+?)\\\nName:\\ ([\\s\\S]+)\\\nError:$",
+    "flags": "",
+    "replacement": "触发插桩处理程序时出错。\n类型：$1\n名称：$2\n错误："
+  },
+  {
+    "id": "glass-427",
+    "pattern": "^([\\s\\S]+)\\ can\\ reach\\ it,\\ but\\ the\\ sign\\-in\\ stored\\ there\\ can't\\ be\\ renewed\\ without\\ you\\.$",
+    "flags": "",
+    "replacement": "$1 可以访问它，但没有你就无法续期保存在那里的登录。"
+  },
+  {
+    "id": "glass-961",
+    "pattern": "^This\\ job\\ finished\\ with\\ conclusion\\ \"([\\s\\S]+)\"\\ —\\ GitHub\\ only\\ reruns\\ jobs\\ that\\ failed\\.$",
+    "flags": "",
+    "replacement": "此作业已结束，结论为“$1”。GitHub 只会重新运行失败的作业。"
+  },
+  {
+    "id": "glass-1536",
+    "pattern": "^Profile\\ with\\ name\\ '([\\s\\S]+)'\\ already\\ exists\\.\\ Do\\ you\\ want\\ to\\ replace\\ its\\ contents\\?$",
+    "flags": "",
+    "replacement": "名为“$1”的配置文件已存在。是否替换其内容？"
+  },
+  {
+    "id": "placeholder-6",
+    "pattern": "^Can't\\ open\\ ([\\s\\S]+)\\ in\\ the\\ browser\\ because\\ you\\ don't\\ have\\ permission\\ to\\ read\\ it\\.$",
+    "flags": "",
+    "replacement": "无法在浏览器中打开 $1，因为你没有读取权限。"
+  },
+  {
+    "id": "glass-1171",
+    "pattern": "^Can't\\ open\\ ([\\s\\S]+)\\ in\\ the\\ browser\\ because\\ you\\ don't\\ have\\ permission\\ to\\ read\\ it\\.$",
+    "flags": "",
+    "replacement": "无法在浏览器中打开 $1，因为你没有读取权限。"
+  },
+  {
+    "id": "glass-1369",
+    "pattern": "^Cursor's\\ servers\\ were\\ temporarily\\ unavailable\\ \\(([\\s\\S]+)\\)\\.\\ Try\\ again\\ in\\ a\\ moment\\.$",
+    "flags": "",
+    "replacement": "Cursor 服务器暂时不可用（$1）。请稍后再试。"
+  },
+  {
+    "id": "glass-1499",
+    "pattern": "^Could\\ not\\ undo\\ '([\\s\\S]+?)'\\ across\\ all\\ files\\ because\\ changes\\ were\\ made\\ to\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法跨所有文件撤消“$1”，因为已对 $2 进行了更改"
+  },
+  {
+    "id": "glass-1505",
+    "pattern": "^Could\\ not\\ redo\\ '([\\s\\S]+?)'\\ across\\ all\\ files\\ because\\ changes\\ were\\ made\\ to\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法跨所有文件恢复“$1”，因为已对 $2 进行了更改"
+  },
+  {
+    "id": "glass-2118",
+    "pattern": "^Install\\ of\\ extension\\ ([\\s\\S]+)\\ finished\\ without\\ producing\\ a\\ local\\ extension\\ or\\ error$",
+    "flags": "",
+    "replacement": "扩展 $1 的安装已结束，但既未生成本地扩展，也未返回错误"
+  },
+  {
+    "id": "glass-1988",
+    "pattern": "^Cannot\\ create\\ project\\ ([\\s\\S]+)s\\ without\\ a\\ workspace\\.\\ Please\\ open\\ a\\ folder\\ first\\.$",
+    "flags": "",
+    "replacement": "无法在没有工作区的情况下创建项目 $1。请先打开一个文件夹。"
+  },
+  {
+    "id": "glass-2034",
+    "pattern": "^Could\\ not\\ select\\ pool:\\ worker\\ repo\\ label\\ \"([\\s\\S]+)\"\\ is\\ not\\ in\\ owner/name\\ format\\.$",
+    "flags": "",
+    "replacement": "无法选择池：工作节点仓库标签“$1”不是 owner/name 格式。"
+  },
+  {
+    "id": "glass-2134",
+    "pattern": "^Unable\\ to\\ write\\ to\\ ([\\s\\S]+?)\\ because\\ ([\\s\\S]+)\\ is\\ not\\ a\\ registered\\ configuration\\.$",
+    "flags": "",
+    "replacement": "无法写入 $1，因为 $2 不是已注册的配置。"
+  },
+  {
+    "id": "glass-35",
+    "pattern": "^Could\\ not\\ create\\ sandbox\\ iframe\\ for\\ ([\\s\\S]+?)\\ check,\\ bailing\\ to\\ window\\.([\\s\\S]+):$",
+    "flags": "",
+    "replacement": "无法为 $1 检查创建沙箱 iframe，将回退到 window.$2："
+  },
+  {
+    "id": "glass-909",
+    "pattern": "^File\\ \"([\\s\\S]+)\"\\ has\\ been\\ deleted\\.\\ This\\ file\\ no\\ longer\\ exists\\ in\\ the\\ workspace\\.$",
+    "flags": "",
+    "replacement": "文件“$1”已删除。此文件在工作区中已不存在。"
+  },
+  {
+    "id": "glass-1002",
+    "pattern": "^Couldn't\\ unsync\\ \"([\\s\\S]+)\",\\ so\\ nothing\\ was\\ published\\ and\\ the\\ skill\\ is\\ unchanged\\.$",
+    "flags": "",
+    "replacement": "无法取消同步“$1”，因此没有发布，技能也没有更改。"
+  },
+  {
+    "id": "glass-1532",
+    "pattern": "^Extension\\ entries\\ ([\\s\\S]+)\\ in\\ the\\ imported\\ profile\\ are\\ invalid\\ and\\ were\\ skipped\\.$",
+    "flags": "",
+    "replacement": "导入的配置文件中的扩展项 $1 无效，已被跳过。"
+  },
+  {
+    "id": "glass-2093",
+    "pattern": "^The\\ following\\ extensions\\ contain\\ dependency\\ loops\\ and\\ have\\ been\\ disabled:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "以下扩展包含依赖循环，已被禁用：$1"
+  },
+  {
+    "id": "glass-53",
+    "pattern": "^Request\\ to\\ ([\\s\\S]+)\\ was\\ blocked\\ because\\ you\\ are\\ making\\ requests\\ too\\ frequently\\.$",
+    "flags": "",
+    "replacement": "对 $1 的请求已被阻止，因为请求太频繁。"
+  },
+  {
+    "id": "glass-764",
+    "pattern": "^Invalid\\ starting\\ directory\\ \"([\\s\\S]+)\",\\ review\\ your\\ terminal\\.integrated\\.cwd\\ setting$",
+    "flags": "",
+    "replacement": "起始目录“$1”无效，请检查 terminal.integrated.cwd 设置"
+  },
+  {
+    "id": "glass-837",
+    "pattern": "^Failed\\ to\\ fetch\\ background\\ composer\\ cached\\ details\\ \\(attempt\\ ([\\s\\S]+?)/([\\s\\S]+)\\):$",
+    "flags": "",
+    "replacement": "无法获取云端智能体缓存详情（第 $1/$2 次）："
+  },
+  {
+    "id": "glass-1159",
+    "pattern": "^Disabled\\ LSP\\ for\\ this\\ workspace,\\ but\\ unloading\\ language\\ features\\ failed:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "已为此工作区禁用 LSP，但卸载语言功能失败：$1"
+  },
+  {
+    "id": "glass-1471",
+    "pattern": "^Crashed\\ remote\\ extension\\ host\\ \\(pid\\ ([\\s\\S]+)\\)\\.\\ It\\ should\\ restart\\ automatically\\.$",
+    "flags": "",
+    "replacement": "已使远程扩展宿主崩溃（pid $1）。它应该会自动重新启动。"
+  },
+  {
+    "id": "glass-1530",
+    "pattern": "^Extension\\ entry\\ ([\\s\\S]+)\\ in\\ the\\ imported\\ profile\\ is\\ missing\\ a\\ valid\\ identifier\\.$",
+    "flags": "",
+    "replacement": "导入的配置文件中的扩展项 $1 缺少有效标识符。"
+  },
+  {
+    "id": "glass-2236",
+    "pattern": "^Would\\ you\\ like\\ to\\ change\\ ([\\s\\S]+?)'s\\ display\\ language\\ to\\ ([\\s\\S]+)\\ and\\ restart\\?$",
+    "flags": "",
+    "replacement": "是否将 $1 的显示语言更改为 $2 并重新启动？"
+  },
+  {
+    "id": "glass-2301",
+    "pattern": "^Process\\ snapshot\\ upload\\ failed:\\ ([\\s\\S]+)\\.\\ The\\ snapshot\\ is\\ still\\ saved\\ on\\ disk\\.$",
+    "flags": "",
+    "replacement": "无法上传进程快照：$1。快照仍保存在磁盘上。"
+  },
+  {
+    "id": "glass-871",
+    "pattern": "^You're\\ on\\ ([\\s\\S]+)\\.\\ Would\\ you\\ like\\ to\\ create\\ a\\ new\\ branch\\ before\\ committing\\?$",
+    "flags": "",
+    "replacement": "你当前在 $1。提交前要创建新分支吗？"
+  },
+  {
+    "id": "glass-1446",
+    "pattern": "^The\\ chosen\\ account,\\ ([\\s\\S]+?),\\ does\\ not\\ match\\ the\\ requested\\ account,\\ ([\\s\\S]+)\\.$",
+    "flags": "",
+    "replacement": "所选账户 $1 与请求的账户 $2 不一致。"
+  },
+  {
+    "id": "glass-1470",
+    "pattern": "^Crashed\\ local\\ extension\\ host\\ \\(pid\\ ([\\s\\S]+)\\)\\.\\ It\\ should\\ restart\\ automatically\\.$",
+    "flags": "",
+    "replacement": "已使本地扩展宿主崩溃（pid $1）。它应该会自动重新启动。"
+  },
+  {
+    "id": "glass-1736",
+    "pattern": "^MCP\\ server\\ `([\\s\\S]+)`\\ has\\ tools\\ with\\ invalid\\ parameters\\ which\\ will\\ be\\ omitted\\.$",
+    "flags": "",
+    "replacement": "MCP 服务器 `$1` 中有参数无效的工具，这些工具将被省略。"
+  },
+  {
+    "id": "glass-2264",
+    "pattern": "^Cannot\\ get\\ environment\\ when\\ there\\ is\\ no\\ backend\\ for\\ remote\\ authority\\ '([\\s\\S]+)'$",
+    "flags": "",
+    "replacement": "无法获取环境，因为远程机构“$1”没有后端"
+  },
+  {
+    "id": "glass-305",
+    "pattern": "^Cannot\\ update\\ property\\ ([\\s\\S]+)\\ in\\ a\\ way\\ that\\ invalidates\\ board\\ configuration\\.$",
+    "flags": "",
+    "replacement": "无法更新属性 $1，因为这会让看板配置失效。"
+  },
+  {
+    "id": "glass-2139",
+    "pattern": "^([\\s\\S]+?)\\ is\\ the\\ resource\\ that\\ failed\\ to\\ save\\ and\\ ([\\s\\S]+)\\ the\\ error\\ message$",
+    "flags": "",
+    "replacement": "$1 是无法保存的资源，$2 是错误消息"
+  },
+  {
+    "id": "glass-1096",
+    "pattern": "^You\\ can\\ only\\ save\\ up\\ to\\ ([\\s\\S]+)\\ custom\\ themes\\.\\ Delete\\ one\\ and\\ try\\ again\\.$",
+    "flags": "",
+    "replacement": "最多只能保存 $1 个自定义主题。请删除一个后再试。"
+  },
+  {
+    "id": "glass-1158",
+    "pattern": "^Enabled\\ LSP\\ for\\ this\\ workspace,\\ but\\ loading\\ language\\ features\\ failed:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "已为此工作区启用 LSP，但加载语言功能失败：$1"
+  },
+  {
+    "id": "glass-1531",
+    "pattern": "^Extension\\ entry\\ ([\\s\\S]+)\\ in\\ the\\ imported\\ profile\\ is\\ invalid\\ and\\ was\\ skipped\\.$",
+    "flags": "",
+    "replacement": "导入的配置文件中的扩展项 $1 无效，已被跳过。"
+  },
+  {
+    "id": "glass-1921",
+    "pattern": "^You\\ are\\ about\\ to\\ connect\\ to\\ an\\ OS\\ version\\ that\\ is\\ unsupported\\ by\\ ([\\s\\S]+)\\.$",
+    "flags": "",
+    "replacement": "你即将连接到 $1 不支持的操作系统版本。"
+  },
+  {
+    "id": "glass-2124",
+    "pattern": "^Cannot\\ uninstall\\ '([\\s\\S]+?)'\\ extension\\.\\ '([\\s\\S]+)'\\ extension\\ depends\\ on\\ this\\.$",
+    "flags": "",
+    "replacement": "无法卸载“$1”扩展。“$2”扩展依赖于此。"
+  },
+  {
+    "id": "glass-2171",
+    "pattern": "^Variable\\ ([\\s\\S]+?)\\ can\\ not\\ be\\ resolved\\ because\\ setting\\ '([\\s\\S]+)'\\ not\\ found\\.$",
+    "flags": "",
+    "replacement": "无法解析变量 $1，因为找不到设置“$2”。"
+  },
+  {
+    "id": "glass-2182",
+    "pattern": "^Cannot\\ uninstall\\ extension\\ '([\\s\\S]+?)'\\.\\ Extension\\ '([\\s\\S]+)'\\ depends\\ on\\ this\\.$",
+    "flags": "",
+    "replacement": "无法卸载扩展“$1”。扩展“$2”依赖于此。"
+  },
+  {
+    "id": "placeholder-1",
+    "pattern": "^Can't\\ open\\ ([\\s\\S]+)\\ in\\ the\\ browser\\ because\\ a\\ local\\ copy\\ couldn't\\ be\\ saved\\.$",
+    "flags": "",
+    "replacement": "无法在浏览器中打开 $1，因为无法保存本地副本。"
+  },
+  {
+    "id": "glass-286",
+    "pattern": "^The\\ agent's\\ request\\ to\\ switch\\ to\\ ([\\s\\S]+)\\ Mode\\ timed\\ out\\ without\\ a\\ response$",
+    "flags": "",
+    "replacement": "智能体切换到 $1 模式的请求超时，没有收到响应"
+  },
+  {
+    "id": "glass-354",
+    "pattern": "^Claude\\ Code\\ event\\ \"([\\s\\S]+)\"\\ is\\ not\\ supported\\ in\\ Cursor\\ and\\ will\\ be\\ ignored$",
+    "flags": "",
+    "replacement": "Cursor 不支持 Claude Code 事件“$1”，将忽略它"
+  },
+  {
+    "id": "glass-367",
+    "pattern": "^Hook\\ \"([\\s\\S]+)\"\\ blocked\\ this\\ action\\ \\(exit\\ code\\ 2\\)\\ but\\ provided\\ no\\ reason\\.$",
+    "flags": "",
+    "replacement": "钩子“$1”阻止了此操作（退出代码 2），但没有提供原因。"
+  },
+  {
+    "id": "glass-756",
+    "pattern": "^Command\\ executed\\ ([\\s\\S]+?),\\ took\\ ([\\s\\S]+?)\\ and\\ failed\\ \\(Exit\\ Code\\ ([\\s\\S]+)\\)$",
+    "flags": "",
+    "replacement": "已执行命令 $1，耗时 $2 后失败（退出代码 $3）"
+  },
+  {
+    "id": "glass-1169",
+    "pattern": "^Can't\\ open\\ ([\\s\\S]+)\\ in\\ the\\ browser\\ because\\ a\\ local\\ copy\\ couldn't\\ be\\ saved\\.$",
+    "flags": "",
+    "replacement": "无法在浏览器中打开 $1，因为无法保存本地副本。"
+  },
+  {
+    "id": "glass-1542",
+    "pattern": "^The\\ extension\\ '([\\s\\S]+?)'\\ wants\\ to\\ access\\ the\\ ([\\s\\S]+?)\\ account\\ '([\\s\\S]+)'\\.$",
+    "flags": "",
+    "replacement": "扩展“$1”想要访问 $2 账户“$3”。"
+  },
+  {
+    "id": "glass-1599",
+    "pattern": "^Bulk\\-import:\\ ([\\s\\S]+?)\\ succeeded,\\ ([\\s\\S]+?)\\ failed\\.\\ First\\ failures:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "批量导入：$1 个成功，$2 个失败。前几项失败：$3"
+  },
+  {
+    "id": "glass-1990",
+    "pattern": "^Are\\ you\\ sure\\ you\\ want\\ to\\ delete\\ \"([\\s\\S]+)\"\\?\\ This\\ action\\ cannot\\ be\\ undone\\.$",
+    "flags": "",
+    "replacement": "确定要删除“$1”吗？此操作无法撤消。"
+  },
+  {
+    "id": "glass-2123",
+    "pattern": "^Cannot\\ install\\ '([\\s\\S]+)'\\ extension\\ because\\ of\\ version\\ mismatch\\ in\\ Marketplace$",
+    "flags": "",
+    "replacement": "无法安装“$1”扩展，因为市场中的版本不匹配"
+  },
+  {
+    "id": "glass-364",
+    "pattern": "^Hook\\ \"([\\s\\S]+)\"\\ returned\\ invalid\\ JSON\\.\\ The\\ command\\ was\\ blocked\\ for\\ safety\\.$",
+    "flags": "",
+    "replacement": "钩子“$1”返回了无效 JSON。出于安全考虑，已阻止该命令。"
+  },
+  {
+    "id": "glass-1434",
+    "pattern": "^Error\\ while\\ migrating\\ ([\\s\\S]+?)\\ file\\ storage\\ from\\ '([\\s\\S]+?)'\\ to\\ '([\\s\\S]+)'$",
+    "flags": "",
+    "replacement": "将 $1 文件存储从“$2”迁移到“$3”时出错"
+  },
+  {
+    "id": "glass-1765",
+    "pattern": "^Timed\\ out\\ waiting\\ for\\ the\\ user\\ to\\ respond\\ to\\ the\\ \"([\\s\\S]+)\"\\ install\\ prompt$",
+    "flags": "",
+    "replacement": "等待你回应“$1”的安装提示词时已超时"
+  },
+  {
+    "id": "glass-1856",
+    "pattern": "^Are\\ you\\ sure\\ you\\ want\\ to\\ paste\\ ([\\s\\S]+)\\ lines\\ of\\ text\\ into\\ the\\ terminal\\?$",
+    "flags": "",
+    "replacement": "是否确实要将 $1 行文本粘贴到终端？"
+  },
+  {
+    "id": "glass-1870",
+    "pattern": "^Info:\\ unknown\\ severity\\ ([\\s\\S]+)\\.\\ Valid\\ values\\ are\\ error,\\ warning\\ and\\ info\\.$",
+    "flags": "",
+    "replacement": "信息：未知严重性 $1。有效值为 error、warning 和 info。"
+  },
+  {
+    "id": "glass-1872",
+    "pattern": "^Error:\\ the\\ pattern\\ property\\ ([\\s\\S]+)\\ is\\ not\\ a\\ valid\\ pattern\\ variable\\ name\\.$",
+    "flags": "",
+    "replacement": "错误：模式属性 $1 不是有效的模式变量名。"
+  },
+  {
+    "id": "glass-2117",
+    "pattern": "^The\\ '([\\s\\S]+?)'\\ extension\\ is\\ not\\ available\\ in\\ ([\\s\\S]+?)\\ for\\ the\\ ([\\s\\S]+)\\.$",
+    "flags": "",
+    "replacement": "“$1”扩展在 $2 中不适用于 $3。"
+  },
+  {
+    "id": "glass-761",
+    "pattern": "^The\\ terminal\\ process\\ \"([\\s\\S]+?)\"\\ failed\\ to\\ launch\\ \\(exit\\ code:\\ ([\\s\\S]+)\\)\\.$",
+    "flags": "",
+    "replacement": "无法启动终端进程“$1”（退出代码：$2）。"
+  },
+  {
+    "id": "glass-902",
+    "pattern": "^Could\\ not\\ open\\ the\\ authorization\\ page\\ for\\ MCP\\ server\\ \"([\\s\\S]+?)\":\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法打开 MCP 服务器“$1”的授权页：$2"
+  },
+  {
+    "id": "glass-1797",
+    "pattern": "^Are\\ you\\ sure\\ you\\ want\\ to\\ permanently\\ delete\\ the\\ following\\ ([\\s\\S]+)\\ files\\?$",
+    "flags": "",
+    "replacement": "是否确定要永久删除以下 $1 个文件？"
+  },
+  {
+    "id": "glass-355",
+    "pattern": "^Claude\\ Code\\ event\\ \"([\\s\\S]+)\"\\ has\\ invalid\\ value\\ \\(expected\\ array\\),\\ skipping$",
+    "flags": "",
+    "replacement": "Claude Code 事件“$1”的值无效（应为数组），已跳过"
+  },
+  {
+    "id": "glass-917",
+    "pattern": "^Failed\\ to\\ checkout\\ locally:\\ ([\\s\\S]+)\\.\\ Do\\ you\\ have\\ changes\\ in\\ submodules\\?$",
+    "flags": "",
+    "replacement": "无法在本地检出：$1。子模块中是否有更改？"
+  },
+  {
+    "id": "glass-1529",
+    "pattern": "^Some\\ extensions\\ from\\ the\\ imported\\ profile\\ could\\ not\\ be\\ installed:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法安装导入的配置文件中的部分扩展：$1"
+  },
+  {
+    "id": "glass-1709",
+    "pattern": "^Failed\\ to\\ write\\ rules\\-index\\.mdc\\ for\\ '([\\s\\S]+?)'\\ in\\ '([\\s\\S]+?)':\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法为“$1”将 rules-index.mdc 写入“$2”：$3"
+  },
+  {
+    "id": "glass-1798",
+    "pattern": "^Are\\ you\\ sure\\ you\\ want\\ to\\ permanently\\ delete\\ '([\\s\\S]+)'\\ and\\ its\\ contents\\?$",
+    "flags": "",
+    "replacement": "是否确定要永久删除“$1”及其内容？"
+  },
+  {
+    "id": "glass-1887",
+    "pattern": "^There\\ are\\ issues\\ with\\ task\\ \"([\\s\\S]+)\"\\.\\ See\\ the\\ output\\ for\\ more\\ details\\.$",
+    "flags": "",
+    "replacement": "任务“$1”存在问题。详情请查看输出。"
+  },
+  {
+    "id": "glass-1957",
+    "pattern": "^([\\s\\S]+)\\ automations\\ use\\ it\\ and\\ will\\ fail\\ until\\ you\\ pick\\ another\\ server\\.$",
+    "flags": "",
+    "replacement": "有 $1 个自动化正在使用它，在你改用其他服务器之前会失败。"
+  },
+  {
+    "id": "glass-382",
+    "pattern": "^The\\ model\\ \"([\\s\\S]+)\"\\ is\\ not\\ supported\\.\\ Please\\ choose\\ a\\ different\\ model\\.$",
+    "flags": "",
+    "replacement": "模型“$1”不受支持。请选择其他模型。"
+  },
+  {
+    "id": "glass-685",
+    "pattern": "^Branch\\ \"([\\s\\S]+)\"\\ has\\ diverged\\ from\\ origin\\ and\\ cannot\\ be\\ fast\\-forwarded\\.$",
+    "flags": "",
+    "replacement": "分支“$1”已与 origin 偏离，无法快进。"
+  },
+  {
+    "id": "glass-1030",
+    "pattern": "^Sensitive\\ key\\ ([\\s\\S]+)\\.\\.\\.\\ detected\\.\\ Please\\ enter\\ only\\ the\\ model\\ name\\.$",
+    "flags": "",
+    "replacement": "检测到敏感密钥 $1…，请只输入模型名称。"
+  },
+  {
+    "id": "glass-1667",
+    "pattern": "^Failed\\ to\\ score\\ all\\ ([\\s\\S]+)\\ commits\\.\\ Check\\ output\\ channel\\ for\\ details\\.$",
+    "flags": "",
+    "replacement": "无法为全部 $1 个提交评分。请查看输出通道了解详情。"
+  },
+  {
+    "id": "glass-1704",
+    "pattern": "^Created\\ hook\\ script\\ but\\ failed\\ to\\ chmod\\ \\+x\\ \\(exit\\ ([\\s\\S]+?)\\):\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "已创建钩子脚本，但无法执行 chmod +x(退出码 $1)：$2"
+  },
+  {
+    "id": "glass-1888",
+    "pattern": "^Couldn't\\ resolve\\ dependent\\ task\\ '([\\s\\S]+?)'\\ in\\ workspace\\ folder\\ '([\\s\\S]+)'$",
+    "flags": "",
+    "replacement": "无法解析依赖任务“$1”（工作区文件夹“$2”）"
+  },
+  {
+    "id": "glass-2161",
+    "pattern": "^Failed\\ to\\ connect\\ to\\ the\\ remote\\ extension\\ host\\ server\\ \\(Error:\\ ([\\s\\S]+)\\)$",
+    "flags": "",
+    "replacement": "无法连接到远程扩展宿主服务器（错误：$1）"
+  },
+  {
+    "id": "glass-2196",
+    "pattern": "^To\\ change\\ the\\ display\\ language\\ to\\ ([\\s\\S]+?),\\ ([\\s\\S]+)\\ needs\\ to\\ restart\\.$",
+    "flags": "",
+    "replacement": "要将显示语言更改为 $1，需要重新启动 $2。"
+  },
+  {
+    "id": "glass-773",
+    "pattern": "^A\\ command\\ named\\ \"([\\s\\S]+)\"\\ already\\ exists\\.\\ Would\\ you\\ like\\ to\\ open\\ it\\?$",
+    "flags": "",
+    "replacement": "名为“$1”的命令已存在。要打开它吗？"
+  },
+  {
+    "id": "glass-1889",
+    "pattern": "^Problem\\ matcher\\ ([\\s\\S]+)\\ can't\\ be\\ resolved\\.\\ The\\ matcher\\ will\\ be\\ ignored$",
+    "flags": "",
+    "replacement": "无法解析问题匹配器 $1。将忽略该匹配器。"
+  },
+  {
+    "id": "glass-2272",
+    "pattern": "^Please\\ create\\ an\\ issue\\ and\\ manually\\ attach\\ the\\ following\\ files:\\\n([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "请创建一个问题，并手动附加以下文件：\n$1"
+  },
+  {
+    "id": "glass-2292",
+    "pattern": "^Snapshot\\ upload\\ failed:\\ ([\\s\\S]+)\\.\\ The\\ snapshot\\ is\\ still\\ saved\\ on\\ disk\\.$",
+    "flags": "",
+    "replacement": "无法上传快照：$1。快照仍保存在磁盘上。"
+  },
+  {
+    "id": "glass-857",
+    "pattern": "^Simulated\\ thinking\\ exceeded\\ timeout\\ \\(([\\s\\S]+)\\)\\.\\ Sentry\\ event\\ captured\\.$",
+    "flags": "",
+    "replacement": "模拟思考已超过超时时间（$1）。已捕获 Sentry 事件。"
+  },
+  {
+    "id": "glass-1267",
+    "pattern": "^Unexpectedly\\ disconnected\\ from\\ remote\\ VNC,\\ retrying\\ in\\ ([\\s\\S]+)\\ seconds\\.$",
+    "flags": "",
+    "replacement": "与远程 VNC 意外断开，将在 $1 秒后重试。"
+  },
+  {
+    "id": "glass-1830",
+    "pattern": "^The\\ extension\\ '([\\s\\S]+)'\\ cannot\\ be\\ installed\\ because\\ it\\ was\\ not\\ found\\.$",
+    "flags": "",
+    "replacement": "无法安装扩展“$1”，因为找不到该扩展。"
+  },
+  {
+    "id": "glass-2009",
+    "pattern": "^Writing\\ login\\ information\\ to\\ the\\ keychain\\ failed\\ with\\ error\\ '([\\s\\S]+)'\\.$",
+    "flags": "",
+    "replacement": "无法将登录信息写入密钥链，错误：“$1”。"
+  },
+  {
+    "id": "glass-182",
+    "pattern": "^Invalid\\ decoration\\ position\\ ([\\s\\S]+?)\\.\\ Line\\ ([\\s\\S]+?)\\ length:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "装饰位置 $1 无效。第 $2 行的长度为 $3"
+  },
+  {
+    "id": "glass-804",
+    "pattern": "^Failed\\ to\\ ([\\s\\S]+?)\\ ([\\s\\S]+),\\ please\\ try\\ again\\ or\\ reload\\ the\\ window\\.$",
+    "flags": "",
+    "replacement": "无法 $1 $2，请重试或重新加载窗口。"
+  },
+  {
+    "id": "glass-1638",
+    "pattern": "^Failed\\ to\\ push\\ branch\\ ([\\s\\S]+)\\.\\ Configure\\ GitHub\\ auth\\ and\\ try\\ again\\.$",
+    "flags": "",
+    "replacement": "无法推送分支 $1。请配置 GitHub 身份验证，然后重试。"
+  },
+  {
+    "id": "glass-1708",
+    "pattern": "^Failed\\ to\\ ensure\\ rules\\ directory\\ '([\\s\\S]+?)'\\ for\\ '([\\s\\S]+?)':\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法确保规则目录“$1”可供“$2”使用：$3"
+  },
+  {
+    "id": "glass-1813",
+    "pattern": "^Warning:\\ ([\\s\\S]+?)\\ at\\ line\\ ([\\s\\S]+?)\\ and\\ character\\ ([\\s\\S]+?)\\.([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "警告：$1，位于第 $2 行、第 $3 个字符。$4"
+  },
+  {
+    "id": "glass-1900",
+    "pattern": "^Task\\ ([\\s\\S]+)\\ no\\ longer\\ exists\\ or\\ has\\ been\\ modified\\.\\ Cannot\\ restart\\.$",
+    "flags": "",
+    "replacement": "任务 $1 已不存在或已被修改。无法重启。"
+  },
+  {
+    "id": "glass-1994",
+    "pattern": "^Authentication\\ timed\\ out\\ for\\ ([\\s\\S]+)\\.\\ Click\\ Authenticate\\ to\\ continue\\.$",
+    "flags": "",
+    "replacement": "$1 的身份验证已超时。请点击“身份验证”以继续。"
+  },
+  {
+    "id": "glass-11",
+    "pattern": "^Cannot\\ add\\ integration\\ \"([\\s\\S]+)\"\\ because\\ no\\ SDK\\ Client\\ is\\ available\\.$",
+    "flags": "",
+    "replacement": "无法添加集成“$1”，因为没有可用的 SDK 客户端。"
+  },
+  {
+    "id": "glass-408",
+    "pattern": "^Creating\\ a\\ socket\\ \\(([\\s\\S]+?)\\)\\ returned\\ an\\ error\\ after\\ ([\\s\\S]+)\\ ms\\.$",
+    "flags": "",
+    "replacement": "创建套接字（$1）在 $2 ms 后返回错误。"
+  },
+  {
+    "id": "glass-592",
+    "pattern": "^Server\\ \"([\\s\\S]+)\"\\ has\\ an\\ invalid\\ command:\\ must\\ be\\ a\\ non\\-empty\\ string$",
+    "flags": "",
+    "replacement": "服务器“$1”的命令无效：必须是非空字符串"
+  },
+  {
+    "id": "glass-1874",
+    "pattern": "^Warning:\\ options\\.cwd\\ must\\ be\\ of\\ type\\ string\\.\\ Ignoring\\ value\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "警告：options.cwd 的类型必须是字符串。正在忽略值 $1。"
+  },
+  {
+    "id": "glass-2032",
+    "pattern": "^Are\\ you\\ sure\\ you\\ want\\ to\\ delete\\ “([\\s\\S]+)”\\?\\ This\\ cannot\\ be\\ undone\\.$",
+    "flags": "",
+    "replacement": "确定要删除“$1”吗？此操作无法撤消。"
+  },
+  {
+    "id": "glass-2210",
+    "pattern": "^Checked\\ out\\ branch\\ for:\\ ([\\s\\S]+)\\.\\ The\\ agent\\ is\\ now\\ running\\ locally\\.$",
+    "flags": "",
+    "replacement": "已为 $1 检出分支。智能体现在本地运行。"
+  },
+  {
+    "id": "glass-2252",
+    "pattern": "^Please\\ try\\ to\\ download\\ and\\ reproduce\\ the\\ issue\\ in\\ ([\\s\\S]+)\\ insiders\\.$",
+    "flags": "",
+    "replacement": "请下载 $1 Insiders 并尝试在其中重现此问题。"
+  },
+  {
+    "id": "glass-911",
+    "pattern": "^Unable\\ to\\ revert\\ file:\\ Cannot\\ determine\\ workspace\\ folder\\ for\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法还原文件：无法确定 $1 的工作区文件夹"
+  },
+  {
+    "id": "glass-1811",
+    "pattern": "^Error:\\ ([\\s\\S]+?)\\ at\\ line\\ ([\\s\\S]+?)\\ and\\ character\\ ([\\s\\S]+?)\\.([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "错误：$1，位于第 $2 行、第 $3 个字符。$4"
+  },
+  {
+    "id": "glass-1934",
+    "pattern": "^([\\s\\S]+?)\\ couldn't\\ finish\\ installing\\ the\\ update\\ to\\ version\\ ([\\s\\S]+)\\.$",
+    "flags": "",
+    "replacement": "$1 无法完成到版本 $2 的更新安装。"
+  },
+  {
+    "id": "glass-1995",
+    "pattern": "^Authentication\\ failed\\ for\\ ([\\s\\S]+)\\.\\ Click\\ Authenticate\\ to\\ try\\ again\\.$",
+    "flags": "",
+    "replacement": "$1 的身份验证失败。请点击“身份验证”以重试。"
+  },
+  {
+    "id": "glass-2175",
+    "pattern": "^Error\\ attempting\\ to\\ manually\\ source\\ shell\\ integration\\ script:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "尝试手动载入 Shell 集成脚本时出错：$1"
+  },
+  {
+    "id": "glass-2189",
+    "pattern": "^'([\\s\\S]+?)'\\ contains\\ extensions\\ which\\ are\\ not\\ supported\\ in\\ ([\\s\\S]+)\\.$",
+    "flags": "",
+    "replacement": "“$1”包含在 $2 中不受支持的扩展。"
+  },
+  {
+    "id": "glass-92",
+    "pattern": "^This\\ tool\\ \\(\"([\\s\\S]+)\"\\)\\ isn't\\ supported\\ in\\ this\\ version\\ of\\ Cursor\\.$",
+    "flags": "",
+    "replacement": "此版本的 Cursor 不支持此工具（“$1”）。"
+  },
+  {
+    "id": "glass-833",
+    "pattern": "^([\\s\\S]+?)\\ file\\ is\\ too\\ large\\ \\(([\\s\\S]+)MB\\)\\.\\ Maximum\\ size\\ is\\ 10MB\\.$",
+    "flags": "",
+    "replacement": "$1 文件过大（$2 MB）。最大大小为 10 MB。"
+  },
+  {
+    "id": "glass-1544",
+    "pattern": "^Unable\\ to\\ load\\ and\\ parse\\ grammar\\ for\\ scope\\ ([\\s\\S]+?)\\ from\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法加载并解析作用域 $1 的语法，来源为 $2"
+  },
+  {
+    "id": "glass-1662",
+    "pattern": "^Error\\ Scoring\\ Commit:\\ ([\\s\\S]+?)\\\n([\\s\\S]+?)\\\nError:\\ ([\\s\\S]+?)\\\n([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "提交评分出错：$1\n$2\n错误：$3\n$4"
+  },
+  {
+    "id": "glass-1891",
+    "pattern": "^There\\ is\\ no\\ task\\ provider\\ registered\\ for\\ tasks\\ of\\ type\\ \"([\\s\\S]+)\"\\.$",
+    "flags": "",
+    "replacement": "没有为类型“$1”的任务注册任务提供程序。"
+  },
+  {
+    "id": "glass-625",
+    "pattern": "^Command\\ blocked:\\ access\\ to\\ \"([\\s\\S]+)\"\\ is\\ restricted\\ by\\ admin\\ policy$",
+    "flags": "",
+    "replacement": "命令已被阻止：管理员策略限制了对“$1”的访问"
+  },
+  {
+    "id": "glass-1008",
+    "pattern": "^Cannot\\ ([\\s\\S]+?)\\ '([\\s\\S]+)':\\ it\\ is\\ not\\ inside\\ a\\ skills\\ directory\\.$",
+    "flags": "",
+    "replacement": "无法 $1“$2”：它不在技能目录中。"
+  },
+  {
+    "id": "glass-1077",
+    "pattern": "^Failed\\ to\\ connect\\ to\\ ([\\s\\S]+)\\.\\ Check\\ the\\ logs\\ below\\ for\\ details\\.$",
+    "flags": "",
+    "replacement": "无法连接到 $1。详情请查看下面的日志。"
+  },
+  {
+    "id": "glass-1528",
+    "pattern": "^'([\\s\\S]+?)'\\ extension\\ would\\ like\\ to\\ access\\ the\\ '([\\s\\S]+)'\\ feature\\.$",
+    "flags": "",
+    "replacement": "扩展“$1”希望访问“$2”功能。"
+  },
+  {
+    "id": "glass-1879",
+    "pattern": "^Warning:\\ ([\\s\\S]+)\\ tasks\\ are\\ unavailable\\ in\\ the\\ current\\ environment\\.$",
+    "flags": "",
+    "replacement": "警告：$1 任务在当前环境中不可用。"
+  },
+  {
+    "id": "glass-2150",
+    "pattern": "^Branch\\ checkout\\ failed\\ \\(([\\s\\S]+)\\)\\ —\\ deferring\\ to\\ agentic\\ reconcile$",
+    "flags": "",
+    "replacement": "分支检出失败（$1），改为交由智能体协调"
+  },
+  {
+    "id": "glass-55",
+    "pattern": "^A\\ networking\\ error\\ occurred\\ during\\ ([\\s\\S]+?)\\ request\\ to\\ ([\\s\\S]+)\\.$",
+    "flags": "",
+    "replacement": "$1 请求发往 $2 期间发生了网络错误。"
+  },
+  {
+    "id": "glass-191",
+    "pattern": "^Recursive\\ g\\ cannot\\ be\\ used\\ outside\\ the\\ referenced\\ group\\ \"([\\s\\S]+)\"$",
+    "flags": "",
+    "replacement": "无法在被引用组“$1”之外使用递归 g"
+  },
+  {
+    "id": "glass-317",
+    "pattern": "^Cannot\\ delete\\ property\\ ([\\s\\S]+)\\ while\\ board\\ configuration\\ uses\\ it\\.$",
+    "flags": "",
+    "replacement": "无法删除属性 $1，因为看板配置正在使用它。"
+  },
+  {
+    "id": "glass-593",
+    "pattern": "^Server\\ \"([\\s\\S]+)\"\\ has\\ an\\ invalid\\ url:\\ must\\ be\\ a\\ non\\-empty\\ string$",
+    "flags": "",
+    "replacement": "服务器“$1”的 URL 无效：必须是非空字符串"
+  },
+  {
+    "id": "glass-700",
+    "pattern": "^An\\ extension\\ provided\\ notebook\\ for\\ '([\\s\\S]+)'\\ could\\ not\\ be\\ saved\\.$",
+    "flags": "",
+    "replacement": "无法保存扩展为“$1”提供的笔记本。"
+  },
+  {
+    "id": "glass-1395",
+    "pattern": "^([\\s\\S]+?)\\ \"([\\s\\S]+?)\"\\ ([\\s\\S]+?)\\ in\\ \"([\\s\\S]+)\"\\.\\ Reload\\ to\\ apply\\.$",
+    "flags": "",
+    "replacement": "$1“$2”$3，位于“$4”。重新加载以应用。"
+  },
+  {
+    "id": "glass-1726",
+    "pattern": "^'([\\s\\S]+)'\\ is\\ marked\\ as\\ read\\-only\\.\\ Do\\ you\\ want\\ to\\ save\\ anyway\\?$",
+    "flags": "",
+    "replacement": "“$1”已标记为只读。是否仍要保存？"
+  },
+  {
+    "id": "glass-2081",
+    "pattern": "^([\\s\\S]+)\\ name\\ cannot\\ contain\\ path\\ separators\\ or\\ directory\\ traversal$",
+    "flags": "",
+    "replacement": "$1 名称无法包含路径分隔符或目录遍历序列"
+  },
+  {
+    "id": "glass-2149",
+    "pattern": "^Failed\\ to\\ restore\\ worktree\\ branch\\ after\\ migration\\ failure:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法在迁移失败后恢复工作树分支：$1"
+  },
+  {
+    "id": "placeholder-3",
+    "pattern": "^Can't\\ open\\ ([\\s\\S]+)\\ in\\ the\\ browser\\ because\\ it\\ no\\ longer\\ exists\\.$",
+    "flags": "",
+    "replacement": "无法在浏览器中打开 $1，因为它已不存在。"
+  },
+  {
+    "id": "glass-357",
+    "pattern": "^Invalid\\ permission\\ value\\.\\ Expected\\ one\\ of:\\ ([\\s\\S]+),\\ or\\ undefined$",
+    "flags": "",
+    "replacement": "权限值无效。应为以下之一：$1，或 undefined"
+  },
+  {
+    "id": "glass-682",
+    "pattern": "^Agent\\ queue\\ mutation\\ failed\\ \\(([\\s\\S]+?)\\)\\ for\\ ([\\s\\S]+?):\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "智能体队列变更失败（$1），对象为 $2：$3"
+  },
+  {
+    "id": "glass-1170",
+    "pattern": "^Can't\\ open\\ ([\\s\\S]+)\\ in\\ the\\ browser\\ because\\ it\\ no\\ longer\\ exists\\.$",
+    "flags": "",
+    "replacement": "无法在浏览器中打开 $1，因为它已不存在。"
+  },
+  {
+    "id": "glass-1524",
+    "pattern": "^Missing\\ or\\ invalid\\ font\\ id\\ '([\\s\\S]+)'\\.\\ Skipping\\ font\\ definition\\.$",
+    "flags": "",
+    "replacement": "字体 ID“$1”缺失或无效。将跳过字体定义。"
+  },
+  {
+    "id": "glass-1668",
+    "pattern": "^Error\\ in\\ Bulk\\ Commit\\ Scoring\\\n([\\s\\S]+?)\\\nError:\\ ([\\s\\S]+?)\\\n([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "批量提交评分出错\n$1\n错误：$2\n$3"
+  },
+  {
+    "id": "glass-1832",
+    "pattern": "^Would\\ you\\ like\\ to\\ install\\ '([\\s\\S]+?)'\\ extension\\ from\\ '([\\s\\S]+)'\\?$",
+    "flags": "",
+    "replacement": "是否要安装扩展“$1”（来自“$2”）？"
+  },
+  {
+    "id": "glass-2327",
+    "pattern": "^Failed\\ to\\ upload\\ the\\ local\\ agent\\ run\\ to\\ Prompt\\ Quality:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法将本地智能体运行上传到提示词质量：$1"
+  },
+  {
+    "id": "glass-788",
+    "pattern": "^Something\\ went\\ wrong\\ setting\\ your\\ per\\-user\\ spend\\ limit:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "设置每位用户支出上限时出了点问题：$1"
+  },
+  {
+    "id": "glass-2064",
+    "pattern": "^Failed\\ to\\ start\\ extension\\ host\\ heap\\ allocation\\ profiler:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法开始扩展宿主堆分配分析：$1"
+  },
+  {
+    "id": "glass-91",
+    "pattern": "^Failed\\ to\\ hydrate\\ tool\\ call\\ \"([\\s\\S]+)\"\\ from\\ conversation\\ state\\.$",
+    "flags": "",
+    "replacement": "无法从对话状态还原工具调用“$1”。"
+  },
+  {
+    "id": "glass-351",
+    "pattern": "^Tool\\ \"([\\s\\S]+)\"\\ is\\ not\\ supported\\ in\\ Cursor\\ and\\ will\\ be\\ ignored$",
+    "flags": "",
+    "replacement": "Cursor 不支持工具“$1”，将忽略它"
+  },
+  {
+    "id": "glass-429",
+    "pattern": "^([\\s\\S]+)\\ can\\ reach\\ it,\\ but\\ can't\\ renew\\ this\\ server's\\ sign\\-in\\.$",
+    "flags": "",
+    "replacement": "$1 可以访问它，但无法续期此服务器的登录。"
+  },
+  {
+    "id": "glass-1239",
+    "pattern": "^Delete\\ this\\ secret\\?\\\n\\\n([\\s\\S]+)\\\n\\\nThis\\ action\\ cannot\\ be\\ undone\\.$",
+    "flags": "",
+    "replacement": "是否删除此密钥？\n\n$1\n\n此操作无法撤消。"
+  },
+  {
+    "id": "glass-1511",
+    "pattern": "^\\(([\\s\\S]+)\\)\\ was\\ pressed\\.\\ Waiting\\ for\\ second\\ key\\ of\\ chord\\.\\.\\.$",
+    "flags": "",
+    "replacement": "已按下（$1）。正在等待组合键的第二个键..."
+  },
+  {
+    "id": "glass-1773",
+    "pattern": "^Local\\ Agent\\ Store\\ is\\ unavailable\\ for\\ this\\ conversation:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "此对话的本地智能体存储不可用：$1"
+  },
+  {
+    "id": "glass-1792",
+    "pattern": "^Are\\ you\\ sure\\ you\\ want\\ to\\ delete\\ the\\ following\\ ([\\s\\S]+)\\ files\\?$",
+    "flags": "",
+    "replacement": "是否确定要删除以下 $1 个文件？"
+  },
+  {
+    "id": "glass-2302",
+    "pattern": "^An\\ error\\ occurred\\ while\\ capturing\\ the\\ process\\ snapshot:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "捕获进程快照时出错：$1"
+  },
+  {
+    "id": "glass-352",
+    "pattern": "^All\\ tools\\ in\\ matcher\\ \"([\\s\\S]+)\"\\ are\\ unsupported,\\ skipping\\ hooks$",
+    "flags": "",
+    "replacement": "匹配器“$1”中的工具都不受支持，将跳过钩子"
+  },
+  {
+    "id": "glass-411",
+    "pattern": "^Error\\ restoring\\ recent\\ entry\\ ([\\s\\S]+?):\\ ([\\s\\S]+)\\.\\ Skip\\ entry\\.$",
+    "flags": "",
+    "replacement": "还原最近条目 $1 时出错：$2。跳过该条目。"
+  },
+  {
+    "id": "glass-762",
+    "pattern": "^The\\ terminal\\ process\\ failed\\ to\\ launch\\ \\(exit\\ code:\\ ([\\s\\S]+)\\)\\.$",
+    "flags": "",
+    "replacement": "无法启动终端进程（退出代码：$1）。"
+  },
+  {
+    "id": "glass-1088",
+    "pattern": "^Failed\\ to\\ parse\\ ([\\s\\S]+?):\\ \\[([\\s\\S]+?),\\ ([\\s\\S]+?)\\]\\ ([\\s\\S]+)\\.$",
+    "flags": "",
+    "replacement": "无法解析 $1：[$2, $3] $4。"
+  },
+  {
+    "id": "glass-1513",
+    "pattern": "^The\\ key\\ combination\\ \\(([\\s\\S]+?),\\ ([\\s\\S]+)\\)\\ is\\ not\\ a\\ command\\.$",
+    "flags": "",
+    "replacement": "组合键（$1, $2）不是命令。"
+  },
+  {
+    "id": "glass-1793",
+    "pattern": "^Are\\ you\\ sure\\ you\\ want\\ to\\ delete\\ '([\\s\\S]+)'\\ and\\ its\\ contents\\?$",
+    "flags": "",
+    "replacement": "是否确实要删除“$1”及其内容？"
+  },
+  {
+    "id": "glass-1800",
+    "pattern": "^Are\\ you\\ sure\\ you\\ want\\ to\\ paste\\ the\\ following\\ ([\\s\\S]+)\\ items\\?$",
+    "flags": "",
+    "replacement": "是否确实要粘贴以下 $1 个项目？"
+  },
+  {
+    "id": "glass-1866",
+    "pattern": "^Error:\\ The\\ string\\ ([\\s\\S]+)\\ is\\ not\\ a\\ valid\\ regular\\ expression\\.$",
+    "flags": "",
+    "replacement": "错误：字符串 $1 不是有效的正则表达式。"
+  },
+  {
+    "id": "glass-1871",
+    "pattern": "^Error:\\ the\\ pattern\\ with\\ the\\ identifier\\ ([\\s\\S]+)\\ doesn't\\ exist\\.$",
+    "flags": "",
+    "replacement": "错误：标识符为 $1 的模式不存在。"
+  },
+  {
+    "id": "glass-1960",
+    "pattern": "^([\\s\\S]+?)\\ ([\\s\\S]+)\\ automations\\ use\\ it\\ and\\ fail\\ until\\ you\\ do\\.$",
+    "flags": "",
+    "replacement": "$1 $2 个自动化正在使用它，在你完成此操作之前会失败。"
+  },
+  {
+    "id": "glass-2004",
+    "pattern": "^Please\\ enter\\ a\\ width\\ in\\ percentage\\ for\\ the\\ '([\\s\\S]+)'\\ column\\.$",
+    "flags": "",
+    "replacement": "请输入“$1”列的宽度（以百分比表示）。"
+  },
+  {
+    "id": "glass-2027",
+    "pattern": "^Delete\\ “([\\s\\S]+)”\\ and\\ its\\ run\\ history\\?\\ This\\ can’t\\ be\\ undone\\.$",
+    "flags": "",
+    "replacement": "要删除“$1”及其运行历史吗？此操作无法撤消。"
+  },
+  {
+    "id": "glass-2052",
+    "pattern": "^Could\\ not\\ forward\\ port\\ ([\\s\\S]+)\\ —\\ no\\ tunnel\\ provider\\ available$",
+    "flags": "",
+    "replacement": "无法转发端口 $1：没有可用的隧道提供程序"
+  },
+  {
+    "id": "glass-176",
+    "pattern": "^Language\\ `([\\s\\S]+)`\\ not\\ found,\\ you\\ may\\ need\\ to\\ load\\ it\\ first$",
+    "flags": "",
+    "replacement": "找不到语言 `$1`，可能需要先加载"
+  },
+  {
+    "id": "glass-1342",
+    "pattern": "^([\\s\\S]+)\\ couldn't\\ connect\\.\\ Check\\ your\\ network\\ and\\ try\\ again\\.$",
+    "flags": "",
+    "replacement": "$1 无法连接。请检查网络后再试。"
+  },
+  {
+    "id": "glass-1512",
+    "pattern": "^\\(([\\s\\S]+)\\)\\ was\\ pressed\\.\\ Waiting\\ for\\ next\\ key\\ of\\ chord\\.\\.\\.$",
+    "flags": "",
+    "replacement": "已按下（$1）。正在等待组合键的下一个键..."
+  },
+  {
+    "id": "glass-1588",
+    "pattern": "^Rewriting\\ state\\.vscdb\\ to\\ give\\ back\\ ([\\s\\S]+?)\\ failed:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法重写 state.vscdb 以释放 $1：$2"
+  },
+  {
+    "id": "glass-181",
+    "pattern": "^Invalid\\ decoration\\ position\\ ([\\s\\S]+?)\\.\\ Lines\\ length:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "装饰位置 $1 无效。总行数：$2"
+  },
+  {
+    "id": "glass-310",
+    "pattern": "^Cannot\\ move\\ card\\ ([\\s\\S]+?)\\ to\\ unknown\\ group\\ value\\ ([\\s\\S]+)\\.$",
+    "flags": "",
+    "replacement": "无法将卡片 $1 移到未知分组值 $2。"
+  },
+  {
+    "id": "glass-1049",
+    "pattern": "^Link\\ GitHub\\ account\\ ([\\s\\S]+)\\ to\\ your\\ current\\ Cursor\\ account\\?$",
+    "flags": "",
+    "replacement": "要将 GitHub 账户 $1 关联到当前的 Cursor 账户吗？"
+  },
+  {
+    "id": "glass-2254",
+    "pattern": "^Connection\\ to\\ '([\\s\\S]+?)'\\ could\\ not\\ be\\ established\\ \\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法建立与“$1”的连接 $2"
+  },
+  {
+    "id": "glass-638",
+    "pattern": "^Failed\\ to\\ inspect\\ cloud\\ subagent\\ conversation\\ state:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法检查云端子智能体的对话状态：$1"
+  },
+  {
+    "id": "glass-683",
+    "pattern": "^Cloud\\ agent\\ forked\\ as\\ ([\\s\\S]+)\\ but\\ could\\ not\\ be\\ loaded\\ yet$",
+    "flags": "",
+    "replacement": "云端智能体已派生为 $1，但暂时无法加载"
+  },
+  {
+    "id": "glass-701",
+    "pattern": "^GithubRpc\\ backend\\ rejected\\ MakeGithubRequest\\ \\(code:\\ ([\\s\\S]+)\\)$",
+    "flags": "",
+    "replacement": "GithubRpc 后端已拒绝 MakeGithubRequest(代码：$1)"
+  },
+  {
+    "id": "glass-758",
+    "pattern": "^Command\\ executed\\ ([\\s\\S]+?)\\ and\\ failed\\ \\(Exit\\ Code\\ ([\\s\\S]+)\\)$",
+    "flags": "",
+    "replacement": "已执行命令 $1，但失败（退出代码 $2）"
+  },
+  {
+    "id": "glass-1924",
+    "pattern": "^The\\ diff\\ algorithm\\ was\\ stopped\\ early\\ \\(after\\ ([\\s\\S]+)\\ ms\\.\\)$",
+    "flags": "",
+    "replacement": "差异算法已提前停止（$1 毫秒后）。"
+  },
+  {
+    "id": "glass-2186",
+    "pattern": "^Installing\\ Extension\\ ([\\s\\S]+)\\ failed:\\ Manifest\\ is\\ not\\ found\\.$",
+    "flags": "",
+    "replacement": "无法安装扩展 $1：未找到清单文件。"
+  },
+  {
+    "id": "glass-2223",
+    "pattern": "^Couldn’t\\ disconnect\\ ([\\s\\S]+)\\ from\\ this\\ computer\\.\\ Try\\ again\\.$",
+    "flags": "",
+    "replacement": "无法将 $1 从这台计算机断开。请重试。"
+  },
+  {
+    "id": "glass-2224",
+    "pattern": "^Couldn’t\\ disconnect\\ ([\\s\\S]+)\\ from\\ all\\ computers\\.\\ Try\\ again\\.$",
+    "flags": "",
+    "replacement": "无法将 $1 从所有计算机断开。请重试。"
+  },
+  {
+    "id": "glass-2269",
+    "pattern": "^([\\s\\S]+?)\\ CPU\\ Profiler\\ returned\\ an\\ invalid\\ profile:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "$1 CPU 分析器返回了无效的分析数据：$2"
+  },
+  {
+    "id": "glass-177",
+    "pattern": "^Theme\\ `([\\s\\S]+)`\\ not\\ found,\\ you\\ may\\ need\\ to\\ load\\ it\\ first$",
+    "flags": "",
+    "replacement": "找不到主题 `$1`，可能需要先加载"
+  },
+  {
+    "id": "glass-180",
+    "pattern": "^Invalid\\ decoration\\ offset:\\ ([\\s\\S]+?)\\.\\ Code\\ length:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "装饰偏移无效：$1。代码长度：$2"
+  },
+  {
+    "id": "glass-988",
+    "pattern": "^Failed\\ to\\ copy\\ canvas\\ link\\ \\(([\\s\\S]+)\\)\\.\\ Try\\ again\\ later\\.$",
+    "flags": "",
+    "replacement": "无法复制 Canvas 链接（$1）。请稍后重试。"
+  },
+  {
+    "id": "glass-1619",
+    "pattern": "^([\\s\\S]+?)\\\n\\\nRelated\\ files\\ \\(could\\ not\\ be\\ opened\\):\\\n([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "$1\n\n相关文件（无法打开）：\n$2"
+  },
+  {
+    "id": "glass-1707",
+    "pattern": "^Failed\\ to\\ search\\ for\\ legacy\\ rules\\ in\\ '([\\s\\S]+?)':\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法在“$1”中搜索旧版规则：$2"
+  },
+  {
+    "id": "glass-1775",
+    "pattern": "^Local\\ subscription\\ inbox\\ record\\ could\\ not\\ be\\ read:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法读取本地订阅收件箱记录：$1"
+  },
+  {
+    "id": "glass-2112",
+    "pattern": "^Allow\\ connecting\\ to\\ the\\ remote\\ server\\ '([\\s\\S]+?):([\\s\\S]+)'\\?$",
+    "flags": "",
+    "replacement": "是否允许连接到远程服务器“$1:$2”？"
+  },
+  {
+    "id": "glass-308",
+    "pattern": "^Card\\ ([\\s\\S]+?)\\ is\\ blocked\\ by\\ missing\\ task\\ ids:\\ ([\\s\\S]+)\\.$",
+    "flags": "",
+    "replacement": "卡片 $1 被缺失的任务 ID 阻止：$2。"
+  },
+  {
+    "id": "glass-646",
+    "pattern": "^Subagent\\ could\\ not\\ be\\ linked\\ to\\ its\\ parent\\ Task:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法将子智能体链接到其父任务：$1"
+  },
+  {
+    "id": "glass-989",
+    "pattern": "^Failed\\ to\\ unpublish\\ canvas\\ \\(([\\s\\S]+)\\)\\.\\ Try\\ again\\ later\\.$",
+    "flags": "",
+    "replacement": "无法取消发布 Canvas($1)。请稍后重试。"
+  },
+  {
+    "id": "glass-994",
+    "pattern": "^Failed\\ to\\ copy\\ skill\\ link\\ \\(([\\s\\S]+)\\)\\.\\ Try\\ again\\ later\\.$",
+    "flags": "",
+    "replacement": "无法复制技能链接（$1）。请稍后重试。"
+  },
+  {
+    "id": "glass-1521",
+    "pattern": "^Invalid\\ font\\ weight\\ in\\ font\\ '([\\s\\S]+)'\\.\\ Ignoring\\ setting\\.$",
+    "flags": "",
+    "replacement": "字体“$1”中的字体粗细无效。将忽略此设置。"
+  },
+  {
+    "id": "glass-1625",
+    "pattern": "^You\\ are\\ on\\ branch\\ ([\\s\\S]+)\\.\\ Choose\\ how\\ to\\ open\\ the\\ PR\\.$",
+    "flags": "",
+    "replacement": "你当前在分支 $1。请选择如何创建 PR。"
+  },
+  {
+    "id": "glass-2036",
+    "pattern": "^([\\s\\S]+)\\ failed\\ to\\ render\\ \\(no\\ additional\\ error\\ details\\)\\.$",
+    "flags": "",
+    "replacement": "$1 无法渲染（没有其他错误详细信息）。"
+  },
+  {
+    "id": "glass-332",
+    "pattern": "^Cannot\\ create\\ baggage\\ metadata\\ from\\ unknown\\ type:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法从未知类型创建 baggage 元数据：$1"
+  },
+  {
+    "id": "glass-854",
+    "pattern": "^Cursor\\ ignores\\ ([\\s\\S]+),\\ so\\ it\\ cannot\\ be\\ added\\ to\\ chat\\.$",
+    "flags": "",
+    "replacement": "Cursor 会忽略 $1，因此无法将它添加到聊天。"
+  },
+  {
+    "id": "glass-932",
+    "pattern": "^Bitbucket\\ Data\\ Center\\ request\\ timed\\ out\\ after\\ ([\\s\\S]+)\\ ms$",
+    "flags": "",
+    "replacement": "Bitbucket 数据中心请求在 $1 毫秒后超时"
+  },
+  {
+    "id": "glass-1047",
+    "pattern": "^Failed\\ to\\ sync\\ saved\\ secrets\\ to\\ the\\ running\\ VM:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法将已保存的密钥同步到正在运行的 VM：$1"
+  },
+  {
+    "id": "glass-1522",
+    "pattern": "^Invalid\\ font\\ style\\ in\\ font\\ '([\\s\\S]+)'\\.\\ Ignoring\\ setting\\.$",
+    "flags": "",
+    "replacement": "字体“$1”中的字形无效。将忽略此设置。"
+  },
+  {
+    "id": "glass-1523",
+    "pattern": "^Invalid\\ font\\ source\\ in\\ font\\ '([\\s\\S]+)'\\.\\ Ignoring\\ source\\.$",
+    "flags": "",
+    "replacement": "字体“$1”中的字体来源无效。将忽略此来源。"
+  },
+  {
+    "id": "glass-1685",
+    "pattern": "^Error\\ accessing\\ Claude\\ project\\ local\\ config\\ file:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "访问 Claude 项目的本地配置文件时出错：$1"
+  },
+  {
+    "id": "glass-2293",
+    "pattern": "^An\\ error\\ occurred\\ while\\ capturing\\ debug\\ snapshot:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "捕获调试快照时出错：$1"
+  },
+  {
+    "id": "glass-693",
+    "pattern": "^Next\\ follow\\-up\\ submit\\ will\\ fail\\ for\\ ([\\s\\S]+)\\ \\(debug\\)\\.$",
+    "flags": "",
+    "replacement": "下次提交 $1 的后续消息将失败（调试）。"
+  },
+  {
+    "id": "glass-771",
+    "pattern": "^No\\ terminal\\ profile\\ provider\\ registered\\ for\\ id\\ \"([\\s\\S]+)\"$",
+    "flags": "",
+    "replacement": "没有为 ID“$1”注册终端配置文件提供程序"
+  },
+  {
+    "id": "glass-943",
+    "pattern": "^Non\\-Error\\ promise\\ rejection\\ captured\\ with\\ value:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "捕获到非 Error 的 Promise 拒绝，值为：$1"
+  },
+  {
+    "id": "glass-1616",
+    "pattern": "^Couldn't\\ process\\ image:\\ ([\\s\\S]+)\\.\\ Continuing\\ without\\ it\\.$",
+    "flags": "",
+    "replacement": "无法处理图像：$1。将跳过该图像并继续。"
+  },
+  {
+    "id": "glass-1674",
+    "pattern": "^A\\ beforeReadFile\\ hook\\ blocked\\ reading\\ this\\ file:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "beforeReadFile 钩子已阻止读取此文件：$1"
+  },
+  {
+    "id": "glass-1764",
+    "pattern": "^Error:\\ no\\ first\\-party\\ marketplace\\ plugin\\ named\\ \"([\\s\\S]+)\"$",
+    "flags": "",
+    "replacement": "错误：没有名为“$1”的第一方市场插件"
+  },
+  {
+    "id": "glass-1799",
+    "pattern": "^Are\\ you\\ sure\\ you\\ want\\ to\\ permanently\\ delete\\ '([\\s\\S]+)'\\?$",
+    "flags": "",
+    "replacement": "是否确定要永久删除“$1”？"
+  },
+  {
+    "id": "glass-1992",
+    "pattern": "^Could\\ not\\ add\\ plugins\\ from\\ the\\ selected\\ folder:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法从所选文件夹添加插件：$1"
+  },
+  {
+    "id": "glass-300",
+    "pattern": "^This\\ plugin\\ includes\\ unsupported\\ install\\ fields:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "此插件包含不受支持的安装字段：$1"
+  },
+  {
+    "id": "glass-329",
+    "pattern": "^([\\s\\S]+?)\\ errors\\ occurred\\ during\\ unsubscription:\\\n([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "取消订阅时发生 $1 个错误：\n$2"
+  },
+  {
+    "id": "glass-551",
+    "pattern": "^Timed\\ out\\ resolving\\ the\\ agent\\ workspace\\ after\\ ([\\s\\S]+)ms$",
+    "flags": "",
+    "replacement": "解析智能体工作区在 $1 ms 后超时"
+  },
+  {
+    "id": "glass-811",
+    "pattern": "^Failed\\ to\\ track\\ billing\\ banner\\ shown\\ event\\ \\(([\\s\\S]+)\\):$",
+    "flags": "",
+    "replacement": "无法记录账单横幅展示事件（$1）："
+  },
+  {
+    "id": "glass-864",
+    "pattern": "^Couldn't\\ copy\\ ([\\s\\S]+?)\\ to\\ the\\ remote\\ machine:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法将 $1 复制到远程计算机：$2"
+  },
+  {
+    "id": "glass-964",
+    "pattern": "^Error:\\ unsupported\\ URI\\ scheme\\ for\\ open_resource:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "错误：open_resource 不支持此 URI 方案：$1"
+  },
+  {
+    "id": "glass-1724",
+    "pattern": "^'([\\s\\S]+)'\\ already\\ exists\\.\\ Do\\ you\\ want\\ to\\ replace\\ it\\?$",
+    "flags": "",
+    "replacement": "“$1”已存在。是否要替换？"
+  },
+  {
+    "id": "glass-1826",
+    "pattern": "^Please\\ update\\ ([\\s\\S]+)\\ to\\ enable\\ the\\ updated\\ extension\\.$",
+    "flags": "",
+    "replacement": "请更新 $1 以启用更新后的扩展。"
+  },
+  {
+    "id": "glass-1959",
+    "pattern": "^([\\s\\S]+)\\ 1\\ automation\\ uses\\ it\\ and\\ fails\\ until\\ you\\ do\\.$",
+    "flags": "",
+    "replacement": "$1 1 个自动化正在使用它，在你完成此操作之前会失败。"
+  },
+  {
+    "id": "glass-2222",
+    "pattern": "^Couldn’t\\ approve\\ ([\\s\\S]+)\\.\\ Try\\ again\\ from\\ that\\ device\\.$",
+    "flags": "",
+    "replacement": "无法批准 $1。请从该设备重试。"
+  },
+  {
+    "id": "glass-2299",
+    "pattern": "^An\\ error\\ occurred\\ while\\ capturing\\ the\\ snapshot:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "捕获快照时出错：$1"
+  },
+  {
+    "id": "glass-149",
+    "pattern": "^Verbatim\\ tags\\ aren't\\ resolved,\\ so\\ ([\\s\\S]+)\\ is\\ invalid\\.$",
+    "flags": "",
+    "replacement": "逐字标签不会解析，因此 $1 无效。"
+  },
+  {
+    "id": "glass-431",
+    "pattern": "^([\\s\\S]+)\\ can\\ reach\\ it,\\ but\\ can't\\ sign\\ in\\ to\\ it\\ yet\\.$",
+    "flags": "",
+    "replacement": "$1 可以访问它，但目前还无法登录它。"
+  },
+  {
+    "id": "glass-477",
+    "pattern": "^Error:\\ Failed\\ to\\ build\\ automation\\ prefill\\ URL:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "错误：无法生成自动化预填 URL：$1"
+  },
+  {
+    "id": "glass-653",
+    "pattern": "^Subagent\\ composer\\ not\\ found\\ for\\ queued\\ resume:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "找不到排队继续所用的子智能体聊天：$1"
+  },
+  {
+    "id": "glass-784",
+    "pattern": "^Something\\ went\\ wrong\\ setting\\ your\\ spent\\ limit:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "设置支出上限时出了点问题：$1"
+  },
+  {
+    "id": "glass-939",
+    "pattern": "^Please\\ enter\\ in\\ the\\ following\\ required\\ fields:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "请填写以下必填字段：$1"
+  },
+  {
+    "id": "glass-1325",
+    "pattern": "^Something\\ went\\ wrong\\ setting\\ your\\ spend\\ limit:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "设置支出上限时出错：$1"
+  },
+  {
+    "id": "glass-1498",
+    "pattern": "^Could\\ not\\ undo\\ '([\\s\\S]+?)'\\ across\\ all\\ files\\.\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法跨所有文件撤消“$1”。$2"
+  },
+  {
+    "id": "glass-1504",
+    "pattern": "^Could\\ not\\ redo\\ '([\\s\\S]+?)'\\ across\\ all\\ files\\.\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法跨所有文件恢复“$1”。$2"
+  },
+  {
+    "id": "glass-2146",
+    "pattern": "^Failed\\ to\\ update\\ Claude\\ Code\\ session\\ registry:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法更新 Claude Code 会话注册表：$1"
+  },
+  {
+    "id": "glass-2213",
+    "pattern": "^Failed\\ to\\ open\\ cloud\\ agent\\ in\\ current\\ window:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法在当前窗口中打开云端智能体：$1"
+  },
+  {
+    "id": "placeholder-11",
+    "pattern": "^Failed\\ to\\ remove\\ ([\\s\\S]+?)\\ from\\ the\\ Project:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法从项目中移除 $1：$2"
+  },
+  {
+    "id": "glass-307",
+    "pattern": "^Blocked\\-by\\ update\\ for\\ ([\\s\\S]+)\\ would\\ create\\ a\\ cycle\\.$",
+    "flags": "",
+    "replacement": "更新 $1 的阻止关系会形成循环。"
+  },
+  {
+    "id": "glass-344",
+    "pattern": "^Failed\\ to\\ hydrate\\ conversation\\ checkpoint\\ from\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法从 $1 还原对话检查点"
+  },
+  {
+    "id": "glass-566",
+    "pattern": "^File\\ reading\\ was\\ blocked\\ by\\ a\\ security\\ hook:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "安全钩子已阻止读取文件：$1"
+  },
+  {
+    "id": "glass-636",
+    "pattern": "^Cannot\\ incrementally\\ append\\ missing\\ transcript:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法增量追加缺失的对话记录：$1"
+  },
+  {
+    "id": "glass-922",
+    "pattern": "^Pull\\ request\\ created,\\ but\\ failed\\ to\\ open\\ it:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "已创建拉取请求，但无法打开：$1"
+  },
+  {
+    "id": "glass-1322",
+    "pattern": "^Failed\\ to\\ remove\\ ([\\s\\S]+?)\\ from\\ the\\ Project:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法从项目中移除 $1：$2"
+  },
+  {
+    "id": "glass-1424",
+    "pattern": "^Do\\ you\\ want\\ to\\ close\\ the\\ merge\\ editor\\ for\\ ([\\s\\S]+)\\?$",
+    "flags": "",
+    "replacement": "是否关闭 $1 的合并编辑器？"
+  },
+  {
+    "id": "glass-1705",
+    "pattern": "^Created\\ hook\\ script\\ but\\ failed\\ to\\ chmod\\ \\+x:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "已创建钩子脚本，但无法执行 chmod +x：$1"
+  },
+  {
+    "id": "glass-2020",
+    "pattern": "^It\\ is\\ not\\ recommended\\ to\\ run\\ ([\\s\\S]+)\\ as\\ root\\ user\\.$",
+    "flags": "",
+    "replacement": "不建议以 root 用户身份运行 $1。"
+  },
+  {
+    "id": "glass-2214",
+    "pattern": "^Failed\\ to\\ open\\ cloud\\ agent\\ in\\ mapped\\ window:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法在映射窗口中打开云端智能体：$1"
+  },
+  {
+    "id": "glass-776",
+    "pattern": "^Failed\\ to\\ collect\\ parameters\\ for\\ MCP\\ prompt:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法收集 MCP 提示词的参数：$1"
+  },
+  {
+    "id": "glass-969",
+    "pattern": "^Task\\ \"([\\s\\S]+?)\"\\ references\\ missing\\ blocker\\ \"([\\s\\S]+)\"$",
+    "flags": "",
+    "replacement": "任务“$1”引用了缺失的阻碍项“$2”"
+  },
+  {
+    "id": "glass-1063",
+    "pattern": "^([\\s\\S]+?):\\ this\\ chat\\ can't\\ send\\ right\\ now\\.\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "$1：此聊天目前无法发送。$2"
+  },
+  {
+    "id": "glass-1501",
+    "pattern": "^Would\\ you\\ like\\ to\\ undo\\ '([\\s\\S]+)'\\ across\\ all\\ files\\?$",
+    "flags": "",
+    "replacement": "是否跨所有文件撤消“$1”？"
+  },
+  {
+    "id": "glass-2014",
+    "pattern": "^The\\ proxy\\ ([\\s\\S]+)\\ requires\\ a\\ username\\ and\\ password\\.$",
+    "flags": "",
+    "replacement": "代理 $1 需要用户名和密码。"
+  },
+  {
+    "id": "glass-2063",
+    "pattern": "^Failed\\ to\\ start\\ extension\\ host\\ CPU\\ profiler:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法开始扩展宿主 CPU 分析：$1"
+  },
+  {
+    "id": "glass-2066",
+    "pattern": "^Failed\\ to\\ open\\ communication\\ profiler\\ report:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法打开通信分析报告：$1"
+  },
+  {
+    "id": "glass-2174",
+    "pattern": "^Terminal\\ has\\ shell\\ integration\\ after\\ timeout:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "超时后终端已有 Shell 集成：$1"
+  },
+  {
+    "id": "glass-755",
+    "pattern": "^Command\\ executed\\ ([\\s\\S]+?),\\ took\\ ([\\s\\S]+)\\ and\\ failed$",
+    "flags": "",
+    "replacement": "已执行命令 $1，耗时 $2 后失败"
+  },
+  {
+    "id": "glass-1418",
+    "pattern": "^Extension\\ '([\\s\\S]+?)'\\ is\\ not\\ installed\\ on\\ ([\\s\\S]+)\\.$",
+    "flags": "",
+    "replacement": "扩展“$1”未安装在 $2 上。"
+  },
+  {
+    "id": "glass-1690",
+    "pattern": "^Invalid\\ ([\\s\\S]+?)\\ Claude\\ transformed\\ config:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "$1 的 Claude 转换后配置无效：$2"
+  },
+  {
+    "id": "glass-1817",
+    "pattern": "^Do\\ you\\ want\\ ([\\s\\S]+)\\ to\\ open\\ the\\ external\\ website\\?$",
+    "flags": "",
+    "replacement": "是否要让 $1 打开外部网站？"
+  },
+  {
+    "id": "glass-1894",
+    "pattern": "^Fetching\\ a\\ task\\ from\\ task\\ storage\\ failed:\\ ([\\s\\S]+)\\.$",
+    "flags": "",
+    "replacement": "从任务存储获取任务失败：$1。"
+  },
+  {
+    "id": "glass-1978",
+    "pattern": "^Could\\ not\\ remove\\ ([\\s\\S]+)\\ from\\ your\\ Cursor\\ account\\.$",
+    "flags": "",
+    "replacement": "无法从 Cursor 账户中移除 $1。"
+  },
+  {
+    "id": "glass-2065",
+    "pattern": "^Failed\\ to\\ start\\ remote\\ server\\ CPU\\ profiler:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法开始远程服务器 CPU 分析：$1"
+  },
+  {
+    "id": "glass-2147",
+    "pattern": "^Claude\\ Code\\ session\\ is\\ no\\ longer\\ available:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "Claude Code 会话已不可用：$1"
+  },
+  {
+    "id": "glass-2155",
+    "pattern": "^Worktree\\ setup\\ script\\ failed\\ with\\ exit\\ code\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "工作树设置脚本失败，退出代码为 $1"
+  },
+  {
+    "id": "glass-102",
+    "pattern": "^Invalid\\ input:\\ expected\\ ([\\s\\S]+?),\\ received\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无效输入：期望 $1，实际接收 $2"
+  },
+  {
+    "id": "glass-396",
+    "pattern": "^Channel\\ name\\ '([\\s\\S]+?)'\\ timed\\ out\\ after\\ ([\\s\\S]+)ms$",
+    "flags": "",
+    "replacement": "通道名称“$1”在 $2 ms 后超时"
+  },
+  {
+    "id": "glass-834",
+    "pattern": "^Failed\\ to\\ attach\\ ([\\s\\S]+)\\ file\\.\\ Please\\ try\\ again\\.$",
+    "flags": "",
+    "replacement": "无法附加 $1 文件。请重试。"
+  },
+  {
+    "id": "glass-901",
+    "pattern": "^Could\\ not\\ connect\\ to\\ MCP\\ server\\ \"([\\s\\S]+?)\"([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法连接到 MCP 服务器“$1”$2"
+  },
+  {
+    "id": "glass-1089",
+    "pattern": "^Invalid\\ manifest\\ file\\ ([\\s\\S]+):\\ Not\\ a\\ JSON\\ object\\.$",
+    "flags": "",
+    "replacement": "清单文件 $1 无效：不是 JSON 对象。"
+  },
+  {
+    "id": "glass-1684",
+    "pattern": "^Error\\ accessing\\ Claude\\ project\\ config\\ file:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "访问 Claude 项目配置文件时出错：$1"
+  },
+  {
+    "id": "glass-2114",
+    "pattern": "^Connection\\ to\\ '([\\s\\S]+?):([\\s\\S]+)'\\ was\\ not\\ allowed\\.$",
+    "flags": "",
+    "replacement": "不允许连接到“$1:$2”。"
+  },
+  {
+    "id": "glass-2280",
+    "pattern": "^Failed\\ to\\ capture\\ or\\ send\\ debugging\\ data\\.\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法捕获或发送调试数据。$1"
+  },
+  {
+    "id": "placeholder-7",
+    "pattern": "^Failed\\ to\\ discard\\ changes\\ in\\ '([\\s\\S]+?)':\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法放弃“$1”中的更改：$2"
+  },
+  {
+    "id": "glass-44",
+    "pattern": "^Unable\\ to\\ create\\ workbench\\ contribution\\ '([\\s\\S]+)'\\.$",
+    "flags": "",
+    "replacement": "无法创建工作台贡献“$1”。"
+  },
+  {
+    "id": "glass-184",
+    "pattern": "^Failed\\ to\\ find\\ start\\ index\\ for\\ decoration\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法找到装饰 $1 的起始索引"
+  },
+  {
+    "id": "glass-188",
+    "pattern": "^Octal\\ encoded\\ byte\\ above\\ 177\\ unsupported\\ \"([\\s\\S]+)\"$",
+    "flags": "",
+    "replacement": "不支持大于 177 的八进制编码字节“$1”"
+  },
+  {
+    "id": "glass-778",
+    "pattern": "^Video\\ attachments\\ must\\ be\\ ([\\s\\S]+)\\ MB\\ or\\ smaller\\.$",
+    "flags": "",
+    "replacement": "视频附件必须为 $1 MB 或更小。"
+  },
+  {
+    "id": "glass-888",
+    "pattern": "^MCP\\ App\\ wants\\ to\\ call\\ \"([\\s\\S]+?)\"\\ on\\ \"([\\s\\S]+)\"\\.$",
+    "flags": "",
+    "replacement": "MCP 应用想要调用“$1”，目标为“$2”。"
+  },
+  {
+    "id": "glass-967",
+    "pattern": "^Completion\\ option\\ \"([\\s\\S]+)\"\\ cannot\\ also\\ be\\ ignored$",
+    "flags": "",
+    "replacement": "完成选项“$1”不能同时列入忽略项"
+  },
+  {
+    "id": "glass-973",
+    "pattern": "^Status\\ \"([\\s\\S]+?)\"\\ has\\ unsupported\\ fields:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "状态“$1”包含不支持的字段：$2"
+  },
+  {
+    "id": "glass-1515",
+    "pattern": "^Invalid\\ `contributes\\.([\\s\\S]+)`\\.\\ Expected\\ an\\ array\\.$",
+    "flags": "",
+    "replacement": "`contributes.$1` 无效。应为数组。"
+  },
+  {
+    "id": "glass-1689",
+    "pattern": "^Failed\\ to\\ parse\\ ([\\s\\S]+)\\ Claude\\ hooks\\ configuration$",
+    "flags": "",
+    "replacement": "无法解析 $1 的 Claude 钩子配置"
+  },
+  {
+    "id": "glass-2062",
+    "pattern": "^Failed\\ to\\ stop\\ ([\\s\\S]+?)\\ workspace\\(s\\):\\ ([\\s\\S]+)\\.$",
+    "flags": "",
+    "replacement": "无法停止 $1 个工作区：$2。"
+  },
+  {
+    "id": "glass-2116",
+    "pattern": "^This\\ extension\\ cannot\\ be\\ installed\\ because\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法安装此扩展，因为 $1"
+  },
+  {
+    "id": "glass-2138",
+    "pattern": "^Failed\\ to\\ discard\\ changes\\ in\\ '([\\s\\S]+?)':\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法放弃“$1”中的更改：$2"
+  },
+  {
+    "id": "glass-2180",
+    "pattern": "^Tool\\ ([\\s\\S]+)\\ is\\ not\\ supported\\ in\\ shadow\\ workspace$",
+    "flags": "",
+    "replacement": "影子工作区不支持工具 $1"
+  },
+  {
+    "id": "glass-144",
+    "pattern": "^The\\ canvas\\ at\\ `([\\s\\S]+)`\\ has\\ the\\ following\\ error:$",
+    "flags": "",
+    "replacement": "`$1` 处的 Canvas 出现以下错误："
+  },
+  {
+    "id": "glass-1207",
+    "pattern": "^Sorted\\ ([\\s\\S]+?)\\ colors\\ by\\ similarity\\ to\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "已将 $1 种颜色按与 $2 的相似度排序"
+  },
+  {
+    "id": "glass-1345",
+    "pattern": "^Couldn't\\ allow\\ ([\\s\\S]+)\\.\\ Check\\ it\\ to\\ try\\ again\\.$",
+    "flags": "",
+    "replacement": "无法允许 $1。请检查后再试。"
+  },
+  {
+    "id": "glass-179",
+    "pattern": "^Missing\\ languages\\ ([\\s\\S]+?),\\ required\\ by\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "缺少语言 $1，$2 需要这些语言"
+  },
+  {
+    "id": "glass-185",
+    "pattern": "^Failed\\ to\\ find\\ end\\ index\\ for\\ decoration\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法找到装饰 $1 的结束索引"
+  },
+  {
+    "id": "glass-434",
+    "pattern": "^([\\s\\S]+)\\ ran\\ it\\ but\\ couldn't\\ reach\\ it\\ reliably\\.$",
+    "flags": "",
+    "replacement": "$1 已运行它，但无法稳定访问它。"
+  },
+  {
+    "id": "glass-692",
+    "pattern": "^Disconnected\\ cloud\\ stream\\ for\\ ([\\s\\S]+)\\ \\(debug\\)\\.$",
+    "flags": "",
+    "replacement": "已断开 $1 的云端流（调试）。"
+  },
+  {
+    "id": "glass-766",
+    "pattern": "^The\\ terminal\\ process\\ failed\\ to\\ launch:\\ ([\\s\\S]+)\\.$",
+    "flags": "",
+    "replacement": "无法启动终端进程：$1。"
+  },
+  {
+    "id": "glass-930",
+    "pattern": "^Failed\\ to\\ ([\\s\\S]+?)\\ background\\ composer:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法 $1 云端智能体：$2"
+  },
+  {
+    "id": "glass-1014",
+    "pattern": "^Invalid\\ domain\\ allowlist\\ entries\\ removed:\\\n([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "已移除无效的域名允许列表条目：\n$1"
+  },
+  {
+    "id": "glass-1097",
+    "pattern": "^Failed\\ to\\ refresh\\ Statsig\\ configurations:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法刷新 Statsig 配置：$1"
+  },
+  {
+    "id": "glass-1113",
+    "pattern": "^Failed\\ to\\ import\\ ([\\s\\S]+?)\\ editor\\ theme([\\s\\S]+)\\.$",
+    "flags": "",
+    "replacement": "无法导入 $1 个编辑器主题$2。"
+  },
+  {
+    "id": "glass-1683",
+    "pattern": "^Error\\ accessing\\ Claude\\ user\\ config\\ file:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "访问 Claude 用户配置文件时出错：$1"
+  },
+  {
+    "id": "glass-1717",
+    "pattern": "^UNABLE\\ to\\ detect\\ cycle,\\ dumping\\ graph:\\ \\\n([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法检测循环，正在转储图：\n$1"
+  },
+  {
+    "id": "glass-1963",
+    "pattern": "^Could\\ not\\ save\\ ([\\s\\S]+)\\ to\\ your\\ Cursor\\ account\\.$",
+    "flags": "",
+    "replacement": "无法将 $1 保存到 Cursor 账户。"
+  },
+  {
+    "id": "glass-2040",
+    "pattern": "^Cannot\\ export\\ agent\\ with\\ unknown\\ source:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法导出来源未知的智能体：$1"
+  },
+  {
+    "id": "glass-2204",
+    "pattern": "^Unable\\ to\\ import\\ ([\\s\\S]+?)\\ extensions:\\ ([\\s\\S]+)\\.$",
+    "flags": "",
+    "replacement": "无法导入 $1 个扩展：$2。"
+  },
+  {
+    "id": "glass-2217",
+    "pattern": "^Failed\\ to\\ apply\\ diffs\\ from\\ Cloud\\ Agent:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法应用来自云端智能体的差异：$1"
+  },
+  {
+    "id": "glass-2255",
+    "pattern": "^Connection\\ to\\ '([\\s\\S]+)'\\ could\\ not\\ be\\ established$",
+    "flags": "",
+    "replacement": "无法建立与“$1”的连接"
+  },
+  {
+    "id": "glass-2265",
+    "pattern": "^Failed\\ to\\ start\\ ([\\s\\S]+?)\\ CPU\\ Profiler:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法启动 $1 CPU 分析器：$2"
+  },
+  {
+    "id": "glass-2267",
+    "pattern": "^Failed\\ to\\ save\\ ([\\s\\S]+?)\\ heap\\ snapshot:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法保存 $1 堆快照：$2"
+  },
+  {
+    "id": "glass-2268",
+    "pattern": "^Failed\\ to\\ take\\ ([\\s\\S]+?)\\ heap\\ snapshot:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法获取 $1 堆快照：$2"
+  },
+  {
+    "id": "glass-289",
+    "pattern": "^Please\\ enter\\ a\\ valid\\ email\\ address\\ for\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "请输入 $1 的有效电子邮件地址"
+  },
+  {
+    "id": "glass-954",
+    "pattern": "^Event\\ buffer\\ exceeded\\ maximum\\ size\\ of\\ ([\\s\\S]+)\\.$",
+    "flags": "",
+    "replacement": "事件缓冲区已超过最大大小 $1。"
+  },
+  {
+    "id": "glass-1065",
+    "pattern": "^([\\s\\S]+?)([\\s\\S]+)\\ This\\ action\\ cannot\\ be\\ undone\\.$",
+    "flags": "",
+    "replacement": "$1$2 此操作无法撤消。"
+  },
+  {
+    "id": "glass-1384",
+    "pattern": "^Couldn't\\ reach\\ ([\\s\\S]+)\\.\\ Check\\ your\\ connection\\.$",
+    "flags": "",
+    "replacement": "无法连接到 $1。请检查网络连接。"
+  },
+  {
+    "id": "glass-1483",
+    "pattern": "^Unable\\ to\\ forward\\ ([\\s\\S]+?):([\\s\\S]+?)\\.\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法转发 $1:$2。$3"
+  },
+  {
+    "id": "glass-1682",
+    "pattern": "^Failed\\ to\\ parse\\ ([\\s\\S]+?)\\ config\\ JSON:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法解析 $1 配置 JSON：$2"
+  },
+  {
+    "id": "glass-1923",
+    "pattern": "^The\\ snippet\\ file\\ \"([\\s\\S]+)\"\\ could\\ not\\ be\\ read\\.$",
+    "flags": "",
+    "replacement": "无法读取代码片段文件“$1”。"
+  },
+  {
+    "id": "glass-2266",
+    "pattern": "^Failed\\ to\\ stop\\ ([\\s\\S]+?)\\ CPU\\ Profiler:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法停止 $1 CPU 分析器：$2"
+  },
+  {
+    "id": "glass-109",
+    "pattern": "^Invalid\\ number:\\ must\\ be\\ a\\ multiple\\ of\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无效数字：必须是 $1 的倍数"
+  },
+  {
+    "id": "glass-186",
+    "pattern": "^Invalid\\ decoration\\ range:\\ ([\\s\\S]+?)\\ \\-\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "装饰范围无效：$1 - $2"
+  },
+  {
+    "id": "glass-304",
+    "pattern": "^Invalid\\ value\\ for\\ ([\\s\\S]+?)\\ property\\ ([\\s\\S]+)\\.$",
+    "flags": "",
+    "replacement": "$1 的属性 $2 值无效。"
+  },
+  {
+    "id": "glass-394",
+    "pattern": "^Sandbox\\ policy\\ '([\\s\\S]+?)'\\ unsupported:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "沙箱策略“$1”不受支持：$2"
+  },
+  {
+    "id": "glass-695",
+    "pattern": "^Couldn't\\ start\\ sign\\-in\\ for\\ ([\\s\\S]+?):\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法开始 $1 的登录：$2"
+  },
+  {
+    "id": "glass-903",
+    "pattern": "^Could\\ not\\ open\\ the\\ authorization\\ page:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法打开授权页：$1"
+  },
+  {
+    "id": "glass-906",
+    "pattern": "^Couldn't\\ find\\ agent\\ ([\\s\\S]+?)\\ to\\ open\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法找到智能体 $1 以打开 $2"
+  },
+  {
+    "id": "glass-1005",
+    "pattern": "^Failed\\ to\\ unpublish\\ skill\\ \"([\\s\\S]+?)\":\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法取消发布技能“$1”：$2"
+  },
+  {
+    "id": "glass-1082",
+    "pattern": "^Failed\\ to\\ read\\ Claude\\ Code\\ transcript:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法读取 Claude Code 对话记录：$1"
+  },
+  {
+    "id": "glass-1352",
+    "pattern": "^Missing\\ workspace\\ with\\ all\\ ([\\s\\S]+)\\ repositories$",
+    "flags": "",
+    "replacement": "缺少包含全部 $1 个仓库的工作区"
+  },
+  {
+    "id": "glass-1621",
+    "pattern": "^Successfully\\ undid\\ changes\\ to\\ ([\\s\\S]+)\\ file\\(s\\)$",
+    "flags": "",
+    "replacement": "已成功撤消 $1 个文件的更改"
+  },
+  {
+    "id": "glass-1665",
+    "pattern": "^Failed\\ to\\ get\\ commits\\ from\\ ([\\s\\S]+?):\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法从 $1 获取提交：$2"
+  },
+  {
+    "id": "glass-1686",
+    "pattern": "^Error\\ accessing\\ enterprise\\ config\\ file:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "访问企业配置文件时出错：$1"
+  },
+  {
+    "id": "glass-1834",
+    "pattern": "^Would\\ you\\ like\\ to\\ enable\\ '([\\s\\S]+)'\\ extension\\?$",
+    "flags": "",
+    "replacement": "是否要启用扩展“$1”？"
+  },
+  {
+    "id": "glass-1875",
+    "pattern": "^Error:\\ Invalid\\ problemMatcher\\ reference:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "错误：problemMatcher 引用无效：$1。"
+  },
+  {
+    "id": "glass-2270",
+    "pattern": "^Failed\\ to\\ save\\ ([\\s\\S]+?)\\ CPU\\ profile:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法保存 $1 CPU 分析文件：$2"
+  },
+  {
+    "id": "glass-315",
+    "pattern": "^Invalid\\ metadata\\ update\\ for\\ property\\ ([\\s\\S]+)\\.$",
+    "flags": "",
+    "replacement": "属性 $1 的元数据更新无效。"
+  },
+  {
+    "id": "glass-356",
+    "pattern": "^Failed\\ to\\ parse\\ Claude\\ settings\\.json:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法解析 Claude 的 settings.json：$1"
+  },
+  {
+    "id": "glass-436",
+    "pattern": "^Cursor's\\ servers\\ could\\ not\\ reach\\ it\\.\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "Cursor 的服务器无法访问它。$1"
+  },
+  {
+    "id": "glass-589",
+    "pattern": "^MCP\\ IPC\\ timeout:\\ ([\\s\\S]+?)\\ exceeded\\ ([\\s\\S]+)ms$",
+    "flags": "",
+    "replacement": "MCP 的 IPC 超时：$1 已超过 $2 ms"
+  },
+  {
+    "id": "glass-1013",
+    "pattern": "^Invalid\\ MCP\\ allowlist\\ entries\\ removed:\\\n([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "已移除无效的 MCP 允许列表条目：\n$1"
+  },
+  {
+    "id": "glass-1091",
+    "pattern": "^Invalid\\ format\\ ([\\s\\S]+):\\ JSON\\ object\\ expected\\.$",
+    "flags": "",
+    "replacement": "格式 $1 无效：需要 JSON 对象。"
+  },
+  {
+    "id": "glass-1423",
+    "pattern": "^Do\\ you\\ want\\ to\\ close\\ ([\\s\\S]+)\\ merge\\ editors\\?$",
+    "flags": "",
+    "replacement": "是否关闭 $1 个合并编辑器？"
+  },
+  {
+    "id": "glass-1439",
+    "pattern": "^Could\\ not\\ open\\ uri\\ with\\ '([\\s\\S]+?)':\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法使用“$1”打开 URI：$2"
+  },
+  {
+    "id": "glass-1846",
+    "pattern": "^Uninstalled\\ the\\ unsupported\\ extension\\ '([\\s\\S]+)'$",
+    "flags": "",
+    "replacement": "已卸载不受支持的扩展“$1”"
+  },
+  {
+    "id": "glass-2061",
+    "pattern": "^Failed\\ to\\ start\\ file\\ watch\\ recording:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法开始记录文件监视：$1"
+  },
+  {
+    "id": "glass-2080",
+    "pattern": "^([\\s\\S]+)\\ name\\ cannot\\ contain\\ control\\ characters$",
+    "flags": "",
+    "replacement": "$1 名称无法包含控制字符"
+  },
+  {
+    "id": "glass-7",
+    "pattern": "^Invalid\\ Sentry\\ Dsn:\\ Invalid\\ projectId\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "Sentry 的 DSN 无效：projectId $1 无效"
+  },
+  {
+    "id": "glass-456",
+    "pattern": "^The\\ app\\ goes\\ offline\\ at\\ ([\\s\\S]+?)\\.([\\s\\S]+)\\.$",
+    "flags": "",
+    "replacement": "应用将于 $1.$2 离线。"
+  },
+  {
+    "id": "glass-990",
+    "pattern": "^Are\\ you\\ sure\\ you\\ want\\ to\\ delete\\ \"([\\s\\S]+)\"\\?$",
+    "flags": "",
+    "replacement": "确定要删除“$1”吗？"
+  },
+  {
+    "id": "glass-995",
+    "pattern": "^Failed\\ to\\ publish\\ skill\\ \"([\\s\\S]+?)\":\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法发布技能“$1”：$2"
+  },
+  {
+    "id": "glass-1178",
+    "pattern": "^Failed\\ to\\ load\\ font\\ '([\\s\\S]+?)':\\ '([\\s\\S]+)'\\.$",
+    "flags": "",
+    "replacement": "无法加载字体“$1”：“$2”。"
+  },
+  {
+    "id": "glass-1436",
+    "pattern": "^Allow\\ '([\\s\\S]+)'\\ extension\\ to\\ open\\ this\\ URI\\?$",
+    "flags": "",
+    "replacement": "是否允许扩展“$1”打开此 URI？"
+  },
+  {
+    "id": "glass-1552",
+    "pattern": "^Failed\\ to\\ apply\\ layout\\ storage\\ data:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法应用布局存储数据：$1"
+  },
+  {
+    "id": "glass-1774",
+    "pattern": "^Local\\ Agent\\ Store\\ inbox\\ sync\\ failed:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法同步本地智能体存储的收件箱：$1"
+  },
+  {
+    "id": "glass-1794",
+    "pattern": "^Are\\ you\\ sure\\ you\\ want\\ to\\ delete\\ '([\\s\\S]+)'\\?$",
+    "flags": "",
+    "replacement": "是否确实要删除“$1”？"
+  },
+  {
+    "id": "glass-2082",
+    "pattern": "^([\\s\\S]+)\\ name\\ is\\ reserved\\ and\\ cannot\\ be\\ used$",
+    "flags": "",
+    "replacement": "$1 名称已保留，无法使用"
+  },
+  {
+    "id": "glass-2163",
+    "pattern": "^Unable\\ to\\ write\\ file\\ '([\\s\\S]+?)'\\ \\(([\\s\\S]+)\\)$",
+    "flags": "",
+    "replacement": "无法写入文件“$1”（$2）"
+  },
+  {
+    "id": "glass-6",
+    "pattern": "^Invalid\\ Sentry\\ Dsn:\\ Invalid\\ protocol\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "Sentry 的 DSN 无效：协议 $1 无效"
+  },
+  {
+    "id": "glass-290",
+    "pattern": "^Please\\ enter\\ a\\ valid\\ ([\\s\\S]+?)\\ for\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "请输入有效的 $1，用于 $2"
+  },
+  {
+    "id": "glass-546",
+    "pattern": "^Could\\ not\\ start\\ authentication\\ for\\ ([\\s\\S]+)\\.$",
+    "flags": "",
+    "replacement": "无法开始 $1 的身份验证。"
+  },
+  {
+    "id": "glass-624",
+    "pattern": "^([\\s\\S]+?)\\ \\(contains\\ blocked\\ path:\\ ([\\s\\S]+)\\)$",
+    "flags": "",
+    "replacement": "$1（包含被阻止的路径：$2）"
+  },
+  {
+    "id": "glass-945",
+    "pattern": "^HTTP\\ Client\\ Error\\ with\\ status\\ code:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "HTTP 客户端错误，状态码：$1"
+  },
+  {
+    "id": "glass-1182",
+    "pattern": "^Type3\\ character\\ \"([\\s\\S]+)\"\\ is\\ not\\ available\\.$",
+    "flags": "",
+    "replacement": "Type3 字符“$1”不可用。"
+  },
+  {
+    "id": "glass-1392",
+    "pattern": "^Copied\\ extension\\ id\\ \"([\\s\\S]+)\"\\ to\\ clipboard\\.$",
+    "flags": "",
+    "replacement": "已将扩展 ID“$1”复制到剪贴板。"
+  },
+  {
+    "id": "glass-1597",
+    "pattern": "^Failed\\ to\\ read\\ directory\\ ([\\s\\S]+?):\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法读取目录 $1：$2"
+  },
+  {
+    "id": "glass-1688",
+    "pattern": "^Error\\ accessing\\ project\\ config\\ file:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "访问项目配置文件时出错：$1"
+  },
+  {
+    "id": "glass-1752",
+    "pattern": "^Failed\\ to\\ run\\ cursor\\ dialog\\ action:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法运行 cursor 对话框操作：$1"
+  },
+  {
+    "id": "glass-1756",
+    "pattern": "^Error:\\ path\\ must\\ be\\ absolute,\\ got\\ \"([\\s\\S]+)\"$",
+    "flags": "",
+    "replacement": "错误：路径必须是绝对路径，实际为“$1”"
+  },
+  {
+    "id": "glass-1757",
+    "pattern": "^Failed\\ to\\ initialize\\ git\\ repository:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法初始化 Git 仓库：$1"
+  },
+  {
+    "id": "glass-1768",
+    "pattern": "^Failed\\ to\\ run\\ backend\\ control\\ tool:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法运行后端控制工具：$1"
+  },
+  {
+    "id": "glass-1801",
+    "pattern": "^Are\\ you\\ sure\\ you\\ want\\ to\\ paste\\ '([\\s\\S]+)'\\?$",
+    "flags": "",
+    "replacement": "是否确实要粘贴“$1”？"
+  },
+  {
+    "id": "glass-2068",
+    "pattern": "^Failed\\ to\\ delete\\ Cloud\\-Agent\\ cache:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法删除云端智能体缓存：$1"
+  },
+  {
+    "id": "glass-2070",
+    "pattern": "^Failed\\ to\\ prune\\ PR\\ lifecycle\\ cache:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法清理 PR 生命周期缓存：$1"
+  },
+  {
+    "id": "glass-2164",
+    "pattern": "^Unable\\ to\\ read\\ file\\ '([\\s\\S]+?)'\\ \\(([\\s\\S]+)\\)$",
+    "flags": "",
+    "replacement": "无法读取文件“$1”（$2）"
+  },
+  {
+    "id": "glass-2283",
+    "pattern": "^Failed\\ to\\ upload\\ ([\\s\\S]+?)\\ profile:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法上传 $1 分析文件：$2"
+  },
+  {
+    "id": "glass-298",
+    "pattern": "^Invalid\\ configuration\\ for\\ server\\ \"([\\s\\S]+)\"\\.$",
+    "flags": "",
+    "replacement": "服务器“$1”的配置无效。"
+  },
+  {
+    "id": "glass-306",
+    "pattern": "^Card\\ ([\\s\\S]+)\\ cannot\\ be\\ blocked\\ by\\ itself\\.$",
+    "flags": "",
+    "replacement": "卡片 $1 不能阻止自己。"
+  },
+  {
+    "id": "glass-572",
+    "pattern": "^Agent\\ simulated\\ thinking\\ timeout\\ \\[([\\s\\S]+)\\]$",
+    "flags": "",
+    "replacement": "智能体模拟思考超时 [$1]"
+  },
+  {
+    "id": "glass-933",
+    "pattern": "^([\\s\\S]+?)\\ repository\\ access\\ failed:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "$1 仓库访问失败：$2"
+  },
+  {
+    "id": "glass-975",
+    "pattern": "^Task\\ directory\\ \"([\\s\\S]+)\"\\ could\\ not\\ be\\ read$",
+    "flags": "",
+    "replacement": "无法读取任务目录“$1”"
+  },
+  {
+    "id": "glass-1012",
+    "pattern": "^Commands\\ that\\ can't\\ run\\ automatically([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法自动运行的命令$1"
+  },
+  {
+    "id": "glass-1067",
+    "pattern": "^Merge\\ blocked:\\ changes\\ requested\\ by\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "合并已阻止：$1 已请求更改"
+  },
+  {
+    "id": "glass-1069",
+    "pattern": "^Merge\\ blocked:\\ review\\ required\\ from\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "合并已阻止：需要 $1 的审查"
+  },
+  {
+    "id": "glass-1336",
+    "pattern": "^([\\s\\S]+?)\\ went\\ offline\\.\\ ([\\s\\S]+?)\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "$1 已离线。$2 $3"
+  },
+  {
+    "id": "glass-1680",
+    "pattern": "^Failed\\ to\\ parse\\ ([\\s\\S]+)\\ hooks\\ configuration$",
+    "flags": "",
+    "replacement": "无法解析 $1 钩子配置"
+  },
+  {
+    "id": "glass-1734",
+    "pattern": "^Tool\\ `([\\s\\S]+)`\\ has\\ invalid\\ JSON\\ parameters:$",
+    "flags": "",
+    "replacement": "工具 `$1` 的 JSON 参数无效："
+  },
+  {
+    "id": "glass-1751",
+    "pattern": "^Failed\\ to\\ fetch\\ Cursor\\ user\\ state:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法获取 Cursor 用户状态：$1"
+  },
+  {
+    "id": "glass-2132",
+    "pattern": "^Error\\ while\\ writing\\ to\\ ([\\s\\S]+?)\\.\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "写入 $1 时出错。$2"
+  },
+  {
+    "id": "placeholder-10",
+    "pattern": "^Failed\\ to\\ remove\\ ([\\s\\S]+)\\ from\\ the\\ Project$",
+    "flags": "",
+    "replacement": "无法从项目中移除 $1"
+  },
+  {
+    "id": "glass-108",
+    "pattern": "^Invalid\\ string:\\ must\\ match\\ pattern\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无效字符串：必须匹配模式 $1"
+  },
+  {
+    "id": "glass-318",
+    "pattern": "^Invalid\\ ratio\\ ([\\s\\S]+?)\\ on\\ branch\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "比率 $1 在分支 $2 上无效"
+  },
+  {
+    "id": "glass-612",
+    "pattern": "^Failed\\ to\\ find\\ tool\\ call\\ context:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法找到工具调用上下文：$1"
+  },
+  {
+    "id": "glass-617",
+    "pattern": "^File\\ is\\ blocked\\ by\\ \\.cursorignore:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "文件已被 .cursorignore 阻止：$1"
+  },
+  {
+    "id": "glass-654",
+    "pattern": "^Subagent\\ creation\\ blocked\\ by\\ hook:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "钩子已阻止创建子智能体：$1"
+  },
+  {
+    "id": "glass-869",
+    "pattern": "^Failed\\ to\\ generate\\ commit\\ message:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法生成提交说明：$1"
+  },
+  {
+    "id": "glass-998",
+    "pattern": "^Failed\\ to\\ sync\\ skill\\ \"([\\s\\S]+?)\":\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法同步技能“$1”：$2"
+  },
+  {
+    "id": "glass-1323",
+    "pattern": "^Failed\\ to\\ remove\\ ([\\s\\S]+)\\ from\\ the\\ Project$",
+    "flags": "",
+    "replacement": "无法从项目中移除 $1"
+  },
+  {
+    "id": "glass-1603",
+    "pattern": "^Could\\ not\\ process\\ conflicted\\ file\\ ([\\s\\S]+):$",
+    "flags": "",
+    "replacement": "无法处理冲突文件 $1："
+  },
+  {
+    "id": "glass-1763",
+    "pattern": "^Error:\\ could\\ not\\ look\\ up\\ plugin\\ \"([\\s\\S]+)\"$",
+    "flags": "",
+    "replacement": "错误：无法查找插件“$1”"
+  },
+  {
+    "id": "glass-1789",
+    "pattern": "^Are\\ you\\ sure\\ to\\ want\\ to\\ copy\\ '([\\s\\S]+)'\\?$",
+    "flags": "",
+    "replacement": "确定要复制“$1”吗？"
+  },
+  {
+    "id": "glass-2058",
+    "pattern": "^Couldn't\\ create\\ a\\ Project\\ from\\ \"([\\s\\S]+)\"\\.$",
+    "flags": "",
+    "replacement": "无法从“$1”创建项目。"
+  },
+  {
+    "id": "glass-2285",
+    "pattern": "^Error\\ starting\\ performance\\ profile:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "启动性能分析时出错：$1"
+  },
+  {
+    "id": "glass-105",
+    "pattern": "^Invalid\\ string:\\ must\\ start\\ with\\ \"([\\s\\S]+)\"$",
+    "flags": "",
+    "replacement": "无效字符串：必须以“$1”开头"
+  },
+  {
+    "id": "glass-135",
+    "pattern": "^Error\\ resolving\\ edit\\ '([\\s\\S]+?)':\\\n([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "解析编辑“$1”时出错：\n$2"
+  },
+  {
+    "id": "glass-291",
+    "pattern": "^Please\\ enter\\ a\\ valid\\ integer\\ for\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "请输入 $1 的有效整数"
+  },
+  {
+    "id": "glass-333",
+    "pattern": "^([\\s\\S]+?)\\ missing\\ blobs:\\ ([\\s\\S]+?)([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "$1 缺少数据块：$2$3"
+  },
+  {
+    "id": "glass-362",
+    "pattern": "^Hook\\ \"([\\s\\S]+)\"\\ returned\\ invalid\\ response\\.$",
+    "flags": "",
+    "replacement": "钩子“$1”返回了无效响应。"
+  },
+  {
+    "id": "glass-471",
+    "pattern": "^Error\\ saving\\ plugin\\ configuration:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "保存插件配置出错：$1"
+  },
+  {
+    "id": "glass-476",
+    "pattern": "^Error:\\ Invalid\\ automation\\ payload:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "错误：自动化有效负载无效：$1"
+  },
+  {
+    "id": "glass-527",
+    "pattern": "^Failed\\ to\\ open\\ authorization\\ URL:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法打开授权 URL：$1"
+  },
+  {
+    "id": "glass-759",
+    "pattern": "^Do\\ you\\ want\\ to\\ run\\ the\\ command:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "是否要运行此命令：$1？"
+  },
+  {
+    "id": "glass-1188",
+    "pattern": "^Optional\\ content\\ group\\ not\\ found:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "找不到可选内容组：$1"
+  },
+  {
+    "id": "glass-1331",
+    "pattern": "^Failed\\ to\\ start\\ CI\\ investigation:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法启动 CI 调查：$1"
+  },
+  {
+    "id": "glass-1372",
+    "pattern": "^\"([\\s\\S]+?)\"\\ couldn't\\ be\\ added\\ to\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法将“$1”添加到 $2"
+  },
+  {
+    "id": "glass-1383",
+    "pattern": "^([\\s\\S]+?)\\ cannot\\ show\\ this\\ chat:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "$1 无法显示此聊天：$2"
+  },
+  {
+    "id": "glass-1396",
+    "pattern": "^Failed\\ to\\ ([\\s\\S]+?)\\ \"([\\s\\S]+?)\":\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法$1“$2”：$3"
+  },
+  {
+    "id": "glass-1533",
+    "pattern": "^Failed\\ to\\ create\\ profile\\ from\\ '([\\s\\S]+)'\\.$",
+    "flags": "",
+    "replacement": "无法从“$1”创建配置文件。"
+  },
+  {
+    "id": "glass-1551",
+    "pattern": "^Unknown\\ error\\ \\(type\\ ([\\s\\S]+?)\\):\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "未知错误（类型 $1）：$2"
+  },
+  {
+    "id": "glass-1587",
+    "pattern": "^([\\s\\S]+):\\ prompt\\-quality\\ report\\ unavailable$",
+    "flags": "",
+    "replacement": "$1：提示词质量报告不可用"
+  },
+  {
+    "id": "glass-1605",
+    "pattern": "^Failed\\ to\\ create\\ debug\\ directory:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法创建调试目录：$1"
+  },
+  {
+    "id": "glass-1687",
+    "pattern": "^Error\\ accessing\\ user\\ config\\ file:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "访问用户配置文件时出错：$1"
+  },
+  {
+    "id": "glass-1735",
+    "pattern": "^MCP\\ server\\ could\\ not\\ be\\ started:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法启动 MCP 服务器：$1"
+  },
+  {
+    "id": "glass-1931",
+    "pattern": "^Error\\ while\\ searching\\ for\\ themes:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "搜索主题时出错：$1"
+  },
+  {
+    "id": "glass-2195",
+    "pattern": "^Restart\\ ([\\s\\S]+?)\\ to\\ switch\\ to\\ ([\\s\\S]+)\\?$",
+    "flags": "",
+    "replacement": "要重新启动 $1 以切换到 $2 吗？"
+  },
+  {
+    "id": "placeholder-9",
+    "pattern": "^Failed\\ to\\ overwrite\\ '([\\s\\S]+?)':\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法覆盖“$1”：$2"
+  },
+  {
+    "id": "glass-5",
+    "pattern": "^Invalid\\ Sentry\\ Dsn:\\ Invalid\\ port\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "Sentry 的 DSN 无效：端口 $1 无效"
+  },
+  {
+    "id": "glass-136",
+    "pattern": "^Error\\ applying\\ edit\\ '([\\s\\S]+?)':\\\n([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "应用编辑“$1”时出错：\n$2"
+  },
+  {
+    "id": "glass-919",
+    "pattern": "^Failed\\ to\\ apply\\ changes\\ locally:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法在本地应用更改：$1"
+  },
+  {
+    "id": "glass-1691",
+    "pattern": "^Failed\\ to\\ parse\\ ([\\s\\S]+?)\\ JSON:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法解析 $1 JSON：$2"
+  },
+  {
+    "id": "glass-1706",
+    "pattern": "^Failed\\ to\\ initialize\\ user\\ hooks:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法初始化用户钩子：$1"
+  },
+  {
+    "id": "glass-1729",
+    "pattern": "^Could\\ not\\ initialize\\ MCP\\ server:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法初始化 MCP 服务器：$1"
+  },
+  {
+    "id": "glass-2137",
+    "pattern": "^Failed\\ to\\ overwrite\\ '([\\s\\S]+?)':\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法覆盖“$1”：$2"
+  },
+  {
+    "id": "glass-104",
+    "pattern": "^Invalid\\ option:\\ expected\\ one\\ of\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无效选项：期望以下之一 $1"
+  },
+  {
+    "id": "glass-106",
+    "pattern": "^Invalid\\ string:\\ must\\ end\\ with\\ \"([\\s\\S]+)\"$",
+    "flags": "",
+    "replacement": "无效字符串：必须以“$1”结尾"
+  },
+  {
+    "id": "glass-314",
+    "pattern": "^Cannot\\ update\\ missing\\ property\\ ([\\s\\S]+)\\.$",
+    "flags": "",
+    "replacement": "无法更新缺失的属性 $1。"
+  },
+  {
+    "id": "glass-316",
+    "pattern": "^Cannot\\ delete\\ missing\\ property\\ ([\\s\\S]+)\\.$",
+    "flags": "",
+    "replacement": "无法删除缺失的属性 $1。"
+  },
+  {
+    "id": "glass-648",
+    "pattern": "^Fork\\ source\\ subagent\\ not\\ found:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "找不到派生源子智能体：$1"
+  },
+  {
+    "id": "glass-680",
+    "pattern": "^Couldn't\\ ([\\s\\S]+?)\\ the\\ request:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法 $1 该请求：$2"
+  },
+  {
+    "id": "glass-696",
+    "pattern": "^Sign\\ in\\ to\\ Cursor\\ to\\ connect\\ ([\\s\\S]+)\\.$",
+    "flags": "",
+    "replacement": "登录 Cursor 以连接 $1。"
+  },
+  {
+    "id": "glass-809",
+    "pattern": "^Failed\\ to\\ save\\ annotated\\ image:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法保存带批注的图像：$1"
+  },
+  {
+    "id": "glass-861",
+    "pattern": "^Couldn’t\\ look\\ up\\ pull\\ request\\ \\#([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法查询拉取请求 #$1"
+  },
+  {
+    "id": "glass-1086",
+    "pattern": "^Couldn't\\ find\\ message\\ for\\ key\\ ([\\s\\S]+)\\.$",
+    "flags": "",
+    "replacement": "无法找到键 $1 的消息。"
+  },
+  {
+    "id": "glass-1092",
+    "pattern": "^Invalid\\ color\\ \"([\\s\\S]+?)\"\\ for\\ ([\\s\\S]+)\\.$",
+    "flags": "",
+    "replacement": "颜色“$1”不适用于 $2。"
+  },
+  {
+    "id": "glass-1120",
+    "pattern": "^Failed\\ to\\ load\\ workspace\\ tasks:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法加载工作区任务：$1"
+  },
+  {
+    "id": "glass-1385",
+    "pattern": "^Message\\ to\\ ([\\s\\S]+?)\\ not\\ sent:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "发给 $1 的消息未发送：$2"
+  },
+  {
+    "id": "glass-1622",
+    "pattern": "^Failed\\ to\\ undo\\ applied\\ changes:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法撤消已应用的更改：$1"
+  },
+  {
+    "id": "glass-1755",
+    "pattern": "^Could\\ not\\ resolve\\ workspace\\ for\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法解析 $1 的工作区"
+  },
+  {
+    "id": "glass-2178",
+    "pattern": "^Command\\ timed\\ out\\ after\\ ([\\s\\S]+)\\ seconds$",
+    "flags": "",
+    "replacement": "命令在 $1 秒后超时"
+  },
+  {
+    "id": "glass-647",
+    "pattern": "^Composer\\ not\\ found\\ for\\ resume:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "找不到要继续的聊天：$1"
+  },
+  {
+    "id": "glass-840",
+    "pattern": "^([\\s\\S]+?)\\ free\\ ([\\s\\S]+)\\ credits\\ expired$",
+    "flags": "",
+    "replacement": "$1 的免费 $2 额度已过期"
+  },
+  {
+    "id": "glass-920",
+    "pattern": "^Failed\\ to\\ create\\ pull\\ request:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法创建拉取请求：$1"
+  },
+  {
+    "id": "glass-1025",
+    "pattern": "^Please\\ try\\ again\\.\\ Request\\ ID:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "请重试。请求 ID：$1"
+  },
+  {
+    "id": "glass-1084",
+    "pattern": "^Claude\\ Code\\ session\\ not\\ found:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "找不到 Claude Code 会话：$1"
+  },
+  {
+    "id": "glass-1675",
+    "pattern": "^Command\\ '([\\s\\S]+)'\\ resulted\\ in\\ an\\ error$",
+    "flags": "",
+    "replacement": "命令“$1”执行出错"
+  },
+  {
+    "id": "glass-1693",
+    "pattern": "^Error\\ executing\\ hooks\\ for\\ step\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "执行步骤 $1 的钩子时出错"
+  },
+  {
+    "id": "glass-2069",
+    "pattern": "^Staged\\ Projects:\\ unavailable\\ \\(([\\s\\S]+)\\)$",
+    "flags": "",
+    "replacement": "暂存项目：不可用（$1）"
+  },
+  {
+    "id": "placeholder-8",
+    "pattern": "^Failed\\ to\\ download\\ ([\\s\\S]+?):\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法下载 $1：$2"
+  },
+  {
+    "id": "glass-43",
+    "pattern": "^([\\s\\S]+?)\\ \\(([\\s\\S]+)\\ errors\\ in\\ total\\)$",
+    "flags": "",
+    "replacement": "$1（共 $2 个错误）"
+  },
+  {
+    "id": "glass-57",
+    "pattern": "^Request\\ compression\\ failed\\ for\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "$1 的请求压缩失败"
+  },
+  {
+    "id": "glass-107",
+    "pattern": "^Invalid\\ string:\\ must\\ include\\ \"([\\s\\S]+)\"$",
+    "flags": "",
+    "replacement": "无效字符串：必须包含“$1”"
+  },
+  {
+    "id": "glass-158",
+    "pattern": "^Plain\\ value\\ cannot\\ start\\ with\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "普通值不能以 $1 开头"
+  },
+  {
+    "id": "glass-311",
+    "pattern": "^Cannot\\ create\\ card\\ in\\ group\\ ([\\s\\S]+)\\.$",
+    "flags": "",
+    "replacement": "无法在分组 $1 中创建卡片。"
+  },
+  {
+    "id": "glass-361",
+    "pattern": "^Hook\\ \"([\\s\\S]+)\"\\ returned\\ invalid\\ JSON\\.$",
+    "flags": "",
+    "replacement": "钩子“$1”返回了无效 JSON。"
+  },
+  {
+    "id": "glass-542",
+    "pattern": "^Authentication\\ timed\\ out\\ after\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "身份验证在 $1 后超时"
+  },
+  {
+    "id": "glass-852",
+    "pattern": "^Failed\\ to\\ download\\ ([\\s\\S]+?):\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法下载 $1：$2"
+  },
+  {
+    "id": "glass-962",
+    "pattern": "^Could\\ not\\ execute\\ GitHub\\ CLI:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法执行 GitHub CLI：$1"
+  },
+  {
+    "id": "glass-974",
+    "pattern": "^([\\s\\S]+):\\ task\\ file\\ could\\ not\\ be\\ read$",
+    "flags": "",
+    "replacement": "$1：无法读取任务文件"
+  },
+  {
+    "id": "glass-1087",
+    "pattern": "^Cannot\\ read\\ file\\ ([\\s\\S]+?):\\ ([\\s\\S]+)\\.$",
+    "flags": "",
+    "replacement": "无法读取文件 $1：$2。"
+  },
+  {
+    "id": "glass-1419",
+    "pattern": "^Extension\\ '([\\s\\S]+)'\\ is\\ not\\ installed\\.$",
+    "flags": "",
+    "replacement": "未安装扩展“$1”。"
+  },
+  {
+    "id": "glass-1473",
+    "pattern": "^Failed\\ to\\ parse\\ notepad\\ data:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法解析记事本数据：$1"
+  },
+  {
+    "id": "glass-1598",
+    "pattern": "^([\\s\\S]+?):\\ unsupported\\ version\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "$1：不支持的版本 $2"
+  },
+  {
+    "id": "glass-1802",
+    "pattern": "^Failed\\ to\\ revert\\ '([\\s\\S]+?)':\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法还原“$1”：$2"
+  },
+  {
+    "id": "glass-2122",
+    "pattern": "^Missing\\ manifest\\ for\\ extension\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "缺少扩展 $1 的清单文件"
+  },
+  {
+    "id": "glass-21",
+    "pattern": "^Cannot\\ extract\\ url\\ for\\ event\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法提取事件 $1 的 URL"
+  },
+  {
+    "id": "glass-343",
+    "pattern": "^Request\\ ID:\\ ([\\s\\S]+?)\\\nError:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "请求 ID：$1\n错误：$2"
+  },
+  {
+    "id": "glass-422",
+    "pattern": "^Agents\\ cannot\\ be\\ added\\ under\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法在 $1 下添加智能体"
+  },
+  {
+    "id": "glass-540",
+    "pattern": "^Failed\\ to\\ clear\\ OAuth\\ state:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法清除 OAuth 状态：$1"
+  },
+  {
+    "id": "glass-541",
+    "pattern": "^Failed\\ to\\ reload\\ MCP\\ server:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法重新加载 MCP 服务器：$1"
+  },
+  {
+    "id": "glass-578",
+    "pattern": "^Failed\\ to\\ checkout\\ branch\\ \"([\\s\\S]+)\"\\.$",
+    "flags": "",
+    "replacement": "无法检出分支“$1”。"
+  },
+  {
+    "id": "glass-610",
+    "pattern": "^Name\\ cannot\\ contain\\ ([\\s\\S]+)\\ character$",
+    "flags": "",
+    "replacement": "名称无法包含 $1 字符"
+  },
+  {
+    "id": "glass-843",
+    "pattern": "^Couldn’t\\ create\\ the\\ project\\.\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法创建项目。$1"
+  },
+  {
+    "id": "glass-873",
+    "pattern": "^Failed\\ to\\ create\\ new\\ branch:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法创建新分支：$1"
+  },
+  {
+    "id": "glass-892",
+    "pattern": "^Tool\\ call\\ blocked\\ by\\ policy:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "策略已阻止此工具调用：$1"
+  },
+  {
+    "id": "glass-1085",
+    "pattern": "^Invalid\\ extensions\\ content\\ in\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "$1 中的扩展内容无效"
+  },
+  {
+    "id": "glass-1090",
+    "pattern": "^Failed\\ to\\ parse\\ ([\\s\\S]+?):\\ ([\\s\\S]+)\\.$",
+    "flags": "",
+    "replacement": "无法解析 $1：$2。"
+  },
+  {
+    "id": "glass-1303",
+    "pattern": "^Failed\\ to\\ run\\ Bugbot\\ action:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法运行 Bugbot 操作：$1"
+  },
+  {
+    "id": "glass-1393",
+    "pattern": "^Failed\\ to\\ copy\\ extension\\ id:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法复制扩展 ID：$1"
+  },
+  {
+    "id": "glass-1985",
+    "pattern": "^Could\\ not\\ install\\ ([\\s\\S]+?):\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法安装 $1：$2"
+  },
+  {
+    "id": "glass-2203",
+    "pattern": "^Unable\\ to\\ import\\ extension:\\ ([\\s\\S]+)\\.$",
+    "flags": "",
+    "replacement": "无法导入扩展：$1。"
+  },
+  {
+    "id": "placeholder-13",
+    "pattern": "^Failed\\ to\\ save\\ '([\\s\\S]+?)':\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法保存“$1”：$2"
+  },
+  {
+    "id": "placeholder-14",
+    "pattern": "^Unable\\ to\\ reload\\ ([\\s\\S]+?):\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法重新加载 $1：$2"
+  },
+  {
+    "id": "glass-312",
+    "pattern": "^Cannot\\ update\\ missing\\ card\\ ([\\s\\S]+)\\.$",
+    "flags": "",
+    "replacement": "无法更新缺失的卡片 $1。"
+  },
+  {
+    "id": "glass-313",
+    "pattern": "^Cannot\\ delete\\ missing\\ card\\ ([\\s\\S]+)\\.$",
+    "flags": "",
+    "replacement": "无法删除缺失的卡片 $1。"
+  },
+  {
+    "id": "glass-611",
+    "pattern": "^Invalid\\ MCP\\ allowlist\\ entry:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "MCP 允许列表项无效：$1"
+  },
+  {
+    "id": "glass-628",
+    "pattern": "^Composer\\ not\\ found\\ for\\ run:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "找不到此次运行的聊天：$1"
+  },
+  {
+    "id": "glass-891",
+    "pattern": "^Tool\\ not\\ available\\ to\\ apps:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "工具不向应用开放：$1"
+  },
+  {
+    "id": "glass-963",
+    "pattern": "^Error:\\ could\\ not\\ parse\\ uri:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "错误：无法解析 URI：$1"
+  },
+  {
+    "id": "glass-1081",
+    "pattern": "^Claude\\ Code\\ blob\\ not\\ found:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "找不到 Claude Code 内容块：$1"
+  },
+  {
+    "id": "glass-1339",
+    "pattern": "^Couldn't\\ start\\ a\\ worker\\ for\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法为 $1 启动工作节点"
+  },
+  {
+    "id": "glass-1358",
+    "pattern": "^Couldn't\\ join\\ this\\ Project\\.\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法加入此项目。$1"
+  },
+  {
+    "id": "glass-1723",
+    "pattern": "^Failed\\ to\\ save\\ '([\\s\\S]+?)':\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法保存“$1”：$2"
+  },
+  {
+    "id": "glass-1758",
+    "pattern": "^Failed\\ to\\ create\\ repository:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法创建仓库：$1"
+  },
+  {
+    "id": "glass-2202",
+    "pattern": "^Failed\\ to\\ disable\\ extension:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法禁用扩展：$1"
+  },
+  {
+    "id": "glass-4",
+    "pattern": "^Invalid\\ Sentry\\ Dsn:\\ ([\\s\\S]+)\\ missing$",
+    "flags": "",
+    "replacement": "Sentry 的 DSN 无效：缺少 $1"
+  },
+  {
+    "id": "glass-42",
+    "pattern": "^A\\ system\\ error\\ occurred\\ \\(([\\s\\S]+)\\)$",
+    "flags": "",
+    "replacement": "发生系统错误（$1）"
+  },
+  {
+    "id": "glass-56",
+    "pattern": "^Request\\ encoding\\ failed\\ for\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "$1 的请求编码失败"
+  },
+  {
+    "id": "glass-547",
+    "pattern": "^([\\s\\S]+?)\\ failed\\ with\\ HTTP\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "$1 失败，HTTP 状态码为 $2"
+  },
+  {
+    "id": "glass-597",
+    "pattern": "^OAuth\\ fanout\\ reload\\ failed:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "重新加载 OAuth 扇出失败：$1"
+  },
+  {
+    "id": "glass-757",
+    "pattern": "^Command\\ executed\\ ([\\s\\S]+)\\ and\\ failed$",
+    "flags": "",
+    "replacement": "已执行命令 $1，但失败"
+  },
+  {
+    "id": "glass-842",
+    "pattern": "^Failed\\ to\\ start\\ side\\ chat:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法启动侧边聊天：$1"
+  },
+  {
+    "id": "glass-1057",
+    "pattern": "^([\\s\\S]+)\\ is\\ no\\ longer\\ in\\ the\\ notes$",
+    "flags": "",
+    "replacement": "$1 已不在笔记中"
+  },
+  {
+    "id": "glass-1135",
+    "pattern": "^Couldn't\\ create\\ folder\\ at\\ ([\\s\\S]+)\\.$",
+    "flags": "",
+    "replacement": "无法在 $1 创建文件夹。"
+  },
+  {
+    "id": "glass-1236",
+    "pattern": "^Failed\\ to\\ save\\ environment:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法保存环境：$1"
+  },
+  {
+    "id": "glass-1356",
+    "pattern": "^Couldn't\\ rename\\ this\\ chat\\.\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法重命名此聊天。$1"
+  },
+  {
+    "id": "glass-1386",
+    "pattern": "^([\\s\\S]+?)\\ could\\ not\\ retry:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "$1 无法重试：$2"
+  },
+  {
+    "id": "glass-1503",
+    "pattern": "^Would\\ you\\ like\\ to\\ undo\\ '([\\s\\S]+)'\\?$",
+    "flags": "",
+    "replacement": "是否撤消“$1”？"
+  },
+  {
+    "id": "glass-1560",
+    "pattern": "^Failed\\ to\\ load\\ blame\\ data:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法加载追溯数据：$1"
+  },
+  {
+    "id": "glass-1576",
+    "pattern": "^Failed\\ to\\ continue\\ locally:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法在本地继续：$1"
+  },
+  {
+    "id": "glass-1577",
+    "pattern": "^Failed\\ to\\ resubmit\\ locally:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法在本地重新提交：$1"
+  },
+  {
+    "id": "glass-1695",
+    "pattern": "^Error\\ executing\\ prompt\\ hook\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "执行提示词钩子 $1 时出错"
+  },
+  {
+    "id": "glass-1754",
+    "pattern": "^Failed\\ to\\ move\\ agent\\ root:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法移动智能体根目录：$1"
+  },
+  {
+    "id": "glass-1762",
+    "pattern": "^Failed\\ to\\ open\\ local\\ task:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法打开本地任务：$1"
+  },
+  {
+    "id": "glass-162",
+    "pattern": "^Unsupported\\ token\\ \\(type:\\ ([\\s\\S]+)\\)$",
+    "flags": "",
+    "replacement": "不支持的标记（类型：$1）"
+  },
+  {
+    "id": "glass-309",
+    "pattern": "^Cannot\\ move\\ missing\\ card\\ ([\\s\\S]+)\\.$",
+    "flags": "",
+    "replacement": "无法移动缺失的卡片 $1。"
+  },
+  {
+    "id": "glass-366",
+    "pattern": "^Hook\\ blocked\\ with\\ message:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "钩子已阻止，消息：$1"
+  },
+  {
+    "id": "glass-444",
+    "pattern": "^Failed\\ to\\ subscribe\\ to\\ CI\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法订阅 CI $1"
+  },
+  {
+    "id": "glass-598",
+    "pattern": "^OAuth\\ fanout\\ clear\\ failed:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "清除 OAuth 扇出失败：$1"
+  },
+  {
+    "id": "glass-813",
+    "pattern": "^Failed\\ to\\ save\\ keybinding:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法保存快捷键：$1"
+  },
+  {
+    "id": "glass-968",
+    "pattern": "^Task\\ \"([\\s\\S]+)\"\\ cannot\\ block\\ itself$",
+    "flags": "",
+    "replacement": "任务“$1”不能阻止自身"
+  },
+  {
+    "id": "glass-1156",
+    "pattern": "^Failed\\ to\\ capture\\ screenshot([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法捕获截图$1"
+  },
+  {
+    "id": "glass-1191",
+    "pattern": "^Error\\ during\\ font\\ loading:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "加载字体时出错：$1"
+  },
+  {
+    "id": "glass-1306",
+    "pattern": "^Failed\\ to\\ load\\ CI\\ checks:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法加载 CI 检查：$1"
+  },
+  {
+    "id": "glass-1310",
+    "pattern": "^Failed\\ to\\ load\\ ([\\s\\S]+?):\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法加载 $1：$2"
+  },
+  {
+    "id": "glass-1474",
+    "pattern": "^Failed\\ to\\ export\\ notepads:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法导出记事本：$1"
+  },
+  {
+    "id": "glass-1602",
+    "pattern": "^GC\\ Agent\\ KV\\ Blobs\\ failed:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法回收智能体键值数据块：$1"
+  },
+  {
+    "id": "glass-1761",
+    "pattern": "^Failed\\ to\\ open\\ automation:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法打开自动化：$1"
+  },
+  {
+    "id": "glass-2078",
+    "pattern": "^Failed\\ to\\ open\\ side\\ chat:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法打开侧边聊天：$1"
+  },
+  {
+    "id": "glass-2212",
+    "pattern": "^Failed\\ to\\ checkout\\ branch:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法检出分支：$1"
+  },
+  {
+    "id": "glass-154",
+    "pattern": "^Missing\\ space\\ after\\ :\\ in\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "$1 中的冒号后缺少空格"
+  },
+  {
+    "id": "glass-283",
+    "pattern": "^Command\\ timed\\ out\\ after\\ ([\\s\\S]+)ms$",
+    "flags": "",
+    "replacement": "命令在 $1 ms 后超时"
+  },
+  {
+    "id": "glass-331",
+    "pattern": "^Promise\\ timed\\ out\\ after\\ ([\\s\\S]+)ms$",
+    "flags": "",
+    "replacement": "Promise 在 $1 ms 后超时"
+  },
+  {
+    "id": "glass-668",
+    "pattern": "^Failed\\ to\\ connect\\ GitHub:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法连接 GitHub：$1"
+  },
+  {
+    "id": "glass-733",
+    "pattern": "^Opening\\ ([\\s\\S]+)\\ in\\ Cursor\\ Browser$",
+    "flags": "",
+    "replacement": "正在 Cursor 浏览器中打开 $1"
+  },
+  {
+    "id": "glass-832",
+    "pattern": "^Resubmit\\ for\\ all\\ ([\\s\\S]+)\\ agents\\?$",
+    "flags": "",
+    "replacement": "要为全部 $1 个智能体重新提交吗？"
+  },
+  {
+    "id": "glass-838",
+    "pattern": "^Failed\\ to\\ install\\ plugin:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法安装插件：$1"
+  },
+  {
+    "id": "glass-1508",
+    "pattern": "^Property\\ ([\\s\\S]+)\\ is\\ not\\ allowed\\.$",
+    "flags": "",
+    "replacement": "不允许使用属性 $1。"
+  },
+  {
+    "id": "glass-1557",
+    "pattern": "^Failed\\ to\\ get\\ repo\\ root:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法获取仓库根目录：$1"
+  },
+  {
+    "id": "glass-1601",
+    "pattern": "^Error\\ deleting\\ old\\ chats:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "删除旧聊天时出错：$1"
+  },
+  {
+    "id": "glass-1604",
+    "pattern": "^Failed\\ to\\ create\\ command:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法创建命令：$1"
+  },
+  {
+    "id": "glass-1732",
+    "pattern": "^Error\\ starting\\ ([\\s\\S]+?):\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "启动 $1 时出错：$2"
+  },
+  {
+    "id": "glass-2",
+    "pattern": "^Error\\ while\\ instrumenting\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "对 $1 插桩时出错"
+  },
+  {
+    "id": "glass-27",
+    "pattern": "^Failed\\ to\\ validate\\ keys:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法验证键：$1"
+  },
+  {
+    "id": "glass-299",
+    "pattern": "^([\\s\\S]+)\\ has\\ an\\ invalid\\ selection$",
+    "flags": "",
+    "replacement": "$1 的选择无效"
+  },
+  {
+    "id": "glass-565",
+    "pattern": "^Failed\\ to\\ connect\\ Slack:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法连接 Slack：$1"
+  },
+  {
+    "id": "glass-596",
+    "pattern": "^New\\ MCP\\ server\\ detected:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "检测到新的 MCP 服务器：$1"
+  },
+  {
+    "id": "glass-1315",
+    "pattern": "^Unlink\\ ([\\s\\S]+)\\ from\\ this\\ agent\\?$",
+    "flags": "",
+    "replacement": "取消 $1 与此智能体的关联？"
+  },
+  {
+    "id": "glass-1387",
+    "pattern": "^Error\\ in\\ button\\ ([\\s\\S]+)\\ onClick:$",
+    "flags": "",
+    "replacement": "按钮 $1 的 onClick 出错："
+  },
+  {
+    "id": "glass-1649",
+    "pattern": "^Failed\\ to\\ stash\\ changes:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法贮藏更改：$1"
+  },
+  {
+    "id": "glass-1730",
+    "pattern": "^Trust\\ MCP\\ servers\\ from\\ ([\\s\\S]+)\\?$",
+    "flags": "",
+    "replacement": "是否信任来自 $1 的 MCP 服务器？"
+  },
+  {
+    "id": "glass-1760",
+    "pattern": "^Failed\\ to\\ open\\ resource:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法打开资源：$1"
+  },
+  {
+    "id": "glass-2194",
+    "pattern": "^Failed\\ to\\ log\\ telemetry:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法记录遥测数据：$1"
+  },
+  {
+    "id": "glass-12",
+    "pattern": "^([\\s\\S]+?)\\ rejected\\ with\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "$1 已被拒绝：$2"
+  },
+  {
+    "id": "glass-140",
+    "pattern": "^Tree\\ element\\ not\\ found:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "找不到树元素：$1"
+  },
+  {
+    "id": "glass-142",
+    "pattern": "^Data\\ tree\\ node\\ not\\ found([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "找不到数据树节点$1"
+  },
+  {
+    "id": "glass-148",
+    "pattern": "^Unsupported\\ YAML\\ version\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "不支持 YAML 版本 $1"
+  },
+  {
+    "id": "glass-288",
+    "pattern": "^Couldn't\\ start\\ sign\\-in:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法开始登录：$1"
+  },
+  {
+    "id": "glass-295",
+    "pattern": "^Invalid\\ index\\ specified:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "指定的索引无效：$1"
+  },
+  {
+    "id": "glass-489",
+    "pattern": "^List\\ directory\\ rejected:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "列出目录被拒绝：$1"
+  },
+  {
+    "id": "glass-491",
+    "pattern": "^Write\\ permission\\ denied:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "写入权限被拒绝：$1"
+  },
+  {
+    "id": "glass-518",
+    "pattern": "^Error\\ reading\\ directory\\ ([\\s\\S]+):$",
+    "flags": "",
+    "replacement": "读取目录 $1 出错："
+  },
+  {
+    "id": "glass-691",
+    "pattern": "^Cloud\\ agent\\ error\\ code:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "云端智能体错误代码：$1"
+  },
+  {
+    "id": "glass-1010",
+    "pattern": "^\"([\\s\\S]+)\":\\ Invalid\\ domain\\ format$",
+    "flags": "",
+    "replacement": "“$1”：域名格式无效"
+  },
+  {
+    "id": "glass-1238",
+    "pattern": "^Failed\\ to\\ save\\ secrets:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法保存密钥：$1"
+  },
+  {
+    "id": "glass-1721",
+    "pattern": "^Failed\\ to\\ set\\ override:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法设置覆盖：$1"
+  },
+  {
+    "id": "glass-2135",
+    "pattern": "^([\\s\\S]+)\\ is\\ currently\\ unavailable$",
+    "flags": "",
+    "replacement": "$1 当前不可用"
+  },
+  {
+    "id": "glass-2211",
+    "pattern": "^Checked\\ out\\ branch\\ for:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "已为 $1 检出分支"
+  },
+  {
+    "id": "glass-103",
+    "pattern": "^Invalid\\ input:\\ expected\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无效输入：期望 $1"
+  },
+  {
+    "id": "glass-118",
+    "pattern": "^Invalid\\ clipping\\ range:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "裁剪范围无效：$1"
+  },
+  {
+    "id": "glass-150",
+    "pattern": "^Could\\ not\\ resolve\\ tag:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法解析标签：$1"
+  },
+  {
+    "id": "glass-160",
+    "pattern": "^Invalid\\ escape\\ sequence\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "转义序列 $1 无效"
+  },
+  {
+    "id": "glass-426",
+    "pattern": "^Log\\ out\\ of\\ ([\\s\\S]+)\\ environment$",
+    "flags": "",
+    "replacement": "从 $1 环境退出登录"
+  },
+  {
+    "id": "glass-443",
+    "pattern": "^Failed\\ to\\ subscribe\\ to\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法订阅 $1"
+  },
+  {
+    "id": "glass-490",
+    "pattern": "^Read\\ permission\\ denied:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "读取权限被拒绝：$1"
+  },
+  {
+    "id": "glass-524",
+    "pattern": "^Failed\\ to\\ create\\ file:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法创建文件：$1"
+  },
+  {
+    "id": "glass-663",
+    "pattern": "^MCP\\ server\\ '([\\s\\S]+)'\\ not\\ found$",
+    "flags": "",
+    "replacement": "找不到 MCP 服务器“$1”"
+  },
+  {
+    "id": "glass-734",
+    "pattern": "^Glass\\ boundary\\ crashed:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "Glass 边界已崩溃：$1"
+  },
+  {
+    "id": "glass-835",
+    "pattern": "^Failed\\ to\\ open\\ canvas:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法打开 Canvas：$1"
+  },
+  {
+    "id": "glass-912",
+    "pattern": "^Failed\\ to\\ revert\\ file:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法还原文件：$1"
+  },
+  {
+    "id": "glass-1180",
+    "pattern": "^Unsupported\\ paint\\ type:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "不支持的绘制类型：$1"
+  },
+  {
+    "id": "glass-1413",
+    "pattern": "^Failed\\ to\\ create\\ rule:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法创建规则：$1"
+  },
+  {
+    "id": "glass-1417",
+    "pattern": "^Extension\\ '([\\s\\S]+)'\\ not\\ found\\.$",
+    "flags": "",
+    "replacement": "未找到扩展“$1”。"
+  },
+  {
+    "id": "glass-1443",
+    "pattern": "^Use\\ Port\\ ([\\s\\S]+)\\ as\\ Sudo\\.\\.\\.$",
+    "flags": "",
+    "replacement": "以超级用户身份使用端口 $1…"
+  },
+  {
+    "id": "glass-1555",
+    "pattern": "^Failed\\ to\\ load\\ commit:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法加载提交：$1"
+  },
+  {
+    "id": "glass-1566",
+    "pattern": "^Failed\\ to\\ push\\ branch:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法推送分支：$1"
+  },
+  {
+    "id": "glass-1592",
+    "pattern": "^Failed\\ to\\ export\\ chat:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法导出聊天：$1"
+  },
+  {
+    "id": "glass-1596",
+    "pattern": "^Failed\\ to\\ import\\ chat:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法导入聊天：$1"
+  },
+  {
+    "id": "glass-1753",
+    "pattern": "^Failed\\ to\\ rename\\ chat:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法重命名聊天：$1"
+  },
+  {
+    "id": "glass-54",
+    "pattern": "^Timeout\\ of\\ ([\\s\\S]+)ms\\ expired\\.$",
+    "flags": "",
+    "replacement": "已超过 $1 ms 的超时时间。"
+  },
+  {
+    "id": "glass-474",
+    "pattern": "^Failed\\ to\\ ([\\s\\S]+)\\ automation\\.$",
+    "flags": "",
+    "replacement": "无法 $1 自动化。"
+  },
+  {
+    "id": "glass-849",
+    "pattern": "^Failed\\ to\\ load\\ video:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法加载视频：$1"
+  },
+  {
+    "id": "glass-1093",
+    "pattern": "^Failed\\ to\\ parse\\ JSON:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法解析 JSON：$1"
+  },
+  {
+    "id": "glass-1094",
+    "pattern": "^Failed\\ to\\ parse\\ YAML:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法解析 YAML：$1"
+  },
+  {
+    "id": "glass-1142",
+    "pattern": "^Storage\\ action\\ failed:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "存储操作失败：$1"
+  },
+  {
+    "id": "glass-1353",
+    "pattern": "^Missing\\ local\\ copy\\ of\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "缺少 $1 的本地副本"
+  },
+  {
+    "id": "glass-1370",
+    "pattern": "^The\\ request\\ failed\\ \\(([\\s\\S]+)\\)$",
+    "flags": "",
+    "replacement": "请求失败（$1）"
+  },
+  {
+    "id": "glass-1448",
+    "pattern": "^Serialization\\ error\\ in\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "$1 中出现序列化错误"
+  },
+  {
+    "id": "glass-1554",
+    "pattern": "^Could\\ not\\ find\\ commit\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法找到提交 $1"
+  },
+  {
+    "id": "glass-1664",
+    "pattern": "^Error\\ revealing\\ paths:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "显示路径时出错：$1"
+  },
+  {
+    "id": "glass-1669",
+    "pattern": "^Error\\ scoring\\ commits:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "为提交评分时出错：$1"
+  },
+  {
+    "id": "glass-2218",
+    "pattern": "^Undo\\ \\&\\ Apply\\ failed:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法撤消并应用：$1"
+  },
+  {
+    "id": "glass-2277",
+    "pattern": "^Error\\ loading\\ webview:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "加载 Web 视图时出错：$1"
+  },
+  {
+    "id": "glass-133",
+    "pattern": "^Invalid\\ delete\\ count:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "删除数量无效：$1"
+  },
+  {
+    "id": "glass-296",
+    "pattern": "^Invalid\\ easing\\ type\\ '([\\s\\S]+)'$",
+    "flags": "",
+    "replacement": "缓动类型“$1”无效"
+  },
+  {
+    "id": "glass-416",
+    "pattern": "^Upload\\ PUT\\ failed\\ \\(([\\s\\S]+)\\)$",
+    "flags": "",
+    "replacement": "PUT 上传失败（$1）"
+  },
+  {
+    "id": "glass-659",
+    "pattern": "^Plan\\ creation\\ failed:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法创建计划：$1"
+  },
+  {
+    "id": "glass-731",
+    "pattern": "^Something\\ went\\ wrong:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "出了点问题：$1"
+  },
+  {
+    "id": "glass-878",
+    "pattern": "^Failed\\ to\\ create\\ PR:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法创建 PR：$1"
+  },
+  {
+    "id": "glass-910",
+    "pattern": "^Failed\\ to\\ open\\ file:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法打开文件：$1"
+  },
+  {
+    "id": "glass-1312",
+    "pattern": "^Link\\ ([\\s\\S]+)\\ to\\ this\\ agent\\?$",
+    "flags": "",
+    "replacement": "将 $1 关联到此智能体？"
+  },
+  {
+    "id": "glass-1630",
+    "pattern": "^Failed\\ to\\ fork\\ chat:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法派生聊天：$1"
+  },
+  {
+    "id": "glass-1663",
+    "pattern": "^Error\\ scoring\\ commit:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "提交评分出错：$1"
+  },
+  {
+    "id": "glass-1759",
+    "pattern": "^Error:\\ unknown\\ agent:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "错误：未知智能体：$1"
+  },
+  {
+    "id": "glass-1980",
+    "pattern": "^Could\\ not\\ turn\\ off\\ ([\\s\\S]+)\\.$",
+    "flags": "",
+    "replacement": "无法关闭 $1。"
+  },
+  {
+    "id": "glass-1986",
+    "pattern": "^([\\s\\S]+)\\ name\\ cannot\\ be\\ empty$",
+    "flags": "",
+    "replacement": "$1 名称不能为空"
+  },
+  {
+    "id": "glass-132",
+    "pattern": "^Invalid\\ start\\ index:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "起始索引无效：$1"
+  },
+  {
+    "id": "glass-469",
+    "pattern": "^Error\\ adding\\ plugin:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "添加插件出错：$1"
+  },
+  {
+    "id": "glass-537",
+    "pattern": "^Turn\\ ended:\\ aborted:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "回合已结束：已中止：$1"
+  },
+  {
+    "id": "glass-841",
+    "pattern": "^([\\s\\S]+)\\ free\\ credits\\ expired$",
+    "flags": "",
+    "replacement": "$1 免费额度已过期"
+  },
+  {
+    "id": "glass-924",
+    "pattern": "^Failed\\ to\\ merge\\ PR:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法合并 PR：$1"
+  },
+  {
+    "id": "glass-1121",
+    "pattern": "^Failed\\ to\\ run\\ task:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法运行任务：$1"
+  },
+  {
+    "id": "glass-1702",
+    "pattern": "^Error\\ executing\\ hook\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "执行钩子 $1 时出错"
+  },
+  {
+    "id": "glass-1979",
+    "pattern": "^Could\\ not\\ turn\\ on\\ ([\\s\\S]+)\\.$",
+    "flags": "",
+    "replacement": "无法打开 $1。"
+  },
+  {
+    "id": "glass-320",
+    "pattern": "^HTTP\\ error!\\ status:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "HTTP 错误！状态：$1"
+  },
+  {
+    "id": "glass-399",
+    "pattern": "^Property\\ not\\ found:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "找不到属性：$1"
+  },
+  {
+    "id": "glass-465",
+    "pattern": "^Add\\ ([\\s\\S]+)\\ missing\\ secrets$",
+    "flags": "",
+    "replacement": "添加 $1 个缺失的密钥"
+  },
+  {
+    "id": "glass-494",
+    "pattern": "^Resource\\ not\\ found:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "找不到资源：$1"
+  },
+  {
+    "id": "glass-583",
+    "pattern": "^Todo\\ update\\ failed:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "待办更新失败：$1"
+  },
+  {
+    "id": "glass-925",
+    "pattern": "^Failed\\ to\\ open\\ PR:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法创建 PR：$1"
+  },
+  {
+    "id": "glass-1152",
+    "pattern": "^([\\s\\S]+)\\ returned\\ an\\ error\\.$",
+    "flags": "",
+    "replacement": "$1 返回了错误。"
+  },
+  {
+    "id": "glass-1307",
+    "pattern": "^Couldn't\\ load\\ commits([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法加载提交$1"
+  },
+  {
+    "id": "glass-26",
+    "pattern": "^Failed\\ to\\ validate\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法验证 $1"
+  },
+  {
+    "id": "glass-536",
+    "pattern": "^Turn\\ ended:\\ error:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "回合已结束：错误：$1"
+  },
+  {
+    "id": "glass-594",
+    "pattern": "^JSON\\ syntax\\ error:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "JSON 语法错误：$1"
+  },
+  {
+    "id": "glass-853",
+    "pattern": "^Failed\\ to\\ download\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法下载 $1"
+  },
+  {
+    "id": "glass-872",
+    "pattern": "^Switched\\ to\\ branch\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "已切换到分支 $1"
+  },
+  {
+    "id": "glass-900",
+    "pattern": "^Unsupported\\ method:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "不支持的方法：$1"
+  },
+  {
+    "id": "glass-1054",
+    "pattern": "^([\\s\\S]+)\\ context\\ unavailable$",
+    "flags": "",
+    "replacement": "$1 上下文不可用"
+  },
+  {
+    "id": "glass-1230",
+    "pattern": "^Error\\ getting\\ IDs:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "获取 ID 时出错：$1"
+  },
+  {
+    "id": "glass-1556",
+    "pattern": "^Backend\\ API\\ error:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "后端 API 错误：$1"
+  },
+  {
+    "id": "glass-1639",
+    "pattern": "^Failed\\ to\\ checkout\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法检出 $1"
+  },
+  {
+    "id": "glass-1807",
+    "pattern": "^'([\\s\\S]+)'\\ is\\ in\\ progress\\.$",
+    "flags": "",
+    "replacement": "“$1”正在进行。"
+  },
+  {
+    "id": "glass-1987",
+    "pattern": "^Could\\ not\\ create\\ ([\\s\\S]+)\\.$",
+    "flags": "",
+    "replacement": "无法创建 $1。"
+  },
+  {
+    "id": "glass-1991",
+    "pattern": "^Could\\ not\\ delete\\ ([\\s\\S]+)\\.$",
+    "flags": "",
+    "replacement": "无法删除 $1。"
+  },
+  {
+    "id": "glass-2037",
+    "pattern": "^([\\s\\S]+)\\ failed\\ to\\ render\\.$",
+    "flags": "",
+    "replacement": "$1 无法渲染。"
+  },
+  {
+    "id": "copied-short",
+    "pattern": "^Copied ([A-Za-z0-9._/-]{1,80})$",
+    "flags": "",
+    "replacement": "已复制 $1"
+  },
+  {
+    "id": "glass-398",
+    "pattern": "^Method\\ not\\ found:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "找不到方法：$1"
+  },
+  {
+    "id": "glass-487",
+    "pattern": "^Permission\\ denied:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "权限被拒绝：$1"
+  },
+  {
+    "id": "glass-851",
+    "pattern": "^Unable\\ to\\ resolve\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法解析 $1"
+  },
+  {
+    "id": "glass-876",
+    "pattern": "^Failed\\ to\\ commit:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法提交：$1"
+  },
+  {
+    "id": "glass-1154",
+    "pattern": "^Could\\ not\\ reach\\ ([\\s\\S]+)\\.$",
+    "flags": "",
+    "replacement": "无法访问 $1。"
+  },
+  {
+    "id": "glass-1701",
+    "pattern": "^JSON\\ Parse\\ Error:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "JSON 解析错误：$1"
+  },
+  {
+    "id": "glass-2089",
+    "pattern": "^Failed\\ to\\ resume:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法恢复：$1"
+  },
+  {
+    "id": "glass-2319",
+    "pattern": "^Failed\\ to\\ orphan:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法转为孤立状态：$1"
+  },
+  {
+    "id": "placeholder-12",
+    "pattern": "^Failed\\ to\\ save\\ '([\\s\\S]+)'$",
+    "flags": "",
+    "replacement": "无法保存“$1”"
+  },
+  {
+    "id": "glass-23",
+    "pattern": "^Assertion\\ failed:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "断言失败：$1"
+  },
+  {
+    "id": "glass-39",
+    "pattern": "^Assertion\\ Failed:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "断言失败：$1"
+  },
+  {
+    "id": "glass-111",
+    "pattern": "^Invalid\\ value\\ in\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "$1 中的值无效"
+  },
+  {
+    "id": "glass-167",
+    "pattern": "^Unsupported\\ token\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "不支持的标记 $1"
+  },
+  {
+    "id": "glass-285",
+    "pattern": "^([\\s\\S]+)\\ connection\\ failed$",
+    "flags": "",
+    "replacement": "$1 连接失败"
+  },
+  {
+    "id": "glass-397",
+    "pattern": "^Event\\ not\\ found:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "找不到事件：$1"
+  },
+  {
+    "id": "glass-423",
+    "pattern": "^Failed\\ to\\ upload\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法上传 $1"
+  },
+  {
+    "id": "glass-1309",
+    "pattern": "^Failed\\ to\\ load\\ ([\\s\\S]+)\\.$",
+    "flags": "",
+    "replacement": "无法加载 $1。"
+  },
+  {
+    "id": "glass-1321",
+    "pattern": "^Failed\\ to\\ stop\\ ([\\s\\S]+)\\.$",
+    "flags": "",
+    "replacement": "无法停止 $1。"
+  },
+  {
+    "id": "glass-1378",
+    "pattern": "^([\\s\\S]+)\\ ran\\ out\\ of\\ time$",
+    "flags": "",
+    "replacement": "$1 已超时"
+  },
+  {
+    "id": "glass-1918",
+    "pattern": "^Disconnected\\ from\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "已与 $1 断开连接"
+  },
+  {
+    "id": "glass-2136",
+    "pattern": "^Failed\\ to\\ save\\ '([\\s\\S]+)'$",
+    "flags": "",
+    "replacement": "无法保存“$1”"
+  },
+  {
+    "id": "glass-2318",
+    "pattern": "^Failed\\ to\\ crash:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法触发崩溃：$1"
+  },
+  {
+    "id": "glass-32",
+    "pattern": "^Content\\ blocked:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "内容已阻止：$1"
+  },
+  {
+    "id": "glass-49",
+    "pattern": "^Failed\\ to\\ parse\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法解析 $1"
+  },
+  {
+    "id": "glass-50",
+    "pattern": "^Caught\\ error\\ in\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "在 $1 中捕获到错误"
+  },
+  {
+    "id": "glass-484",
+    "pattern": "^Timed\\ out\\ after\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "$1 后已超时"
+  },
+  {
+    "id": "glass-486",
+    "pattern": "^File\\ not\\ found:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "找不到文件：$1"
+  },
+  {
+    "id": "glass-488",
+    "pattern": "^Delete\\ rejected:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "删除被拒绝：$1"
+  },
+  {
+    "id": "glass-868",
+    "pattern": "^Failed\\ to\\ push:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法推送：$1"
+  },
+  {
+    "id": "glass-890",
+    "pattern": "^Tool\\ not\\ found:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "找不到工具：$1"
+  },
+  {
+    "id": "glass-1382",
+    "pattern": "^([\\s\\S]+)\\ could\\ not\\ reply$",
+    "flags": "",
+    "replacement": "$1 无法回复"
+  },
+  {
+    "id": "glass-2001",
+    "pattern": "^Sign\\ out\\ of\\ '([\\s\\S]+)'\\?$",
+    "flags": "",
+    "replacement": "要退出“$1”的登录吗？"
+  },
+  {
+    "id": "glass-2181",
+    "pattern": "^Invalid\\ location\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "位置 $1 无效"
+  },
+  {
+    "id": "glass-110",
+    "pattern": "^Invalid\\ key\\ in\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "$1 中的键无效"
+  },
+  {
+    "id": "glass-907",
+    "pattern": "^Unable\\ to\\ open\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法打开 $1"
+  },
+  {
+    "id": "glass-1157",
+    "pattern": "^Failed\\ to\\ load\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法加载 $1"
+  },
+  {
+    "id": "glass-1174",
+    "pattern": "^Replace\\ failed:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "替换失败：$1"
+  },
+  {
+    "id": "glass-2035",
+    "pattern": "^([\\s\\S]+)\\ could\\ not\\ load$",
+    "flags": "",
+    "replacement": "$1 无法加载"
+  },
+  {
+    "id": "glass-117",
+    "pattern": "^Invalid\\ range:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "范围无效：$1"
+  },
+  {
+    "id": "glass-292",
+    "pattern": "^Denied\\ use\\ of\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "已拒绝使用 $1"
+  },
+  {
+    "id": "glass-492",
+    "pattern": "^Edit\\ rejected:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "编辑被拒绝：$1"
+  },
+  {
+    "id": "glass-1375",
+    "pattern": "^([\\s\\S]+):\\ not\\ supported$",
+    "flags": "",
+    "replacement": "$1：不支持"
+  },
+  {
+    "id": "glass-1400",
+    "pattern": "^Missing\\ color:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "缺少颜色：$1"
+  },
+  {
+    "id": "glass-134",
+    "pattern": "^Invalid\\ index\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "索引 $1 无效"
+  },
+  {
+    "id": "glass-302",
+    "pattern": "^Invalid\\ JSON:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "JSON 无效：$1"
+  },
+  {
+    "id": "glass-806",
+    "pattern": "^Agent\\ Review:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "智能体审查：$1"
+  },
+  {
+    "id": "glass-1377",
+    "pattern": "^([\\s\\S]+)\\ hit\\ an\\ error$",
+    "flags": "",
+    "replacement": "$1 遇到错误"
+  },
+  {
+    "id": "glass-122",
+    "pattern": "^Audio\\ error:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "音频错误：$1"
+  },
+  {
+    "id": "glass-657",
+    "pattern": "^Task\\ failed:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "任务失败：$1"
+  },
+  {
+    "id": "glass-1162",
+    "pattern": "^Move\\ failed:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "移动失败：$1"
+  },
+  {
+    "id": "glass-1163",
+    "pattern": "^Copy\\ failed:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "复制失败：$1"
+  },
+  {
+    "id": "glass-2311",
+    "pattern": "^Error\\ Code:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "错误代码：$1"
+  },
+  {
+    "id": "glass-170",
+    "pattern": "^Blocked\\ by\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "被 $1 阻止"
+  },
+  {
+    "id": "glass-1447",
+    "pattern": "^Login\\ with\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "使用 $1 登录"
+  },
+  {
+    "id": "glass-1559",
+    "pattern": "^Git\\ error:\\ ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "Git 错误：$1"
+  },
+  {
+    "id": "new-agent-in",
+    "pattern": "^New Agent in (.+)$",
+    "flags": "",
+    "replacement": "在 $1 中新建智能体"
+  },
+  {
+    "id": "preview-of",
+    "pattern": "^Preview of (.+)$",
+    "flags": "",
+    "replacement": "“$1”预览"
+  },
+  {
     "id": "agent-count",
     "pattern": "^(\\d+) Agents?$",
     "flags": "",
@@ -21,7 +5493,7 @@
     "id": "failed-delete",
     "pattern": "^Failed to delete \"(.+)\"\\.$",
     "flags": "",
-    "replacement": "删除“$1”失败。"
+    "replacement": "无法删除“$1”。"
   },
   {
     "id": "file-count",
@@ -1994,7 +7466,7 @@
   {
     "id": "included-resets-credits-Jan",
     "pattern": "^Included usage with your subscription\\. Resets Jan (\\d{1,2})\\. Used before your credits\\.$",
-    "replacement": "订阅内含用量，1月$1日重置，优先于额度扣除。",
+    "replacement": "订阅内含用量，1月$1日重置，会先于额度使用。",
     "flags": ""
   },
   {
@@ -2006,7 +7478,7 @@
   {
     "id": "included-resets-credits-Feb",
     "pattern": "^Included usage with your subscription\\. Resets Feb (\\d{1,2})\\. Used before your credits\\.$",
-    "replacement": "订阅内含用量，2月$1日重置，优先于额度扣除。",
+    "replacement": "订阅内含用量，2月$1日重置，会先于额度使用。",
     "flags": ""
   },
   {
@@ -2018,7 +7490,7 @@
   {
     "id": "included-resets-credits-Mar",
     "pattern": "^Included usage with your subscription\\. Resets Mar (\\d{1,2})\\. Used before your credits\\.$",
-    "replacement": "订阅内含用量，3月$1日重置，优先于额度扣除。",
+    "replacement": "订阅内含用量，3月$1日重置，会先于额度使用。",
     "flags": ""
   },
   {
@@ -2030,7 +7502,7 @@
   {
     "id": "included-resets-credits-Apr",
     "pattern": "^Included usage with your subscription\\. Resets Apr (\\d{1,2})\\. Used before your credits\\.$",
-    "replacement": "订阅内含用量，4月$1日重置，优先于额度扣除。",
+    "replacement": "订阅内含用量，4月$1日重置，会先于额度使用。",
     "flags": ""
   },
   {
@@ -2042,7 +7514,7 @@
   {
     "id": "included-resets-credits-May",
     "pattern": "^Included usage with your subscription\\. Resets May (\\d{1,2})\\. Used before your credits\\.$",
-    "replacement": "订阅内含用量，5月$1日重置，优先于额度扣除。",
+    "replacement": "订阅内含用量，5月$1日重置，会先于额度使用。",
     "flags": ""
   },
   {
@@ -2054,7 +7526,7 @@
   {
     "id": "included-resets-credits-Jun",
     "pattern": "^Included usage with your subscription\\. Resets Jun (\\d{1,2})\\. Used before your credits\\.$",
-    "replacement": "订阅内含用量，6月$1日重置，优先于额度扣除。",
+    "replacement": "订阅内含用量，6月$1日重置，会先于额度使用。",
     "flags": ""
   },
   {
@@ -2066,7 +7538,7 @@
   {
     "id": "included-resets-credits-Jul",
     "pattern": "^Included usage with your subscription\\. Resets Jul (\\d{1,2})\\. Used before your credits\\.$",
-    "replacement": "订阅内含用量，7月$1日重置，优先于额度扣除。",
+    "replacement": "订阅内含用量，7月$1日重置，会先于额度使用。",
     "flags": ""
   },
   {
@@ -2078,7 +7550,7 @@
   {
     "id": "included-resets-credits-Aug",
     "pattern": "^Included usage with your subscription\\. Resets Aug (\\d{1,2})\\. Used before your credits\\.$",
-    "replacement": "订阅内含用量，8月$1日重置，优先于额度扣除。",
+    "replacement": "订阅内含用量，8月$1日重置，会先于额度使用。",
     "flags": ""
   },
   {
@@ -2090,7 +7562,7 @@
   {
     "id": "included-resets-credits-Sep",
     "pattern": "^Included usage with your subscription\\. Resets Sep (\\d{1,2})\\. Used before your credits\\.$",
-    "replacement": "订阅内含用量，9月$1日重置，优先于额度扣除。",
+    "replacement": "订阅内含用量，9月$1日重置，会先于额度使用。",
     "flags": ""
   },
   {
@@ -2102,7 +7574,7 @@
   {
     "id": "included-resets-credits-Oct",
     "pattern": "^Included usage with your subscription\\. Resets Oct (\\d{1,2})\\. Used before your credits\\.$",
-    "replacement": "订阅内含用量，10月$1日重置，优先于额度扣除。",
+    "replacement": "订阅内含用量，10月$1日重置，会先于额度使用。",
     "flags": ""
   },
   {
@@ -2114,7 +7586,7 @@
   {
     "id": "included-resets-credits-Nov",
     "pattern": "^Included usage with your subscription\\. Resets Nov (\\d{1,2})\\. Used before your credits\\.$",
-    "replacement": "订阅内含用量，11月$1日重置，优先于额度扣除。",
+    "replacement": "订阅内含用量，11月$1日重置，会先于额度使用。",
     "flags": ""
   },
   {
@@ -2126,7 +7598,7 @@
   {
     "id": "included-resets-credits-Dec",
     "pattern": "^Included usage with your subscription\\. Resets Dec (\\d{1,2})\\. Used before your credits\\.$",
-    "replacement": "订阅内含用量，12月$1日重置，优先于额度扣除。",
+    "replacement": "订阅内含用量，12月$1日重置，会先于额度使用。",
     "flags": ""
   },
   {
@@ -2138,7 +7610,7 @@
   {
     "id": "included-resets-credits-any",
     "pattern": "^Included usage with your subscription\\. Resets ([^.]+)\\. Used before your credits\\.$",
-    "replacement": "订阅内含用量，$1重置，优先于额度扣除。",
+    "replacement": "订阅内含用量，$1重置，会先于额度使用。",
     "flags": ""
   },
   {
@@ -2233,7 +7705,7 @@
   },
   {
     "id": "model-enabled",
-    "pattern": "^([A-Z][A-Za-z0-9.+_-]*(?: [A-Za-z0-9.+_-]+){0,2}) enabled$",
+    "pattern": "^([A-Z][A-Za-z0-9.+_-]*(?: (?!not\\b)[A-Za-z0-9.+_-]+){0,2}) enabled$",
     "replacement": "$1 已启用",
     "flags": ""
   },
@@ -2350,5 +7822,11 @@
     "pattern": "^(.{40,}) options$",
     "flags": "",
     "replacement": "“$1”选项"
+  },
+  {
+    "id": "newer-package",
+    "pattern": "^A newer ([\\s\\S]+?) package \\(([\\s\\S]+?)\\) is available via ([\\s\\S]+)\\.$",
+    "flags": "",
+    "replacement": "有新的 $1 安装包（$2）可通过 $3 获取。"
   }
 ]

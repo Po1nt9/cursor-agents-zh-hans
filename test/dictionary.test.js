@@ -73,7 +73,7 @@ test('the shipped dictionary compiles and static rules agree with it', () => {
   );
   assert.equal(
     raw.exact['Use /review for an agentic code review of your changes'],
-    '使用 /review 对更改做智能体代码审查',
+    '使用 /review 让智能体审查代码更改',
   );
   assert.equal(
     raw.exact['Use /automate to create Cursor Automations without leaving your agent chat'],
@@ -81,7 +81,7 @@ test('the shipped dictionary compiles and static rules agree with it', () => {
   );
   assert.equal(
     raw.exact['Messages sent while Cursor is working can steer it mid-run without interrupting - turn it on under New Messages in Agent settings'],
-    'Cursor 工作时发来的消息可以插话，不必打断。在智能体设置的“新消息”里打开。',
+    'Cursor 工作时，你可以直接插话补充说明，不必打断它。在智能体设置的“新消息”中开启。',
   );
   assert.equal(raw.exact.Today, '今天');
   assert.equal(raw.exact.Yesterday, '昨天');
@@ -96,14 +96,14 @@ test('the shipped dictionary compiles and static rules agree with it', () => {
   assert.equal(translateText('Weekly usage resets on Oct 24 (7 days left)', compiled).text, '每周用量将于10月24日重置（还剩 7 天）');
   assert.equal(
     translateText('Included usage with your subscription. Resets Oct 24. Used before your credits.', compiled).text,
-    '订阅内含用量，10月24日重置，优先于额度扣除。',
+    '订阅内含用量，10月24日重置，会先于额度使用。',
   );
   assert.equal(raw.exact['Send follow-up'], '发送后续消息');
   assert.equal(raw.exact['Cursor Agents Window'], 'Cursor 智能体窗口');
   assert.equal(raw.exact.Account, '账户');
   assert.equal(raw.exact['Log Out'], '退出登录');
   assert.equal(raw.exact['Sign out'], '退出登录');
-  assert.equal(translateText('Included usage with your subscription. Resets 10月24日. Used before your credits.', compiled).text, '订阅内含用量，10月24日重置，优先于额度扣除。');
+  assert.equal(translateText('Included usage with your subscription. Resets 10月24日. Used before your credits.', compiled).text, '订阅内含用量，10月24日重置，会先于额度使用。');
   assert.equal(translateText('Submit with ⌘ + Enter', compiled).text, '使用 ⌘ + Enter 提交');
   assert.equal(translateText('⌘Enter submits chat, Enter inserts a newline, and primary actions move to ⌥⌘Enter', compiled).text, '⌘Enter 提交聊天，Enter 换行，主要操作改为 ⌥⌘Enter');
   assert.equal(raw.exact['Create Profile'], '创建配置文件');
@@ -145,7 +145,7 @@ test('the shipped dictionary compiles and static rules agree with it', () => {
   assert.equal(translateText('Context 11%', compiled).text, '上下文已用 11%');
   assert.equal(translateText('Start with Find critical bugs', compiled).text, '从“查找严重缺陷”开始');
   assert.equal(translateText('Grok 4.7 enabled', compiled).text, 'Grok 4.7 已启用');
-  assert.equal(translateText('Configure gmail', compiled).text, '配置 gmail');
+  assert.equal(translateText('Configure gmail', compiled).text, '配置 Gmail');
   assert.equal(translateText('Close bash', compiled).text, '关闭 bash');
   assert.equal(translateText('Filter By', compiled).text, '筛选');
   assert.equal(translateText('System font\u200b\u200b', compiled).text, '系统字体');
@@ -167,6 +167,19 @@ test('the shipped dictionary compiles and static rules agree with it', () => {
   assert.equal(translateText('Oct 17, 2026, 10:15 PM', compiled).text, '2026年10月17日 22:15');
   assert.equal(raw.exact.Composer, '聊天');
   assert.equal(raw.exact['Open PR'], '打开 PR');
+  assert.equal(translateText('to dictate', compiled).text, '开始听写');
+  assert.equal(translateText('Close toast', compiled).text, '关闭通知');
+  assert.equal(translateText('New Agent in cursor-agents-zh-hans', compiled).text, '在 cursor-agents-zh-hans 中新建智能体');
+  assert.equal(translateText('Copied branch name to clipboard', compiled).text, '已将分支名复制到剪贴板');
+  assert.equal(translateText('Message copied to clipboard', compiled).text, '已复制消息');
+  assert.equal(
+    translateText('Failed to download readme.md: network', compiled).text,
+    '无法下载 readme.md：network',
+  );
+  assert.equal(
+    translateText('”? They will be stopped and marked as failed.', compiled).text,
+    '”的所有进行中运行吗？这些运行会被停止并标记为失败。',
+  );
 });
 
 test('generated runtime is plain script and passes node --check', () => {

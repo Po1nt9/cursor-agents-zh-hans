@@ -109,7 +109,7 @@
     {
       "id": "rate-limit",
       "literal": "You've hit your rate limit on your current plan",
-      "translation": "已达到当前套餐的用量速率上限",
+      "translation": "已达到当前套餐的速率限制",
       "expectedHits": {
         "3.25.6": 3
       }
@@ -125,7 +125,7 @@
     {
       "id": "nested-side-chat",
       "literal": "Cannot create a side chat inside a side chat. Return to the main thread first.",
-      "translation": "不能在侧边聊天中再开侧边聊天。请先回到主线程。",
+      "translation": "不能在侧边聊天中再开侧边聊天。请先回到主对话。",
       "expectedHits": {
         "3.25.6": 2
       }
@@ -205,7 +205,7 @@
     {
       "id": "switched-cursor-models",
       "literal": "Switched to Cursor Models. Other Models limit reached.",
-      "translation": "已切换到 Cursor 模型。其他模型已达上限。",
+      "translation": "已切换到 Cursor 模型。其他模型的用量已达上限。",
       "expectedHits": {
         "3.25.6": 3
       }
@@ -213,7 +213,7 @@
     {
       "id": "failed-start-cloud",
       "literal": "Failed to start Cloud Agent",
-      "translation": "启动云端智能体失败",
+      "translation": "无法启动云端智能体",
       "expectedHits": {
         "3.25.6": 3
       }
@@ -341,7 +341,7 @@
     {
       "id": "continue-interrupted",
       "literal": "Continue Interrupted Agents",
-      "translation": "继续被中断的智能体",
+      "translation": "继续已中断的智能体",
       "expectedHits": {
         "3.25.6": 2
       }
@@ -421,7 +421,7 @@
     {
       "id": "build-research-debug-at-a-longer-horizon",
       "literal": "Build, research, debug at a longer horizon",
-      "translation": "用更长的周期构建、研究和调试",
+      "translation": "处理耗时更长的构建、研究和调试任务",
       "expectedHits": {
         "3.25.6": 1
       }

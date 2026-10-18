@@ -6,6 +6,8 @@ const HAN_LATIN = /[\u4e00-\u9fff][A-Za-z]|[A-Za-z][\u4e00-\u9fff]/;
 const HALF_PUNCT = /[\u4e00-\u9fff]\s*[,:;!?]|[,:;!?]\s*[\u4e00-\u9fff]/;
 const DATE_SPACE = /\d 月|\d 年|月 \d|月 \$|\$\d+ 日|\d 日|[\u4e00-\u9fff] \d+月|[\u4e00-\u9fff] \d+年/;
 const HALF_PAREN = /[\u4e00-\u9fff][ \t]*\(|\([\u4e00-\u9fff]|[\u4e00-\u9fff][ \t]*\)|\)[ \t]*[\u4e00-\u9fff]/;
+const CODE_CALL = /\$\([^)\n]*\)|\b[\w$]+(?:\.[\w$]+)+\([^)\n]*\)|\b[A-Za-z_][\w$]*\([^)\n]*\)|\(\d+,\s*\d+\)/g;
+const FULLWIDTH_CODE = /\$（[^）\n]*）|(?<![0-9.])[A-Za-z_][\w$]*(?:\.[A-Za-z_][\w$]*)*（[^）\n]*）|（\s*\d+\s*[,，]\s*\d+\s*）/;
 
 function skipPunct(text) {
   return /https?:\/\/|\/[a-z][a-z0-9-]*|shift\+|Ctrl|Alt|Shift|⌘|⌥|⇧/.test(text);
@@ -17,9 +19,14 @@ export function promptNoun(english) {
   if (!/\bprompts?\b/i.test(en)) return false;
   if (/\bprompted\b/i.test(en)) return false;
   if (/when prompted/i.test(en)) return false;
+  // "will prompt" / "prompt before" is the verb, not the noun 提示词.
+  if (/\b(will|would|won't|to|not|before|after)\s+prompt\b/i.test(en)) return false;
+  if (/\bprompt before\b/i.test(en)) return false;
   if (/authentication prompts?/i.test(en)) return false;
   if (/skip prompts?/i.test(en)) return false;
   if (/connection prompt/i.test(en)) return false;
+  if (/approval prompt/i.test(en)) return false;
+  if (/github prompt/i.test(en)) return false;
   if (/never show/i.test(en)) return false;
   return true;
 }
@@ -82,7 +89,9 @@ export function lintChinese(english, chinese) {
     const stripped = zh.replace(/[A-Za-z]'[A-Za-z]/g, '');
     if (stripped.includes('"') || stripped.includes("'")) issues.push('ascii-quotes');
   }
-  if (HALF_PAREN.test(zh)) issues.push('halfwidth-paren');
+  if (FULLWIDTH_CODE.test(zh)) issues.push('fullwidth-code-paren');
+  const prose = zh.replace(CODE_CALL, ' ');
+  if (HALF_PAREN.test(prose)) issues.push('halfwidth-paren');
   if (/由于[^。]{0,160}因此/.test(zh)) issues.push('stiff-yinci');
   if (/进行比较|进行查找|进行导航/.test(zh)) issues.push('stiff-jinxing');
   if (/\btabs?\b/i.test(en) && !/\b(tags?|labels?)\b/i.test(en) && /标签(?!页)/.test(zh)) issues.push('tab-vs-label');

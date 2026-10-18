@@ -676,6 +676,13 @@ export function startDomTranslator(api, env) {
         || component === 'palette-item'
         || /(^|\s)(row|item|card|entry)(\s|$)/i.test(classBlob(cur));
       if (rowish && otherLabelIn(cur, token)) return true;
+      // Chat header durations sit in a button next to a status label ("环境已就绪" / "13s").
+      const role = String(cur.getAttribute?.('role') || '');
+      if (tag === 'BUTTON' || role === 'button') {
+        if (otherLabelIn(cur, token)) return true;
+        const parent = cur.parentElement;
+        if (parent && otherLabelIn(parent, token)) return true;
+      }
       cur = cur.parentElement || null;
     }
     return false;
@@ -821,7 +828,7 @@ export function startDomTranslator(api, env) {
     return name === 'placeholder' || name === 'data-placeholder' || name === 'aria-placeholder';
   }
 
-  function translateAttrs(el) {
+  function translateAttrs(el, viaAttributeEvent) {
     if (!el || el.nodeType !== 1 || typeof el.getAttribute !== 'function') return;
     const skip = shouldSkipAttributeTarget(el);
     // Placeholder text inside the composer is drawn by the injected CSS.
@@ -842,28 +849,63 @@ export function startDomTranslator(api, env) {
         continue;
       }
       if (cooled(el)) return;
-      if (attributeLooping(el, attr, raw)) return;
+      if (attributeLooping(el, attr, raw, viaAttributeEvent)) return;
       memo[attr] = result.text;
       noteWrite(el);
       el.setAttribute(attr, result.text);
     }
   }
 
-  // Each element gets its own budget, and the same English source also has a
-  // short global window so a placeholder rebuild cannot spin. The source is
-  // not banned forever: after the window, another tab can still translate.
-  function attributeLooping(el, name, source) {
+  // Each new node shares a short global window so a placeholder rebuild cannot
+  // spin. React also writes the English aria-label back onto the same button;
+  // those attribute events get their own per-element budget, then one delayed
+  // rewrite if the English value is what stuck.
+  const attrRetryPending = new Set();
+
+  function scheduleAttrRetry(el, name, source) {
+    const key = `${name}\n${source}`;
+    if (attrRetryPending.has(key)) return;
+    const host = env.window;
+    const timer = host && host.setTimeout;
+    if (typeof timer !== 'function') return;
+    attrRetryPending.add(key);
+    timer.call(host, () => {
+      attrRetryPending.delete(key);
+      if (!el || !el.parentElement) return;
+      if (el.getAttribute?.(name) !== source) return;
+      translateAttrs(el, 'retry');
+    }, LOOP_WINDOW_MS + COOLDOWN_MS);
+  }
+
+  function attributeLooping(el, name, source, viaAttributeEvent) {
     const t = now();
     const key = `${name}\n${source}`;
+    let state = attrLoops.get(el);
+    if (!state || state.name !== name || state.source !== source) {
+      state = { name, source, count: 0, resets: 0, coolUntil: 0 };
+    } else if (state.coolUntil && t < state.coolUntil && viaAttributeEvent !== 'retry') {
+      attrLoops.set(el, state);
+      return true;
+    }
+    if (viaAttributeEvent === 'retry') {
+      state.coolUntil = t + COOLDOWN_MS;
+      attrLoops.set(el, state);
+      return false;
+    }
+    if (viaAttributeEvent) {
+      if (state.resets >= LOOP_LIMIT) {
+        state.coolUntil = t + COOLDOWN_MS;
+        attrLoops.set(el, state);
+        scheduleAttrRetry(el, name, source);
+        return true;
+      }
+      state.resets += 1;
+      attrLoops.set(el, state);
+      return false;
+    }
     let global = attrWrites.get(key);
     if (!global || t - global.windowStart >= LOOP_WINDOW_MS) {
       global = { windowStart: t, count: 0 };
-    }
-    let state = attrLoops.get(el);
-    if (!state || state.name !== name || state.source !== source) {
-      state = { name, source, count: 0, coolUntil: 0 };
-    } else if (state.coolUntil && t < state.coolUntil) {
-      return true;
     }
     if (global.count >= LOOP_LIMIT) {
       attrWrites.set(key, global);
@@ -899,7 +941,7 @@ export function startDomTranslator(api, env) {
       return;
     }
     if (item.type === 'attributes') {
-      translateAttrs(item.target);
+      translateAttrs(item.target, true);
       return;
     }
     if (item.type === 'childList') {

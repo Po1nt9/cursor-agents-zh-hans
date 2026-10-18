@@ -1331,6 +1331,16 @@ test('a chat timestamp and an automation row localize compact ages', () => {
   translateTree([header, row], compiled);
   assert.equal(age.childNodes[0].nodeValue, '13秒');
   assert.equal(hours.childNodes[0].nodeValue, '9小时');
+  const bar = h.makeElement('DIV');
+  const status = h.makeElement('BUTTON');
+  status.appendChild(h.makeText('Ready'));
+  const ageButton = h.makeElement('BUTTON');
+  const ageLabel = h.makeText('13s');
+  ageButton.appendChild(ageLabel);
+  bar.appendChild(status);
+  bar.appendChild(ageButton);
+  translateTree([bar], compiled);
+  assert.equal(ageLabel.nodeValue, '13秒');
 });
 
 test('queued microtasks finish a dropdown before the soon timer', () => {
