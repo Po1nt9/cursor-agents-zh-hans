@@ -178,7 +178,7 @@ test('the shipped dictionary compiles and static rules agree with it', () => {
   );
   assert.equal(
     translateText('”? They will be stopped and marked as failed.', compiled).text,
-    '”的所有进行中运行吗？这些运行会停掉，并标为失败。',
+    '”的所有进行中运行吗？这些运行将被停止并标记为失败。',
   );
 });
 
@@ -212,4 +212,30 @@ test('scan diffs candidate strings against the dictionary', () => {
   const diff = diffAgainstDictionary(counts, compiled);
   assert.equal(diff.missing.some((item) => item.text === 'Some Brand New Label'), true);
   assert.equal(diff.missing.some((item) => item.text === 'New Agent'), false);
+});
+
+test('the release copy translates whole labels, not leftover English fragments', () => {
+  const { compiled } = loadDictionary();
+  const cases = [
+    ['New messages below', '下方有新消息'],
+    ['messages below', 'messages below'],
+    ['opened this PR', '创建了此 PR'],
+    ['merged this PR', '合并了此 PR'],
+    ['approved these changes', '批准了这些更改'],
+    ['dismissed a review', '驳回了一条审查'],
+    ['left comments', '发表了评论'],
+    ['marked this ready for review', '将此 PR 标记为可供审查'],
+    ['requested a review from bob', '请求 bob 审查'],
+    ['removed a review request from bob', '移除了 bob 的审查请求'],
+    ['assigned ', '指派了 '],
+    ['someone', '某人'],
+    ['added the bug label', '添加了标签 bug'],
+    ['renamed this PR: Ship it', '重命名了此 PR：Ship it'],
+    ['cursor desktop', 'cursor desktop'],
+    ['reviewed', '审查了此 PR'],
+    ['committed', '提交了代码'],
+  ];
+  for (const [en, zh] of cases) {
+    assert.equal(translateText(en, compiled).text, zh, en);
+  }
 });

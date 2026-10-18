@@ -18,7 +18,7 @@ Cursor 3 的智能体窗口和经典窗口加载**同一份** `workbench.html`�
 三层词典：
 
 - 完全匹配（`dictionary/exact.json`）：整段可见文字去掉首尾空白后必须完全相等，设置页的标题和说明都走这里
-- 片段（`dictionary/fragments.json`）：只有整段文字正好等于这条短语时才替换，不会再改句子中间的几个词
+- 片段（`dictionary/fragments.json`）：只有整段文字正好等于这条短语时才替换。同一句里如果旁边还留着英文，不会只改其中一个 span，以免出现「New下面的消息」
 - 正则（`dictionary/regex.json`，给带数字或名字的整句用，例如「工作了 2 分 15 秒」「26 分钟前」）
 
 下面这些区域**不会**翻译：代码编辑器、终端、差异内容、聊天记录和模型输出的 Markdown、用户正在输入的内容。消息列表内部的英文也会留下来，以免把模型写的句子改掉。
@@ -112,7 +112,15 @@ node bin/cursor-zh.js restore
 
 ## 实机验证
 
-Cursor 3.25.6 上，`54d9266` 在已登录的智能体窗口里对过：抽到的首页提示都是整句中文，`report()` 的预算条目是 0，没有半句中文半句英文，空闲时渲染进程 CPU 大约 1.4%，设置项在打开菜单前后没有变化。`99eb59f` 在 Mac 上能装上并运行，菜单、提示、用量和 macOS 快捷键仍有英文，部分译文不自然。这一版针对这些缺口改了词典和覆盖范围。本仓库的自动化测试不打开真正的 Cursor。
+这一版是发布构建。下方有新消息、PR 时间线动词，以及把过口语的句子改回产品用语，都由 `node --test` 覆盖，没有在登录过的 Cursor 里看过。`scan --bundles glass` 仍是改这些译文之前的 4668 / 4928，没有重跑。
+
+安装时先 `restore`，再 `apply --update-checksums`，不要加 `--static`。不在默认位置时带上路径，例如：
+
+```bash
+node bin/cursor-zh.js apply --app-path /Applications/Agent/Cursor.app --update-checksums
+```
+
+如果 `doctor` 说 entitlements 是空的，先重装 Cursor，再打补丁。本仓库的自动化测试不打开真正的 Cursor。
 
 ## 译文从哪来
 

@@ -2,7 +2,7 @@
 
 ## 这一版实际量过的
 
-2026-10-18，对 Cursor 3.25.6 Linux 包里的 `workbench.glass.main.js` 跑了本仓库的 `scan --bundles glass`（界面属性抽取，不是下面的引号扫描，也不是 acorn 报错标题）。结果是 **4668 / 4928** 条候选有整句译文。剩下的 260 条主要是开发者对话框、Monaco / GPU 名字、模型名，以及按术语留在英文里的品牌（Canvas、Pro、Ultra、GitHub、Cursor、Enter）。这一版没有在登录过的 Cursor 里看过。
+2026-10-18，对 Cursor 3.25.6 Linux 包里的 `workbench.glass.main.js` 跑了本仓库的 `scan --bundles glass`（界面属性抽取，不是下面的引号扫描，也不是 acorn 报错标题）。结果是 **4668 / 4928** 条候选有整句译文。剩下的 260 条主要是开发者对话框、Monaco / GPU 名字、模型名，以及按术语留在英文里的品牌（Canvas、Pro、Ultra、GitHub、Cursor、Enter）。这次扫描在发布译文（下方有新消息、PR 时间线、口语回改）之前，发布构建没有重跑。这一版没有在登录过的 Cursor 里看过。
 
 独立复核 `125af33` 时，acorn 标题集是 3097 / 3107，另有 9 条部分覆盖。那个数字不是这一次重测的。下面的 100% 表和 3101 / 3107 是更早一次写进仓库的计数，这一次没有用同样的方法重跑，不要把它当成这一版的新结果。
 

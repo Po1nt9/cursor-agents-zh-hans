@@ -31,7 +31,9 @@ function residue(chinese) {
     .replace(/\b[a-z]+[A-Z][\w$]*\b/g, ' ')
     .replace(/\b[A-Z]{2,6}\b/g, ' ')
     .replace(/\b(?:git|npm|pnpm|yarn|dev)\b(?:\s+[\w.-]+)*/g, ' ')
-    .replace(/\bGuido van Rossum\b/g, ' ');
+    .replace(/\bGuido van Rossum\b/g, ' ')
+    // Hook errors keep this English term as the name of the fail-closed policy.
+    .replace(/\bfail closed\b/g, ' ');
   text = text.replace(/\b[A-Za-z][A-Za-z0-9.+]*\b/g, (word) => (ALLOW.has(word) ? ' ' : word));
   return ENGLISH_RUN.exec(text);
 }

@@ -718,6 +718,23 @@ export function startDomTranslator(api, env) {
     return formatAge(spec);
   }
 
+  // A fragment may name a whole label. It must not rewrite one piece inside a
+  // longer English phrase, or "New" + "messages below" becomes "New下面的消息".
+  function englishBeside(hostText, piece) {
+    const all = normalized(hostText || '');
+    const core = normalized(stripMarks(piece) || '');
+    if (!all || !core || all === core) return false;
+    const idx = all.indexOf(core);
+    if (idx < 0) return false;
+    const rest = `${all.slice(0, idx)} ${all.slice(idx + core.length)}`;
+    return /[A-Za-z]{2,}/.test(rest);
+  }
+
+  function fragmentSplitsLabel(host) {
+    if (!host || !host.parentElement) return false;
+    return englishBeside(narrowText(host.parentElement), narrowText(host));
+  }
+
   function wordSpanHost(start) {
     let host = start;
     for (let depth = 0; depth < ANCESTOR_DEPTH && host; depth += 1) {
@@ -797,7 +814,7 @@ export function startDomTranslator(api, env) {
       host = host.parentElement || null;
     }
 
-    if (best) {
+    if (best && !(best.tier === 'fragment' && fragmentSplitsLabel(best.host))) {
       // Keep slash-command spans when the translation still contains them.
       // Otherwise the parent sentence replaces every inner label.
       if (best.inline && applyInline(best.host, best.text)) return;
@@ -826,6 +843,10 @@ export function startDomTranslator(api, env) {
 
     const result = budgetedTranslate(node.nodeValue);
     if (!result.changed || result.text === node.nodeValue) {
+      textMemo.set(node, node.nodeValue);
+      return;
+    }
+    if (result.tier === 'fragment' && (englishBeside(narrowText(parent), node.nodeValue) || fragmentSplitsLabel(parent))) {
       textMemo.set(node, node.nodeValue);
       return;
     }

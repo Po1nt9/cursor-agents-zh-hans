@@ -331,7 +331,7 @@
   "True when an item in the EXPLORER has been cut for cut and paste.": "如果资源管理器中的一个项已被剪切用于剪切和粘贴，则为 True。",
   "True when the focused item in the EXPLORER can be moved to trash.": "资源管理器中的焦点项可移到回收站时为 True。",
   "True when the focus is inside the EXPLORER view.": "当焦点位于资源管理器视图内时为 True。",
-  "True when the focus is inside the OPEN EDITORS view.": "当焦点位于打开的编辑器视图内时为 True。",
+  "True when the focus is inside the OPEN EDITORS view.": "当焦点位于“打开的编辑器”视图内时为 True。",
   "True when the focus is inside the EXPLORER viewlet.": "当焦点位于资源管理器 Viewlet 内时为 True。",
   "True when the explorer tree is using the explorer find provider.": "当资源管理器树使用资源管理器查找提供程序时为 True。",
   "True when the focused item in the EXPLORER view is a compact item.": "如果资源管理器视图中的焦点项是精简项，则为 True。",

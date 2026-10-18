@@ -105,13 +105,13 @@
     "id": "glass-1890",
     "pattern": "^Task\\ detection\\ for\\ ([\\s\\S]+?)\\ tasks\\ causes\\ files\\ in\\ any\\ workspace\\ you\\ open\\ to\\ be\\ run\\ as\\ code\\.\\ Enabling\\ ([\\s\\S]+?)\\ task\\ detection\\ is\\ a\\ user\\ setting\\ and\\ will\\ apply\\ to\\ any\\ workspace\\ you\\ open\\.\\ \\\n\\\n\\ Do\\ you\\ want\\ to\\ enable\\ ([\\s\\S]+)\\ task\\ detection\\ for\\ all\\ workspaces\\?$",
     "flags": "",
-    "replacement": "对 $1 任务的检测会使你打开的任何工作区中的文件被当作代码运行。启用 $1 任务检测是用户设置，将应用于你打开的任何工作区。\n\n是否要为所有工作区启用 $1 任务检测？"
+    "replacement": "对 $1 任务的检测会把你打开的任何工作区中的文件当作代码运行。启用 $1 任务检测是用户设置，将应用于你打开的任何工作区。\n\n是否要为所有工作区启用 $1 任务检测？"
   },
   {
     "id": "glass-1611",
     "pattern": "^([\\s\\S]+)\\\n\\\nPlease\\ check\\ the\\ \\[NDJSON\\ port\\ setting\\]\\(command:workbench\\.action\\.openWorkspaceSettings\\?%5B%22ndjson\\.port%22%5D\\)\\ and\\ ensure:\\\n\\-\\ The\\ port\\ is\\ not\\ already\\ in\\ use\\ by\\ another\\ service\\\n\\-\\ You\\ have\\ permission\\ to\\ use\\ the\\ port\\ \\(try\\ a\\ port\\ above\\ 1024\\)$",
     "flags": "",
-    "replacement": "$1\n\n请检查 [NDJSON 端口设置](command:workbench.action.openWorkspaceSettings?%5B%22ndjson.port%22%5D)，并确认：\n- 端口未被其他服务占用\n- 你有权使用该端口（可尝试 1024 以上的端口）"
+    "replacement": "$1\n\n请检查 [NDJSON 端口设置](command:workbench.action.openWorkspaceSettings?%5B%22ndjson.port%22%5D)，并确认：\n- 没有其他服务占用该端口\n- 你有权使用该端口（可尝试 1024 以上的端口）"
   },
   {
     "id": "glass-1409",
@@ -153,7 +153,7 @@
     "id": "glass-2157",
     "pattern": "^Your\\ local\\ \"([\\s\\S]+)\"\\ has\\ commits\\ the\\ agent's\\ version\\ doesn't\\ include,\\ so\\ the\\ agent's\\ version\\ of\\ the\\ branch\\ was\\ opened\\ instead\\.\\ Your\\ local\\ branch\\ is\\ untouched\\ —\\ merge\\ or\\ switch\\ back\\ when\\ ready\\.$",
     "flags": "",
-    "replacement": "本地“$1”包含智能体版本中没有的提交，因此改为打开了智能体版本的分支。本地分支未被改动，准备好后可以合并或切换回去。"
+    "replacement": "本地“$1”包含智能体版本中没有的提交，因此改为打开了智能体版本的分支。本地分支保持不变，准备好后可以合并或切换回去。"
   },
   {
     "id": "glass-1430",
@@ -171,7 +171,7 @@
     "id": "glass-83",
     "pattern": "^Cursor could not authenticate with the source-control provider for this repository\\. Its stored access may have been revoked, expired, or lost\\. Reconnect the integration for this repository, then start the agent again\\.$",
     "flags": "",
-    "replacement": "Cursor 无法通过此仓库的源代码管理提供程序完成身份验证。保存的访问权限可能已被收回、过期或丢失。请重新连接此仓库的集成，然后重新启动智能体。"
+    "replacement": "Cursor 无法通过此仓库的源代码管理提供程序完成身份验证。保存的访问权限可能已收回、过期或丢失。请重新连接此仓库的集成，然后重新启动智能体。"
   },
   {
     "id": "glass-2113",
@@ -375,7 +375,7 @@
     "id": "glass-1699",
     "pattern": "^Tool blocked because this hook is configured to fail closed \\(block when it fails\\)\\. Hook \"([\\s\\S]+?)\" failed with exit code (\\d+): ([\\s\\S]+)$",
     "flags": "",
-    "replacement": "工具已被阻止，因为此钩子配置为失败即阻止（失败时拦截）。钩子“$1”失败，退出码为 $2：$3"
+    "replacement": "工具已被拦截：此钩子设为失败时拦截（fail closed）。钩子“$1”失败，退出码为 $2：$3"
   },
   {
     "id": "glass-567",
@@ -453,7 +453,7 @@
     "id": "glass-2021",
     "pattern": "^Files\\ you\\ store\\ within\\ the\\ installation\\ folder\\ \\('([\\s\\S]+)'\\)\\ may\\ be\\ OVERWRITTEN\\ or\\ DELETED\\ IRREVERSIBLY\\ without\\ warning\\ at\\ update\\ time\\.$",
     "flags": "",
-    "replacement": "更新可能会盖掉或删掉安装文件夹（“$1”）里的文件，而且不会警告。"
+    "replacement": "更新时可能会不可撤消地覆盖或删除安装文件夹（“$1”）中的文件，且不会事先提示。"
   },
   {
     "id": "glass-1876",
@@ -483,7 +483,7 @@
     "id": "glass-1698",
     "pattern": "^Tool\\ blocked\\ because\\ this\\ hook\\ is\\ configured\\ to\\ fail\\ closed\\ \\(block\\ when\\ it\\ fails\\)\\.\\ Hook\\ \"([\\s\\S]+?)\"\\ timed\\ out\\ after\\ ([\\s\\S]+)s\\.$",
     "flags": "",
-    "replacement": "工具已被阻止，因为此钩子配置为失败即阻止（失败时拦截）。钩子“$1”在 $2 秒后超时。"
+    "replacement": "工具已被拦截：此钩子设为失败时拦截（fail closed）。钩子“$1”在 $2 秒后超时。"
   },
   {
     "id": "glass-1427",
@@ -495,13 +495,13 @@
     "id": "glass-1961",
     "pattern": "^Saved\\ ([\\s\\S]+)\\.\\ Cursor's\\ servers\\ signed\\ you\\ out\\ of\\ it\\ because\\ its\\ URL\\ or\\ OAuth\\ client\\ changed,\\ so\\ sign\\ in\\ again\\ from\\ its\\ row\\.$",
     "flags": "",
-    "replacement": "已保存 $1。它的 URL 或 OAuth 客户端变了，Cursor 的服务器已将你登出。请在该行重新登录。"
+    "replacement": "已保存 $1。其 URL 或 OAuth 客户端已变更，Cursor 的服务器已将你登出。请在该行重新登录。"
   },
   {
     "id": "glass-1703",
     "pattern": "^Tool\\ blocked\\ because\\ this\\ hook\\ is\\ configured\\ to\\ fail\\ closed\\ \\(block\\ when\\ it\\ fails\\)\\.\\ Hook\\ \"([\\s\\S]+?)\"\\ execution\\ failed:\\ ([\\s\\S]+)$",
     "flags": "",
-    "replacement": "工具已被阻止，因为此钩子配置为失败即阻止（失败时拦截）。钩子“$1”执行失败：$2"
+    "replacement": "工具已被拦截：此钩子设为失败时拦截（fail closed）。钩子“$1”执行失败：$2"
   },
   {
     "id": "glass-1902",
@@ -531,19 +531,19 @@
     "id": "glass-2108",
     "pattern": "^The\\ following\\ extension\\(s\\)\\ were\\ blocked\\ due\\ to\\ signature\\ verification:\\ ([\\s\\S]+)\\.\\ Please\\ reinstall\\ them\\ from\\ a\\ trusted\\ source\\.$",
     "flags": "",
-    "replacement": "以下扩展因签名验证被阻止：$1。请从受信任的来源重新安装。"
+    "replacement": "签名验证已阻止以下扩展：$1。请从受信任的来源重新安装。"
   },
   {
     "id": "glass-1696",
     "pattern": "^Tool\\ blocked\\ because\\ this\\ hook\\ is\\ configured\\ to\\ fail\\ closed\\ \\(block\\ when\\ it\\ fails\\)\\.\\ Prompt\\ hook\\ timed\\ out\\ after\\ ([\\s\\S]+)s\\.$",
     "flags": "",
-    "replacement": "工具已被阻止，因为此钩子配置为失败即阻止（失败时拦截）。提示词钩子在 $1 秒后超时。"
+    "replacement": "工具已被拦截：此钩子设为失败时拦截（fail closed）。提示词钩子在 $1 秒后超时。"
   },
   {
     "id": "glass-763",
     "pattern": "^Access\\ was\\ denied\\ to\\ the\\ path\\ containing\\ your\\ executable\\ \"([\\s\\S]+)\"\\.\\ Manage\\ and\\ change\\ your\\ permissions\\ to\\ get\\ this\\ to\\ work$",
     "flags": "",
-    "replacement": "拒绝访问包含可执行文件“$1”的路径。请调整权限后再试"
+    "replacement": "无法访问包含可执行文件“$1”的路径（权限被拒绝）。请调整权限后再试。"
   },
   {
     "id": "glass-2130",
@@ -555,7 +555,7 @@
     "id": "glass-1700",
     "pattern": "^Tool\\ blocked\\ because\\ this\\ hook\\ is\\ configured\\ to\\ fail\\ closed\\ \\(block\\ when\\ it\\ fails\\)\\.\\ Hook\\ \"([\\s\\S]+)\"\\ returned\\ no\\ output\\.$",
     "flags": "",
-    "replacement": "工具已被阻止，因为此钩子配置为失败即阻止（失败时拦截）。钩子“$1”没有返回输出。"
+    "replacement": "工具已被拦截：此钩子设为失败时拦截（fail closed）。钩子“$1”没有返回输出。"
   },
   {
     "id": "glass-2003",
@@ -675,13 +675,13 @@
     "id": "glass-1484",
     "pattern": "^Unable\\ to\\ forward\\ ([\\s\\S]+?):([\\s\\S]+)\\.\\ The\\ host\\ may\\ not\\ be\\ available\\ or\\ that\\ remote\\ port\\ may\\ already\\ be\\ forwarded$",
     "flags": "",
-    "replacement": "无法转发 $1:$2。主机可能不可用，或该远程端口可能已被转发"
+    "replacement": "无法转发 $1:$2。主机可能不可用，或该远程端口可能已转发"
   },
   {
     "id": "glass-1697",
     "pattern": "^Tool\\ blocked\\ because\\ this\\ hook\\ is\\ configured\\ to\\ fail\\ closed\\ \\(block\\ when\\ it\\ fails\\)\\.\\ Prompt\\ hook\\ failed:\\ ([\\s\\S]+)$",
     "flags": "",
-    "replacement": "工具已被阻止，因为此钩子配置为失败即阻止（失败时拦截）。提示词钩子失败：$1"
+    "replacement": "工具已被拦截：此钩子设为失败时拦截（fail closed）。提示词钩子失败：$1"
   },
   {
     "id": "glass-1626",
@@ -705,7 +705,7 @@
     "id": "glass-1480",
     "pattern": "^Error\\ running\\ command\\ ([\\s\\S]+?):\\ ([\\s\\S]+?)\\.\\ This\\ is\\ likely\\ caused\\ by\\ the\\ extension\\ that\\ contributes\\ ([\\s\\S]+)\\.$",
     "flags": "",
-    "replacement": "运行命令 $1 时出错：$2。多半是提供 $1 的扩展引起的。"
+    "replacement": "运行命令 $1 时出错：$2。很可能是提供 $1 的扩展导致的。"
   },
   {
     "id": "glass-2007",
@@ -981,7 +981,7 @@
     "id": "glass-363",
     "pattern": "^Tool\\ blocked\\ because\\ this\\ hook\\ is\\ configured\\ to\\ fail\\ closed\\ \\(block\\ when\\ it\\ fails\\)\\.\\ ([\\s\\S]+)$",
     "flags": "",
-    "replacement": "工具已被阻止，因为此钩子配置为失败即阻止（失败时拦截）。$1"
+    "replacement": "工具已被拦截：此钩子设为失败时拦截（fail closed）。$1"
   },
   {
     "id": "glass-432",
@@ -1035,7 +1035,7 @@
     "id": "glass-20",
     "pattern": "^Event\\ dropped\\ due\\ to\\ not\\ having\\ an\\ error\\ message,\\ error\\ type\\ or\\ stacktrace\\.\\\nEvent:\\ ([\\s\\S]+)$",
     "flags": "",
-    "replacement": "事件因没有错误消息、错误类型或堆栈跟踪而被丢弃。\n事件：$1"
+    "replacement": "因没有错误消息、错误类型或堆栈跟踪，已丢弃该事件。\n事件：$1"
   },
   {
     "id": "glass-1172",
@@ -1155,7 +1155,7 @@
     "id": "glass-1535",
     "pattern": "^Profile\\ '([\\s\\S]+)'\\ was\\ created,\\ but\\ no\\ extensions\\ from\\ the\\ imported\\ profile\\ were\\ applied\\.$",
     "flags": "",
-    "replacement": "已创建配置文件“$1”，但导入的扩展都没有用上。"
+    "replacement": "已创建配置文件“$1”，但未应用导入配置文件中的任何扩展。"
   },
   {
     "id": "glass-435",
@@ -1167,13 +1167,13 @@
     "id": "glass-1848",
     "pattern": "^The\\ following\\ extensions\\ were\\ found\\ to\\ be\\ problematic\\ and\\ have\\ been\\ uninstalled:\\ ([\\s\\S]+)$",
     "flags": "",
-    "replacement": "以下扩展存在问题，已被卸载：$1"
+    "replacement": "已卸载以下有问题的扩展：$1"
   },
   {
     "id": "glass-1907",
     "pattern": "^The\\ following\\ workspace\\ folders\\ are\\ ignored\\ since\\ they\\ use\\ task\\ version\\ 0\\.1\\.0:\\ ([\\s\\S]+)$",
     "flags": "",
-    "replacement": "这些工作区文件夹的任务版本是 0.1.0，所以忽略了：$1"
+    "replacement": "已忽略以下工作区文件夹（任务版本为 0.1.0）：$1"
   },
   {
     "id": "glass-1967",
@@ -1371,7 +1371,7 @@
     "id": "glass-1532",
     "pattern": "^Extension\\ entries\\ ([\\s\\S]+)\\ in\\ the\\ imported\\ profile\\ are\\ invalid\\ and\\ were\\ skipped\\.$",
     "flags": "",
-    "replacement": "导入配置里的扩展项 $1 无效，已跳过。"
+    "replacement": "导入的配置文件中的扩展项 $1 无效，已跳过。"
   },
   {
     "id": "glass-2093",
@@ -1383,7 +1383,7 @@
     "id": "glass-53",
     "pattern": "^Request\\ to\\ ([\\s\\S]+)\\ was\\ blocked\\ because\\ you\\ are\\ making\\ requests\\ too\\ frequently\\.$",
     "flags": "",
-    "replacement": "对 $1 的请求已被阻止，因为请求太频繁。"
+    "replacement": "已阻止对 $1 的请求，因为请求太频繁。"
   },
   {
     "id": "glass-764",
@@ -1413,7 +1413,7 @@
     "id": "glass-1530",
     "pattern": "^Extension\\ entry\\ ([\\s\\S]+)\\ in\\ the\\ imported\\ profile\\ is\\ missing\\ a\\ valid\\ identifier\\.$",
     "flags": "",
-    "replacement": "导入配置里的扩展项 $1 没有有效标识符。"
+    "replacement": "导入的配置文件中的扩展项 $1 没有有效标识符。"
   },
   {
     "id": "glass-2236",
@@ -1449,7 +1449,7 @@
     "id": "glass-1736",
     "pattern": "^MCP\\ server\\ `([\\s\\S]+)`\\ has\\ tools\\ with\\ invalid\\ parameters\\ which\\ will\\ be\\ omitted\\.$",
     "flags": "",
-    "replacement": "MCP 服务器 `$1` 中有参数无效的工具，这些工具将被省略。"
+    "replacement": "MCP 服务器 `$1` 中有参数无效的工具，将省略这些工具。"
   },
   {
     "id": "glass-2264",
@@ -1485,7 +1485,7 @@
     "id": "glass-1531",
     "pattern": "^Extension\\ entry\\ ([\\s\\S]+)\\ in\\ the\\ imported\\ profile\\ is\\ invalid\\ and\\ was\\ skipped\\.$",
     "flags": "",
-    "replacement": "导入配置里的扩展项 $1 无效，已跳过。"
+    "replacement": "导入的配置文件中的扩展项 $1 无效，已跳过。"
   },
   {
     "id": "glass-1921",
@@ -1647,7 +1647,7 @@
     "id": "glass-1529",
     "pattern": "^Some\\ extensions\\ from\\ the\\ imported\\ profile\\ could\\ not\\ be\\ installed:\\ ([\\s\\S]+)$",
     "flags": "",
-    "replacement": "导入的配置里有些扩展没装上：$1"
+    "replacement": "导入的配置文件中部分扩展未安装：$1"
   },
   {
     "id": "glass-1709",
@@ -1797,7 +1797,7 @@
     "id": "glass-1900",
     "pattern": "^Task\\ ([\\s\\S]+)\\ no\\ longer\\ exists\\ or\\ has\\ been\\ modified\\.\\ Cannot\\ restart\\.$",
     "flags": "",
-    "replacement": "任务 $1 已不存在或已被修改。无法重启。"
+    "replacement": "任务 $1 已不存在或已有改动。无法重启。"
   },
   {
     "id": "glass-1994",
@@ -1917,7 +1917,7 @@
     "id": "glass-625",
     "pattern": "^Command\\ blocked:\\ access\\ to\\ \"([\\s\\S]+)\"\\ is\\ restricted\\ by\\ admin\\ policy$",
     "flags": "",
-    "replacement": "命令已被阻止：管理员策略限制了对“$1”的访问"
+    "replacement": "已阻止该命令：管理员策略限制了对“$1”的访问"
   },
   {
     "id": "glass-1077",
@@ -1953,7 +1953,7 @@
     "id": "glass-191",
     "pattern": "^Recursive\\ g\\ cannot\\ be\\ used\\ outside\\ the\\ referenced\\ group\\ \"([\\s\\S]+)\"$",
     "flags": "",
-    "replacement": "无法在被引用组“$1”之外使用递归 g"
+    "replacement": "无法在所引用的组“$1”之外使用递归 g"
   },
   {
     "id": "glass-317",
@@ -2325,7 +2325,7 @@
     "id": "glass-308",
     "pattern": "^Card\\ ([\\s\\S]+?)\\ is\\ blocked\\ by\\ missing\\ task\\ ids:\\ ([\\s\\S]+)\\.$",
     "flags": "",
-    "replacement": "卡片 $1 被缺失的任务 ID 阻止：$2。"
+    "replacement": "卡片 $1 因缺少任务 ID 而受阻：$2。"
   },
   {
     "id": "glass-646",
@@ -3309,7 +3309,7 @@
     "id": "glass-624",
     "pattern": "^([\\s\\S]+?)\\ \\(contains\\ blocked\\ path:\\ ([\\s\\S]+)\\)$",
     "flags": "",
-    "replacement": "$1（包含被阻止的路径：$2）"
+    "replacement": "$1（包含已阻止的路径：$2）"
   },
   {
     "id": "glass-945",
@@ -3501,7 +3501,7 @@
     "id": "glass-617",
     "pattern": "^File\\ is\\ blocked\\ by\\ \\.cursorignore:\\ ([\\s\\S]+)$",
     "flags": "",
-    "replacement": "文件已被 .cursorignore 阻止：$1"
+    "replacement": ".cursorignore 已阻止这些文件：$1"
   },
   {
     "id": "glass-654",
@@ -4503,7 +4503,7 @@
     "id": "glass-12",
     "pattern": "^([\\s\\S]+?)\\ rejected\\ with\\ ([\\s\\S]+)$",
     "flags": "",
-    "replacement": "$1 已被拒绝：$2"
+    "replacement": "已拒绝 $1：$2"
   },
   {
     "id": "glass-140",
@@ -4539,7 +4539,7 @@
     "id": "glass-489",
     "pattern": "^List\\ directory\\ rejected:\\ ([\\s\\S]+)$",
     "flags": "",
-    "replacement": "列出目录被拒绝：$1"
+    "replacement": "已拒绝列出目录：$1"
   },
   {
     "id": "glass-491",
@@ -4917,7 +4917,7 @@
     "id": "glass-1979",
     "pattern": "^Could\\ not\\ turn\\ on\\ ([\\s\\S]+)\\.$",
     "flags": "",
-    "replacement": "无法打开 $1。"
+    "replacement": "无法开启 $1。"
   },
   {
     "id": "glass-320",
@@ -5223,7 +5223,7 @@
     "id": "glass-488",
     "pattern": "^Delete\\ rejected:\\ ([\\s\\S]+)$",
     "flags": "",
-    "replacement": "删除被拒绝：$1"
+    "replacement": "已拒绝删除：$1"
   },
   {
     "id": "glass-868",
@@ -5301,7 +5301,7 @@
     "id": "glass-492",
     "pattern": "^Edit\\ rejected:\\ ([\\s\\S]+)$",
     "flags": "",
-    "replacement": "编辑被拒绝：$1"
+    "replacement": "已拒绝编辑：$1"
   },
   {
     "id": "glass-1375",
@@ -5373,7 +5373,7 @@
     "id": "glass-170",
     "pattern": "^Blocked\\ by\\ ([\\s\\S]+)$",
     "flags": "",
-    "replacement": "被 $1 阻止"
+    "replacement": "已由 $1 阻止"
   },
   {
     "id": "glass-1447",
@@ -8571,7 +8571,7 @@
     "id": "tpl-auth",
     "pattern": "^([\\s\\S]+?) the source-control provider for this repository\\. Its stored access may have been revoked, expired, or lost\\. Reconnect the integration for this repository, then start the agent again\\.$",
     "flags": "",
-    "replacement": "$1此仓库的源代码管理提供程序。保存的访问权限可能已被收回、过期或丢失。请重新连接此仓库的集成，然后重新启动智能体。"
+    "replacement": "$1此仓库的源代码管理提供程序。保存的访问权限可能已收回、过期或丢失。请重新连接此仓库的集成，然后重新启动智能体。"
   },
   {
     "id": "tpl-mcp-grant-long",
@@ -8595,7 +8595,7 @@
     "id": "tpl-mcp-ran-long",
     "pattern": "^([\\s\\S]+?) ran it but couldn't reach it reliably, so it's back on this machine for now\\.$",
     "flags": "",
-    "replacement": "$1已运行它，但无法稳定访问它，因此暂时回到这台计算机上运行。"
+    "replacement": "$1 已运行它，但无法稳定访问它，因此暂时回到这台计算机上运行。"
   },
   {
     "id": "tpl-mcp-grant",
@@ -8619,7 +8619,7 @@
     "id": "tpl-mcp-ran",
     "pattern": "^([\\s\\S]+?) ran it but couldn't reach it reliably\\.$",
     "flags": "",
-    "replacement": "$1已运行它，但无法稳定访问它。"
+    "replacement": "$1 已运行它，但无法稳定访问它。"
   },
   {
     "id": "tpl-saving-one",
@@ -8793,7 +8793,7 @@
     "id": "hook-exit-code",
     "pattern": "^Tool blocked because this hook is configured to fail closed \\(block when it fails\\)\\. Hook \"([\\s\\S]+?)\" failed with exit code (\\d+)$",
     "flags": "",
-    "replacement": "工具已被阻止，因为此钩子配置为失败即阻止（失败时拦截）。钩子“$1”失败，退出码为 $2。"
+    "replacement": "工具已被拦截：此钩子设为失败时拦截（fail closed）。钩子“$1”失败，退出码为 $2。"
   },
   {
     "id": "agent-review-state",
@@ -8841,7 +8841,7 @@
     "id": "debug-server-notice",
     "pattern": "^The debug server did not start in time\\.\\s+Please check the \\[NDJSON port setting\\]\\((.+?)\\) and ensure:\\s+- The port is not already in use by another service\\s+- You have permission to use the port \\(try a port above 1024\\)$",
     "flags": "",
-    "replacement": "调试服务器启动超时。请检查 [NDJSON 端口设置]($1)，并确认：端口没有被其他服务占用。你有权使用该端口（可尝试 1024 以上的端口）。"
+    "replacement": "调试服务器启动超时。请检查 [NDJSON 端口设置]($1)，并确认：没有其他服务占用该端口。你有权使用该端口（可尝试 1024 以上的端口）。"
   },
   {
     "id": "throw-private-worker-quoted",
@@ -8889,13 +8889,13 @@
     "id": "throw-browser-origin",
     "pattern": "^Browser tool ([\\s\\S]+) is blocked because the current page origin cannot be determined\\. Allowed origins: ([\\s\\S]+)$",
     "flags": "",
-    "replacement": "浏览器工具 $1 已被阻止，因为无法确定当前页面的来源。允许的来源：$2"
+    "replacement": "已阻止浏览器工具 $1，因为无法确定当前页面的来源。允许的来源：$2"
   },
   {
     "id": "throw-browser-url",
     "pattern": "^Browser tool ([\\s\\S]+) is blocked because the current page URL is invalid\\. Allowed origins: ([\\s\\S]+)$",
     "flags": "",
-    "replacement": "浏览器工具 $1 已被阻止，因为当前页面的 URL 无效。允许的来源：$2"
+    "replacement": "已阻止浏览器工具 $1，因为当前页面的 URL 无效。允许的来源：$2"
   },
   {
     "id": "throw-browser-admin",
@@ -9520,5 +9520,47 @@
     "pattern": "^(\\d+)秒钟前$",
     "flags": "",
     "replacement": "$1秒前"
+  },
+  {
+    "id": "pr-requested-review-from",
+    "pattern": "^requested a review from ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "请求 $1 审查"
+  },
+  {
+    "id": "pr-removed-review-from",
+    "pattern": "^removed a review request from ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "移除了 $1 的审查请求"
+  },
+  {
+    "id": "pr-renamed-title",
+    "pattern": "^renamed this PR: ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "重命名了此 PR：$1"
+  },
+  {
+    "id": "pr-added-label",
+    "pattern": "^added the ([\\s\\S]+) label$",
+    "flags": "",
+    "replacement": "添加了标签 $1"
+  },
+  {
+    "id": "pr-removed-label",
+    "pattern": "^removed the ([\\s\\S]+) label$",
+    "flags": "",
+    "replacement": "移除了标签 $1"
+  },
+  {
+    "id": "pr-assigned-name",
+    "pattern": "^assigned ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "指派了 $1"
+  },
+  {
+    "id": "pr-unassigned-name",
+    "pattern": "^unassigned ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "取消指派 $1"
   }
 ]

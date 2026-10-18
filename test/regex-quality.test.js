@@ -151,11 +151,11 @@ test('field types, themes, resume, and the remaining review strings', () => {
   );
   assert.equal(
     translateText('Browser tool click is blocked because the current page origin cannot be determined. Allowed origins: https://example.com', compiled).text,
-    '浏览器工具 click 已被阻止，因为无法确定当前页面的来源。允许的来源：https://example.com',
+    '已阻止浏览器工具 click，因为无法确定当前页面的来源。允许的来源：https://example.com',
   );
   assert.equal(
     translateText('Browser tool click is blocked because the current page URL is invalid. Allowed origins: https://example.com', compiled).text,
-    '浏览器工具 click 已被阻止，因为当前页面的 URL 无效。允许的来源：https://example.com',
+    '已阻止浏览器工具 click，因为当前页面的 URL 无效。允许的来源：https://example.com',
   );
   assert.equal(
     translateText('Browser tool click is blocked on origin https://evil.test by administrator settings. Allowed origins: https://example.com', compiled).text,
@@ -262,11 +262,11 @@ test('field types, themes, resume, and the remaining review strings', () => {
   );
   assert.equal(
     translateText('Tool blocked because this hook is configured to fail closed (block when it fails). Hook "lint" failed with exit code 2', compiled).text,
-    '工具已被阻止，因为此钩子配置为失败即阻止（失败时拦截）。钩子“lint”失败，退出码为 2。',
+    '工具已被拦截：此钩子设为失败时拦截（fail closed）。钩子“lint”失败，退出码为 2。',
   );
   assert.equal(
     translateText('Tool blocked because this hook is configured to fail closed (block when it fails). Hook "lint" failed with exit code 2: boom', compiled).text,
-    '工具已被阻止，因为此钩子配置为失败即阻止（失败时拦截）。钩子“lint”失败，退出码为 2：boom',
+    '工具已被拦截：此钩子设为失败时拦截（fail closed）。钩子“lint”失败，退出码为 2：boom',
   );
   assert.equal(translateText('Focus Accessible Terminal View', compiled).text, '聚焦到可访问终端视图');
   assert.equal(

@@ -1539,3 +1539,126 @@ test('shadow menus and zero-size portals are translated and reported', () => {
   assert.equal(visible.entries.some((entry) => entry.text === 'Zzzz shadow english'), true);
   assert.equal(visible.entries.some((entry) => entry.text === 'Filter By'), false);
 });
+
+function renderedText(el) {
+  let out = '';
+  const kids = el.childNodes || [];
+  for (let i = 0; i < kids.length; i += 1) {
+    const child = kids[i];
+    if (child.nodeType === 3) out += child.nodeValue || '';
+    else if (child.nodeType === 1) out += renderedText(child);
+  }
+  return out;
+}
+
+test('a fragment does not glue an English word to Chinese inside one label', () => {
+  const { compiled } = loadDictionary();
+  const h = harness();
+  const mixed = /[A-Za-z]{2,}[\u4e00-\u9fff]|[\u4e00-\u9fff][A-Za-z]{2,}/;
+
+  const pill = h.makeElement('SPAN', { classes: ['pill'] });
+  pill.appendChild(h.makeText('New'));
+  const below = h.makeElement('SPAN');
+  below.appendChild(h.makeText(' messages below'));
+  pill.appendChild(below);
+  const pillHost = h.makeElement('DIV');
+  pillHost.appendChild(pill);
+
+  const whole = h.makeElement('SPAN');
+  whole.appendChild(h.makeText('New Agent'));
+  const wholeHost = h.makeElement('DIV');
+  wholeHost.appendChild(whole);
+
+  const opened = h.makeElement('SPAN');
+  opened.appendChild(h.makeText('opened this PR'));
+  const merged = h.makeElement('SPAN');
+  merged.appendChild(h.makeText('merged this PR'));
+  const assigned = h.makeElement('SPAN');
+  assigned.appendChild(h.makeText('assigned '));
+  assigned.appendChild(h.makeText('someone'));
+  const named = h.makeElement('SPAN');
+  named.appendChild(h.makeText('assigned '));
+  named.appendChild(h.makeText('bob'));
+  const review = h.makeElement('SPAN');
+  review.appendChild(h.makeText('requested a review'));
+  const from = h.makeElement('SPAN');
+  from.appendChild(h.makeText(' from '));
+  from.appendChild(h.makeText('bob'));
+  review.appendChild(from);
+  const committedVerb = h.makeElement('SPAN');
+  committedVerb.appendChild(h.makeText('committed'));
+  const message = h.makeElement('SPAN');
+  message.appendChild(h.makeText('fix the parser'));
+  const committed = h.makeElement('SPAN');
+  committed.appendChild(committedVerb);
+  committed.appendChild(message);
+  const labelName = h.makeElement('SPAN');
+  labelName.appendChild(h.makeText('bug'));
+  const labeled = h.makeElement('SPAN');
+  labeled.appendChild(h.makeText('added the '));
+  labeled.appendChild(labelName);
+  labeled.appendChild(h.makeText(' '));
+  labeled.appendChild(h.makeText('label'));
+  const code = h.makeElement('CODE');
+  code.appendChild(h.makeText('cursor desktop'));
+  const bridge = h.makeElement('SPAN');
+  bridge.appendChild(h.makeText('Enable the '));
+  bridge.appendChild(code);
+  bridge.appendChild(h.makeText(' CLI command, which lists and sends messages to agent threads open in this desktop app. Restart Cursor after changing this setting.'));
+
+  const hosts = [pillHost, wholeHost, opened, merged, assigned, named, review, committed, labeled, bridge]
+    .map((node) => {
+      if (node === pillHost || node === wholeHost) return node;
+      const wrap = h.makeElement('DIV');
+      wrap.appendChild(node);
+      return wrap;
+    });
+  translateTree([pillHost, wholeHost, ...hosts.slice(2)], compiled);
+
+  assert.equal(renderedText(pill), '下方有新消息');
+  assert.doesNotMatch(renderedText(pill).replace(/\s+/g, ''), mixed);
+  assert.equal(renderedText(whole), '新建智能体');
+  assert.equal(renderedText(opened), '创建了此 PR');
+  assert.equal(renderedText(merged), '合并了此 PR');
+  assert.equal(renderedText(assigned), '指派了 某人');
+  assert.equal(renderedText(named), '指派了 bob');
+  assert.equal(renderedText(review), '请求 bob 审查');
+  assert.equal(renderedText(committedVerb), '提交了代码');
+  assert.equal(renderedText(message), 'fix the parser');
+  assert.equal(renderedText(labeled), '添加了标签 bug');
+  assert.equal(renderedText(code), 'cursor desktop');
+  assert.match(renderedText(bridge), /^启用 cursor desktop CLI 命令/);
+
+  const onlyFragment = compileDictionary({
+    exact: {},
+    fragments: [{ from: 'messages below', to: '下面的消息' }],
+    regex: [],
+  });
+  const again = h.makeElement('SPAN');
+  again.appendChild(h.makeText('New'));
+  const inner = h.makeElement('SPAN');
+  inner.appendChild(h.makeText(' messages below'));
+  again.appendChild(inner);
+  const againHost = h.makeElement('DIV');
+  againHost.appendChild(again);
+  translateTree([againHost], onlyFragment);
+  const stuck = renderedText(again).replace(/\s+/g, '');
+  assert.equal(stuck, 'Newmessagesbelow');
+  assert.doesNotMatch(stuck, mixed);
+
+  const phrase = h.makeElement('SPAN');
+  phrase.appendChild(h.makeText('Qqkeep '));
+  const phraseInner = h.makeElement('SPAN');
+  phraseInner.appendChild(h.makeText('Agents Window'));
+  phrase.appendChild(phraseInner);
+  phrase.appendChild(h.makeText(' qqrest'));
+  const phraseHost = h.makeElement('DIV');
+  phraseHost.appendChild(phrase);
+  const fragmentOnly = compileDictionary({
+    exact: {},
+    fragments: [{ from: 'Agents Window', to: '智能体窗口' }],
+    regex: [],
+  });
+  translateTree([phraseHost], fragmentOnly);
+  assert.equal(renderedText(phrase).replace(/\s+/g, ''), 'QqkeepAgentsWindowqqrest');
+});
