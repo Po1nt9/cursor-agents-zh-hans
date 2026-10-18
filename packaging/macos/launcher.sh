@@ -14,6 +14,9 @@ if [[ -f "${here}/../Resources/scripts/gui.sh" ]]; then
   CURSOR_ZH_RESOURCES="$(cd "${here}/../Resources" && pwd)"
   export CURSOR_ZH_RESOURCES
   export CURSOR_ZH_PACK="${CURSOR_ZH_RESOURCES}/pack"
+  export CURSOR_ZH_APP_ROOT="$app_root"
+  # This fails silently when Gatekeeper has translocated the app onto a
+  # read-only mount. gui_main then asks the user to move it.
   if command -v xattr >/dev/null 2>&1; then
     xattr -dr com.apple.quarantine "$app_root" 2>/dev/null || true
   fi

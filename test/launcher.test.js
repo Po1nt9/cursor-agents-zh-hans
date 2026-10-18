@@ -148,12 +148,17 @@ function cliArgs(env) {
     .map((line) => JSON.parse(line));
 }
 
-test('shellcheck is clean and scripts stay on bash 3.2', () => {
-  const result = spawnSync('shellcheck', ['-x', '-P', 'SCRIPTDIR', ...shellScripts], {
-    cwd: root,
-    encoding: 'utf8',
-  });
-  assert.equal(result.status, 0, `${result.stdout}\n${result.stderr}`);
+test('shellcheck is clean and scripts stay on bash 3.2', (t) => {
+  const which = spawnSync('bash', ['-c', 'command -v shellcheck'], { encoding: 'utf8' });
+  if (which.status !== 0 || !which.stdout.trim()) {
+    t.diagnostic('shellcheck is not installed; skipping the shellcheck pass');
+  } else {
+    const result = spawnSync('shellcheck', ['-x', '-P', 'SCRIPTDIR', ...shellScripts], {
+      cwd: root,
+      encoding: 'utf8',
+    });
+    assert.equal(result.status, 0, `${result.stdout}\n${result.stderr}`);
+  }
   const banned = [
     [/declare -A/, 'associative array'],
     [/\bmapfile\b/, 'mapfile'],
@@ -359,6 +364,21 @@ test('install restores an old patch, then applies without sudo when the app is w
   assert.match(text, /WatchPaths/);
   assert.match(text, /product\.json/);
   assert.ok(text.includes(app));
+  const runtime = path.join(env.HOME, 'Library', 'Application Support', 'cursor-zh-hans', 'runtime');
+  const stagedNode = path.join(runtime, 'node', 'node');
+  const stagedWatch = path.join(runtime, 'scripts', 'watch.sh');
+  const stagedPack = path.join(runtime, 'pack');
+  assert.ok(text.includes(stagedNode));
+  assert.ok(text.includes(stagedWatch));
+  assert.ok(text.includes(stagedPack));
+  assert.equal(text.includes(env.CURSOR_ZH_NODE), false);
+  assert.equal(text.includes(env.CURSOR_ZH_WATCH_SCRIPT), false);
+  assert.equal(text.includes(env.CURSOR_ZH_PACK), false);
+  assert.equal(fs.existsSync(path.join(runtime, 'scripts', 'common.sh')), true);
+  assert.equal(fs.existsSync(path.join(runtime, 'scripts', 'dialogs.sh')), true);
+  assert.equal(fs.existsSync(path.join(stagedPack, 'bin', 'cursor-zh.js')), true);
+  assert.equal(fs.readFileSync(path.join(runtime, 'version'), 'utf8').trim().length > 0, true);
+  assert.equal(fs.statSync(stagedNode).mode & 0o111, 0o111);
 });
 
 test('a clean install does not restore first and can skip the watcher', () => {
@@ -580,6 +600,8 @@ ui_ask_watch
   assert.match(osa, /检查状态/);
   assert.match(osa, /恢复英文/);
   assert.match(osa, /安装汉化/);
+  assert.match(osa, /choose from list/);
+  assert.match(osa, /取消/);
 });
 
 test('the watcher reapplies only when the install is stale and Cursor is quit', () => {
@@ -804,4 +826,321 @@ install_main --uninstall
   assert.match(launched, /Cursor 汉化\.app/);
   assert.match(launched, /--restore/);
   assert.equal(fs.existsSync(path.join(dest, 'Cursor 汉化.app', 'Contents', 'MacOS', 'launcher')), true);
+});
+
+test('translocation, Downloads, and a read-only volume must be moved first', () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'cursor-zh-move-'));
+  function mustMove(appRoot, extra = {}) {
+    const ran = spawnSync('bash', ['--noprofile', '--norc', '-c', `source ${JSON.stringify(path.join(root, 'packaging/lib/common.sh'))}
+if installer_must_move ${JSON.stringify(appRoot)}; then printf '%s\\n' 0; else printf '%s\\n' 1; fi
+`], {
+      encoding: 'utf8',
+      env: { PATH: '/usr/bin:/bin', HOME: dir, TMPDIR: dir, LANG: 'C.UTF-8', ...extra },
+    });
+    assert.equal(ran.status, 0, ran.stderr);
+    return ran.stdout.trim();
+  }
+  assert.equal(mustMove('/private/var/folders/ab/T/AppTranslocation/UUID/d/Cursor 汉化.app'), '0');
+  assert.equal(mustMove('/Users/me/Downloads/Cursor 汉化.app'), '0');
+  assert.equal(mustMove('/Users/me/Downloads'), '0');
+  const writable = path.join(dir, 'Applications', 'Cursor 汉化.app');
+  fs.mkdirSync(writable, { recursive: true });
+  assert.equal(mustMove(writable), '1');
+  assert.equal(mustMove(writable, { CURSOR_ZH_VOLUME_READONLY: '1' }), '0');
+  assert.equal(mustMove('/Applications/Cursor 汉化.app'), '1');
+
+  const readonlyDir = path.join(dir, 'readonly-app');
+  fs.mkdirSync(readonlyDir);
+  const deniedDir = path.join(dir, 'denied-app');
+  fs.mkdirSync(deniedDir);
+  const probed = spawnSync('bash', ['--noprofile', '--norc', '-c', `
+source ${JSON.stringify(path.join(root, 'packaging/lib/common.sh'))}
+touch() {
+  printf '%s\\n' "touch: $1: Read-only file system" >&2
+  return 1
+}
+if installer_must_move ${JSON.stringify(readonlyDir)}; then ro=0; else ro=1; fi
+touch() {
+  printf '%s\\n' "touch: $1: Permission denied" >&2
+  return 1
+}
+if installer_must_move ${JSON.stringify(deniedDir)}; then deny=0; else deny=1; fi
+printf '%s %s\\n' "$ro" "$deny"
+`], {
+    encoding: 'utf8',
+    env: { PATH: '/usr/bin:/bin', HOME: dir, TMPDIR: dir, LANG: 'C.UTF-8' },
+  });
+  assert.equal(probed.status, 0, probed.stderr);
+  assert.equal(probed.stdout.trim(), '0 1');
+
+  const app = makeCursor(path.join(dir, 'apps'));
+  const { result, env } = sourceGui(dir, 'gui_main', {
+    CURSOR_ZH_APP_ROOT: '/private/var/folders/ab/T/AppTranslocation/UUID/d/Cursor 汉化.app',
+    CURSOR_ZH_DRY_RUN: '1',
+    CURSOR_ZH_SEARCH_ROOTS: path.dirname(app),
+  });
+  assert.equal(result.status, 1, result.stderr);
+  assert.match(result.stdout, /OPEN \/Applications/);
+  assert.match(readUi(env), /拖进「应用程序」/);
+  assert.equal(cliArgs(env).length, 0);
+  assert.equal(readUi(env).includes('MENU'), false);
+});
+
+test('cursor_is_running matches only the target app path', () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'cursor-zh-ps-'));
+  const app = '/Applications/Cursor.app';
+  const other = '/Applications/Agent/Cursor.app';
+  const psFile = path.join(dir, 'ps.txt');
+  const mockBin = path.join(dir, 'bin');
+  writeExec(path.join(mockBin, 'ps'), `#!/bin/bash
+cat ${JSON.stringify(psFile)}
+`);
+  function running(lines, target) {
+    fs.writeFileSync(psFile, `${lines.filter((line) => line !== null).join('\n')}\n`);
+    const arg = target === undefined ? '' : JSON.stringify(target);
+    const result = runBash(`
+source ${JSON.stringify(path.join(root, 'packaging/lib/common.sh'))}
+if cursor_is_running ${arg}; then printf '%s\\n' yes; else printf '%s\\n' no; fi
+`, { HOME: dir, PATH: `${mockBin}:/usr/bin:/bin` });
+    assert.equal(result.status, 0, result.stderr);
+    return result.stdout.trim();
+  }
+  assert.equal(running([
+    `${other}/Contents/MacOS/Cursor`,
+    'Cursor Helper',
+    '/usr/libexec/Cursor Helper (Plugin)',
+  ], app), 'no');
+  assert.equal(running([
+    `${other}/Contents/MacOS/Cursor`,
+    `${app}/Contents/MacOS/Cursor Helper (GPU) --type=gpu`,
+  ], app), 'yes');
+  assert.equal(running([
+    `${app}/Contents/MacOS/Cursor --flag`,
+  ], app), 'yes');
+  assert.equal(running([
+    `${app}/Contents/MacOS/Cursor`,
+  ], other), 'no');
+  assert.equal(running([`${app}/Contents/MacOS/Cursor`], undefined), 'no');
+});
+
+test('a save prompt can be retried, and cancel stops the install', () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'cursor-zh-retry-'));
+  const app = makeCursor(path.join(dir, 'apps'));
+  const confirmLog = path.join(dir, 'confirms');
+  fs.writeFileSync(confirmLog, '');
+  const cancelled = sourceGui(dir, `
+cursor_is_running() { return 0; }
+ui_confirm() {
+  printf 'CONFIRM %s\\n' "$2" >> "$MOCK_UI"
+  printf 'x\\n' >> ${JSON.stringify(confirmLog)}
+  n=$(wc -l < ${JSON.stringify(confirmLog)})
+  if [[ "$n" -eq 1 ]]; then return 0; fi
+  return 1
+}
+cmd_install ${JSON.stringify(app)}
+`);
+  assert.notEqual(cancelled.result.status, 0);
+  assert.equal(cliArgs(cancelled.env).length, 0);
+  assert.match(readUi(cancelled.env), /重试/);
+  assert.match(readUi(cancelled.env), /已取消/);
+  assert.equal(readUi(cancelled.env).includes('QUIT'), true);
+
+  const retried = sourceGui(path.join(dir, 'retry'), `
+cursor_is_running() {
+  n=$(wc -l < ${JSON.stringify(confirmLog)})
+  if [[ "$n" -ge 2 ]]; then return 1; fi
+  return 0
+}
+ui_confirm() {
+  printf 'CONFIRM %s\\n' "$2" >> "$MOCK_UI"
+  printf 'x\\n' >> ${JSON.stringify(confirmLog)}
+  return 0
+}
+: > ${JSON.stringify(confirmLog)}
+cmd_install ${JSON.stringify(app)}
+`);
+  assert.equal(retried.result.status, 0, retried.result.stderr);
+  assert.match(readUi(retried.env), /重试/);
+  assert.ok(cliArgs(retried.env).some((args) => args[0] === 'apply'));
+});
+
+test('an admin install chowns support, the agent plist, and the log back to the user', () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'cursor-zh-chown-'));
+  const home = path.join(dir, 'home');
+  const support = path.join(home, 'Library', 'Application Support', 'cursor-zh-hans');
+  const plist = path.join(home, 'Library', 'LaunchAgents', 'com.po1nt9.cursor-zh-hans.watch.plist');
+  const logFile = path.join(dir, 'cursor-zh-hans.log');
+  fs.mkdirSync(support, { recursive: true });
+  fs.mkdirSync(path.dirname(plist), { recursive: true });
+  fs.writeFileSync(plist, '<plist></plist>');
+  fs.writeFileSync(logFile, 'log\n');
+  fs.writeFileSync(path.join(support, 'watch.lock'), '');
+  const elevated = path.join(dir, 'elevated.args');
+  const mismatched = runBash(`
+source ${JSON.stringify(path.join(root, 'packaging/lib/gui.sh'))}
+CLI_ELEVATED=1
+file_owner_uid() { printf '%s\\n' "999"; }
+run_elevated() { printf '%s\\n' "$*" >> ${JSON.stringify(elevated)}; return 0; }
+reclaim_user_files
+`, {
+    HOME: home,
+    CURSOR_ZH_LOG_FILE: logFile,
+    CURSOR_ZH_NODE: process.execPath,
+  });
+  assert.equal(mismatched.status, 0, mismatched.stderr);
+  const chownLine = fs.readFileSync(elevated, 'utf8');
+  assert.match(chownLine, /\/usr\/sbin\/chown/);
+  assert.match(chownLine, /-R/);
+  assert.ok(chownLine.includes(support));
+  assert.ok(chownLine.includes(plist));
+  assert.ok(chownLine.includes(logFile));
+  const agentsDir = path.join(home, 'Library', 'LaunchAgents');
+  assert.equal(chownLine.split(' ').includes(agentsDir), false);
+
+  fs.writeFileSync(elevated, '');
+  const owned = runBash(`
+source ${JSON.stringify(path.join(root, 'packaging/lib/gui.sh'))}
+CLI_ELEVATED=1
+run_elevated() { printf '%s\\n' "$*" >> ${JSON.stringify(elevated)}; return 0; }
+reclaim_user_files
+`, {
+    HOME: home,
+    CURSOR_ZH_LOG_FILE: logFile,
+    CURSOR_ZH_NODE: process.execPath,
+  });
+  assert.equal(owned.status, 0, owned.stderr);
+  assert.equal(fs.readFileSync(elevated, 'utf8'), '');
+});
+
+test('restore removes the support folder, agent, and lock, and can keep the log', () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'cursor-zh-cleanup-'));
+  const app = makeCursor(path.join(dir, 'apps'));
+  const installed = sourceGui(dir, `cmd_install ${JSON.stringify(app)}`);
+  assert.equal(installed.result.status, 0, installed.result.stderr);
+  const support = path.join(installed.env.HOME, 'Library', 'Application Support', 'cursor-zh-hans');
+  const plist = path.join(installed.env.HOME, 'Library', 'LaunchAgents', 'com.po1nt9.cursor-zh-hans.watch.plist');
+  fs.mkdirSync(path.join(support, 'watch.lock'));
+  assert.equal(fs.existsSync(plist), true);
+  assert.equal(fs.existsSync(support), true);
+
+  const kept = sourceGui(dir, `
+ui_confirm() {
+  printf 'CONFIRM %s %s\\n' "$2" "$3" >> "$MOCK_UI"
+  if [[ "$1" == *安装日志* ]]; then return 1; fi
+  return 0
+}
+cmd_restore ${JSON.stringify(app)}
+`, {
+    HOME: installed.env.HOME,
+    MOCK_UI: installed.env.MOCK_UI,
+    MOCK_LOG: path.join(dir, 'restore-cli.log'),
+    CURSOR_ZH_LOG_FILE: installed.env.CURSOR_ZH_LOG_FILE,
+    CURSOR_ZH_PACK: installed.env.CURSOR_ZH_PACK,
+  });
+  assert.equal(kept.result.status, 0, kept.result.stderr);
+  assert.equal(fs.existsSync(plist), false);
+  assert.equal(fs.existsSync(support), false);
+  assert.equal(fs.existsSync(path.join(support, 'watch.lock')), false);
+  assert.match(readUi(kept.env), /删掉日志/);
+  assert.match(readUi(kept.env), /留着/);
+  assert.equal(fs.existsSync(installed.env.CURSOR_ZH_LOG_FILE), true);
+
+  const again = sourceGui(path.join(dir, 'again'), `cmd_install ${JSON.stringify(app)}`, {
+    HOME: installed.env.HOME,
+    CURSOR_ZH_LOG_FILE: installed.env.CURSOR_ZH_LOG_FILE,
+  });
+  assert.equal(again.result.status, 0, again.result.stderr);
+  assert.equal(fs.existsSync(support), true);
+  const failed = sourceGui(path.join(dir, 'fail'), `cmd_restore ${JSON.stringify(app)}`, {
+    HOME: installed.env.HOME,
+    CURSOR_ZH_LOG_FILE: installed.env.CURSOR_ZH_LOG_FILE,
+    MOCK_RESTORE_CODE: '1',
+    MOCK_RESTORE_OUTPUT: '磁盘满了，写不回去。',
+  });
+  assert.notEqual(failed.result.status, 0);
+  assert.equal(fs.existsSync(path.join(installed.env.HOME, 'Library', 'LaunchAgents', 'com.po1nt9.cursor-zh-hans.watch.plist')), false);
+  assert.equal(fs.existsSync(support), true);
+  assert.match(readUi(failed.env), /自动重新安装已经关掉/);
+  assert.match(readUi(failed.env), /没有恢复成英文/);
+  assert.equal(readUi(failed.env).includes('删掉日志'), false);
+});
+
+test('the main menu cancel stops before any install', () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'cursor-zh-menu-'));
+  const apps = path.join(dir, 'Applications');
+  makeCursor(apps);
+  const mockBin = path.join(dir, 'bin');
+  writeExec(path.join(mockBin, 'mdfind'), '#!/bin/bash\nexit 0\n');
+  writeExec(path.join(mockBin, 'ps'), '#!/bin/bash\nexit 0\n');
+  const { result, env } = sourceGui(dir, `
+ui_menu() { printf 'MENU\\n' >> "$MOCK_UI"; return 1; }
+gui_main
+`, {
+    CURSOR_ZH_SEARCH_ROOTS: apps,
+    PATH: `${mockBin}:/usr/bin:/bin`,
+  });
+  assert.equal(result.status, 0, `${result.stdout}\n${result.stderr}`);
+  assert.match(readUi(env), /MENU/);
+  assert.match(readUi(env), /已取消/);
+  assert.equal(cliArgs(env).length, 0);
+});
+
+test('install.sh says when no release has been published', () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'cursor-zh-404-'));
+  const mockBin = path.join(dir, 'bin');
+  const dest = path.join(dir, 'out.zip');
+  writeExec(path.join(mockBin, 'curl'), `#!/bin/bash
+out=""
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    -o) out="$2"; shift 2 ;;
+    *) shift ;;
+  esac
+done
+if [[ -n "$out" ]]; then printf '%s\\n' "missing" > "$out"; fi
+if [[ "\${MOCK_CURL_EXIT:-0}" != 0 ]]; then exit "$MOCK_CURL_EXIT"; fi
+printf '%s' "\${MOCK_CURL_CODE:-404}"
+`);
+  writeExec(path.join(mockBin, 'uname'), `#!/bin/bash
+printf '%s\\n' Darwin
+`);
+  const missing = runBash(`
+source ${JSON.stringify(path.join(root, 'install.sh'))}
+download_release ${JSON.stringify(dest)}
+`, {
+    HOME: path.join(dir, 'home'),
+    PATH: `${mockBin}:/usr/bin:/bin`,
+    CURSOR_ZH_LIB_ONLY: '1',
+    MOCK_CURL_CODE: '404',
+  });
+  assert.notEqual(missing.status, 0);
+  assert.match(missing.stdout, /还没有发布安装包/);
+  assert.match(missing.stdout, /v0\.1\.0/);
+  assert.equal(fs.existsSync(dest), false);
+
+  const offline = runBash(`
+source ${JSON.stringify(path.join(root, 'install.sh'))}
+download_release ${JSON.stringify(dest)}
+`, {
+    HOME: path.join(dir, 'home'),
+    PATH: `${mockBin}:/usr/bin:/bin`,
+    CURSOR_ZH_LIB_ONLY: '1',
+    MOCK_CURL_EXIT: '6',
+  });
+  assert.notEqual(offline.status, 0);
+  assert.match(offline.stdout, /网络不太好/);
+
+  const viaMain = runBash(`
+source ${JSON.stringify(path.join(root, 'install.sh'))}
+install_main
+`, {
+    HOME: path.join(dir, 'home'),
+    PATH: `${mockBin}:/usr/bin:/bin`,
+    CURSOR_ZH_LIB_ONLY: '1',
+    CURSOR_ZH_INSTALL_DEST: path.join(dir, 'Applications'),
+    MOCK_CURL_CODE: '404',
+  });
+  assert.notEqual(viaMain.status, 0);
+  assert.match(viaMain.stdout, /还没有发布安装包/);
+  assert.equal(viaMain.stdout.includes('请到 GitHub 的发布页'), false);
 });

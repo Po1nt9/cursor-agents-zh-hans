@@ -16,6 +16,67 @@ launch_agent_plist_path() {
   printf '%s\n' "${HOME}/Library/LaunchAgents/$(launch_agent_label).plist"
 }
 
+support_runtime_dir() {
+  printf '%s\n' "$(support_dir)/runtime"
+}
+
+copy_file_into() {
+  local src="$1"
+  local dest="$2"
+  mkdir -p "$(dirname "$dest")"
+  rm -f "$dest"
+  cp -L "$src" "$dest"
+}
+
+copy_dir_into() {
+  local src="$1"
+  local dest="$2"
+  rm -rf "$dest"
+  mkdir -p "$dest"
+  cp -R "$src"/. "$dest"/
+}
+
+# Copy the watcher off the .app. A translocated or deleted app must not be
+# the path launchd uses later. Only the node arch we resolved is copied.
+stage_support_runtime() {
+  local node="$1"
+  local watch="$2"
+  local pack="$3"
+  local runtime=""
+  local scripts_src=""
+  local name=""
+  local version="unknown"
+  runtime="$(support_runtime_dir)"
+  if [[ ! -e "$node" || ! -f "$watch" || ! -d "$pack" ]]; then
+    cursor_zh_log "没能准备自动安装用的文件。"
+    return 1
+  fi
+  mkdir -p "${runtime}/node" "${runtime}/scripts"
+  copy_file_into "$node" "${runtime}/node/node"
+  chmod 755 "${runtime}/node/node"
+  scripts_src="$(cd "$(dirname "$watch")" && pwd)"
+  for name in common.sh dialogs.sh watch.sh; do
+    if [[ -f "${scripts_src}/${name}" ]]; then
+      copy_file_into "${scripts_src}/${name}" "${runtime}/scripts/${name}"
+      chmod 755 "${runtime}/scripts/${name}"
+    fi
+  done
+  if [[ ! -f "${runtime}/scripts/watch.sh" || ! -f "${runtime}/scripts/common.sh" || ! -f "${runtime}/scripts/dialogs.sh" ]]; then
+    cursor_zh_log "监视脚本没有复制完整。"
+    return 1
+  fi
+  copy_dir_into "$pack" "${runtime}/pack"
+  if [[ -n "${CURSOR_ZH_RESOURCES:-}" && -f "${CURSOR_ZH_RESOURCES}/version" ]]; then
+    version="$(tr -d '[:space:]' < "${CURSOR_ZH_RESOURCES}/version")"
+  elif [[ -f "${pack}/package.json" ]]; then
+    version="$("$node" -e 'const fs=require("fs"); try { const p=JSON.parse(fs.readFileSync(process.argv[1],"utf8")); process.stdout.write(String(p.version||"unknown")); } catch (e) { process.stdout.write("unknown"); }' "${pack}/package.json" 2>/dev/null || true)"
+  fi
+  if [[ -z "$version" ]]; then
+    version="unknown"
+  fi
+  printf '%s\n' "$version" > "${runtime}/version"
+}
+
 load_launch_agent() {
   local plist="$1"
   if [[ "${CURSOR_ZH_SKIP_LAUNCHCTL:-}" == 1 ]]; then
@@ -37,6 +98,12 @@ install_launch_agent() {
   local node="$2"
   local watch="$3"
   local pack="$4"
+  stage_support_runtime "$node" "$watch" "$pack" || return 1
+  local runtime=""
+  runtime="$(support_runtime_dir)"
+  node="${runtime}/node/node"
+  watch="${runtime}/scripts/watch.sh"
+  pack="${runtime}/pack"
   local dir="${HOME}/Library/LaunchAgents"
   local plist=""
   local product=""
@@ -46,6 +113,8 @@ install_launch_agent() {
   product="${cursor_app}/Contents/Resources/app/product.json"
   log_file="$(cursor_zh_log_file)"
   mkdir -p "$(dirname "$log_file")"
+  # WatchPaths sees edits to product.json. Replacing the whole Cursor.app
+  # often does not fire it, so StartInterval polls every 15 minutes as well.
   cat > "$plist" <<EOF
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">

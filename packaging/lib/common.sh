@@ -88,16 +88,89 @@ is_app_writable() {
   [[ -w "$app" && -w "$app/Contents/Resources/app" ]]
 }
 
-cursor_is_running() {
-  if command -v pgrep >/dev/null 2>&1; then
-    if pgrep -x Cursor >/dev/null 2>&1; then
-      return 0
-    fi
-    if pgrep -f "Cursor Helper" >/dev/null 2>&1; then
+file_owner_uid() {
+  if stat -c %u "$1" 2>/dev/null; then
+    return 0
+  fi
+  stat -f %u "$1"
+}
+
+# True when this path, or something inside it, is not owned by uid.
+path_needs_reclaim() {
+  local path="$1"
+  local uid="$2"
+  [[ -e "$path" ]] || return 1
+  local owner=""
+  owner="$(file_owner_uid "$path" 2>/dev/null || true)"
+  if [[ -z "$owner" ]]; then
+    return 1
+  fi
+  if [[ "$owner" != "$uid" ]]; then
+    return 0
+  fi
+  if [[ -d "$path" ]]; then
+    local foreign=""
+    foreign="$(find "$path" ! -user "$uid" -print 2>/dev/null | head -n 1 || true)"
+    if [[ -n "$foreign" ]]; then
       return 0
     fi
   fi
   return 1
+}
+
+# Gatekeeper runs a quarantined app from a disposable read-only path.
+# Downloads and other read-only volumes have the same problem: the app
+# disappears or cannot clear quarantine, so the user must move it first.
+installer_must_move() {
+  local app_root="${1:-${CURSOR_ZH_APP_ROOT:-}}"
+  if [[ -z "$app_root" ]]; then
+    return 1
+  fi
+  case "$app_root" in
+    */AppTranslocation/*) return 0 ;;
+    */Downloads|*/Downloads/*|*/downloads|*/downloads/*) return 0 ;;
+  esac
+  if [[ "${CURSOR_ZH_VOLUME_READONLY:-}" == 1 ]]; then
+    return 0
+  fi
+  if [[ ! -d "$app_root" ]]; then
+    return 1
+  fi
+  local probe="${app_root}/.cursor-zh-write-probe"
+  local errfile=""
+  local err=""
+  errfile="$(mktemp)"
+  if touch "$probe" 2>"$errfile"; then
+    rm -f "$probe" "$errfile"
+    return 1
+  fi
+  err="$(cat "$errfile" 2>/dev/null || true)"
+  rm -f "$errfile"
+  case "$err" in
+    *"Read-only file system"*|*"read-only file system"*) return 0 ;;
+  esac
+  return 1
+}
+
+# Match this Cursor.app only. Helpers of this app include the same path
+# prefix; another install's "Cursor Helper" does not.
+cursor_is_running() {
+  local app="${1:-}"
+  if [[ -z "$app" ]]; then
+    return 1
+  fi
+  local needle="${app}/Contents/MacOS/Cursor"
+  local line=""
+  local found=1
+  if ! command -v ps >/dev/null 2>&1; then
+    return 1
+  fi
+  while IFS= read -r line; do
+    case "$line" in
+      *"$needle"*) found=0 ;;
+    esac
+  done < <(ps -ax -o command= 2>/dev/null || true)
+  return "$found"
 }
 
 file_mtime() {

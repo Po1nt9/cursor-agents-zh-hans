@@ -39,6 +39,48 @@ resolve_watch_script() {
   printf '%s\n' "${GUI_LIB}/watch.sh"
 }
 
+explain_move_app() {
+  local message='「Cursor 汉化」现在是从「下载」文件夹或一个临时位置打开的，没法一直留在那里。
+
+请把「Cursor 汉化」拖进「应用程序」，然后从「应用程序」里再打开一次。'
+  if ui_confirm "$message" "打开「应用程序」" "好"; then
+    open_applications_folder
+  fi
+}
+
+open_applications_folder() {
+  if [[ "${CURSOR_ZH_DRY_RUN:-}" == 1 ]]; then
+    printf '%s\n' "OPEN /Applications"
+    return 0
+  fi
+  if command -v open >/dev/null 2>&1; then
+    open "/Applications" || true
+  fi
+}
+
+# do shell script runs as root and can leave root-owned files behind.
+# chown only our support dir, our LaunchAgent plist, and our log.
+reclaim_user_files() {
+  if [[ "${CLI_ELEVATED:-}" != 1 ]]; then
+    return 0
+  fi
+  local uid=""
+  local gid=""
+  local path=""
+  local -a targets=()
+  uid="$(id -u)"
+  gid="$(id -g)"
+  for path in "$(support_dir)" "$(launch_agent_plist_path)" "$(cursor_zh_log_file)"; do
+    if path_needs_reclaim "$path" "$uid"; then
+      targets+=("$path")
+    fi
+  done
+  if [[ ${#targets[@]} -eq 0 ]]; then
+    return 0
+  fi
+  run_elevated /usr/sbin/chown -R "${uid}:${gid}" "${targets[@]}"
+}
+
 run_elevated() {
   local script=""
   local user_name=""
@@ -93,6 +135,7 @@ run_cli_capture() {
   pack="$(resolve_pack)"
   errfile="$(mktemp)"
   if [[ "$mode" == "auto" ]] && ! is_app_writable "$app"; then
+    CLI_ELEVATED=1
     out="$(run_elevated "$node" "${pack}/bin/cursor-zh.js" "$@" --app-path "$app" --no-sudo 2>"$errfile")" || status=$?
   else
     out="$("$node" "${pack}/bin/cursor-zh.js" "$@" --app-path "$app" --no-sudo 2>"$errfile")" || status=$?
@@ -109,6 +152,9 @@ run_cli_capture() {
     cursor_zh_log "$CLI_STDERR"
   fi
   cursor_zh_log "$CLI_STDOUT"
+  if [[ "${CLI_ELEVATED:-}" == 1 ]]; then
+    reclaim_user_files || cursor_zh_log "没能把文件所有者改回当前用户。"
+  fi
   return "$status"
 }
 
@@ -177,14 +223,25 @@ ${log_file}" "$detail"
 }
 
 quit_cursor_app() {
-  osascript -e "tell application id \"${CURSOR_BUNDLE_ID}\" to quit" >/dev/null 2>&1 || \
+  local app="${1:-}"
+  if [[ -n "$app" ]]; then
+    if osascript -e 'on run argv
+      tell application (item 1 of argv) to quit
+    end run' - "$app" >/dev/null 2>&1; then
+      return 0
+    fi
+  fi
+  osascript -e 'on run argv
+    tell application id (item 1 of argv) to quit
+  end run' - "${CURSOR_BUNDLE_ID}" >/dev/null 2>&1 || \
     osascript -e 'tell application "Cursor" to quit' >/dev/null 2>&1 || true
 }
 
 wait_cursor_quit() {
+  local app="$1"
   local i=0
   while [[ "$i" -lt 30 ]]; do
-    if ! cursor_is_running; then
+    if ! cursor_is_running "$app"; then
       return 0
     fi
     i=$((i + 1))
@@ -194,19 +251,26 @@ wait_cursor_quit() {
 }
 
 ensure_cursor_quit() {
-  if ! cursor_is_running; then
+  local app="$1"
+  if ! cursor_is_running "$app"; then
     return 0
   fi
-  if ! ui_confirm "Cursor 正在运行。要先退出才能继续。现在退出 Cursor 吗？" "退出并继续" "取消"; then
+  if ! ui_confirm "Cursor 正在运行。要先退出才能继续。现在退出 Cursor 吗？
+
+如果弹出保存提示，请先保存或处理完。" "退出并继续" "取消"; then
     ui_alert "已取消。你可以自己完全退出 Cursor 之后，再打开「Cursor 汉化」。"
     return 1
   fi
-  quit_cursor_app || true
-  if ! wait_cursor_quit; then
-    show_cli_error "Cursor 还没有退出。" "等了大约 30 秒，Cursor 仍在运行。请自己退出后再试。"
-    return 1
-  fi
-  return 0
+  while true; do
+    quit_cursor_app "$app" || true
+    if wait_cursor_quit "$app"; then
+      return 0
+    fi
+    if ! ui_confirm "Cursor 还没有退出。如果它弹出了保存提示，请先处理完，再点「重试」。" "重试" "取消"; then
+      ui_alert "已取消。请自己完全退出 Cursor 之后再试。"
+      return 1
+    fi
+  done
 }
 
 relaunch_cursor() {
@@ -281,7 +345,7 @@ cmd_status() {
 
 cmd_install() {
   local app="$1"
-  ensure_cursor_quit || return 1
+  ensure_cursor_quit "$app" || return 1
   local status=0
   local blob=""
   run_cli_capture "$app" read status --json || status=$?
@@ -338,7 +402,7 @@ cmd_install() {
 
 cmd_restore() {
   local app="$1"
-  ensure_cursor_quit || return 1
+  ensure_cursor_quit "$app" || return 1
   local status=0
   run_cli_capture "$app" auto restore || status=$?
   local blob="${CLI_STDOUT}"$'\n'"${CLI_STDERR}"
@@ -349,11 +413,22 @@ cmd_restore() {
   remove_launch_agent || true
   if [[ "$status" -ne 0 ]]; then
     if output_says_empty_entitlements "$blob"; then
-      ui_warn "$ENTITLEMENTS_USER_MESSAGE"
+      ui_warn "没有恢复成英文。自动重新安装已经关掉。
+
+${ENTITLEMENTS_USER_MESSAGE}"
       return 1
     fi
-    show_cli_error "没有恢复成英文。" "$blob"
+    show_cli_error "没有恢复成英文。自动重新安装已经关掉，但界面没有恢复成英文。" "$blob"
     return 1
+  fi
+  local support=""
+  support="$(support_dir)"
+  rm -rf "$support" || true
+  if [[ -e "$support" ]]; then
+    cursor_zh_log "没能删掉支持文件夹：${support}"
+  fi
+  if ui_confirm "要删掉安装日志吗？留着的话，以后出问题还能看。" "删掉日志" "留着"; then
+    rm -f "$(cursor_zh_log_file)"
   fi
   relaunch_cursor "$app" || cursor_zh_log "重新打开 Cursor 没有成功。"
   ui_alert "已经恢复成英文，并关掉了自动重新安装。Cursor 正在打开。"
@@ -363,6 +438,11 @@ gui_main() {
   local preset="${1:-}"
   mkdir -p "$(dirname "$(cursor_zh_log_file)")"
   cursor_zh_log "启动 ${preset:-菜单}"
+  if installer_must_move "${CURSOR_ZH_APP_ROOT:-}"; then
+    explain_move_app
+    cursor_zh_log "需要先把「Cursor 汉化」拖进「应用程序」。"
+    return 1
+  fi
   if ! resolve_node >/dev/null; then
     ui_warn "找不到运行环境。请重新下载「Cursor 汉化」。"
     return 1

@@ -82,7 +82,7 @@ watch_decide() {
     printf '%s\n' "skip"
     return 0
   fi
-  if cursor_is_running; then
+  if cursor_is_running "$app"; then
     printf '%s\n' "wait"
     return 0
   fi

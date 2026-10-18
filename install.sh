@@ -31,7 +31,27 @@ install_dest() {
 download_release() {
   local dest="$1"
   local url="https://github.com/${CURSOR_ZH_REPO}/releases/latest/download/Cursor-zh-hans-macOS.zip"
-  curl -fL --retry 3 --retry-delay 2 -o "$dest" "$url"
+  local code=""
+  local errfile=""
+  errfile="$(mktemp)"
+  # -s hides the English progress bar. -f is omitted so a 404 stays a status code.
+  code="$(curl -sS -L --retry 3 --retry-delay 2 -o "$dest" -w '%{http_code}' "$url" 2>"$errfile")" || {
+    rm -f "$errfile" "$dest"
+    printf '%s\n' "网络不太好，没有下载成功。请检查网络后再试。"
+    return 1
+  }
+  rm -f "$errfile"
+  case "$code" in
+    200) return 0 ;;
+    404)
+      rm -f "$dest"
+      printf '%s\n' "还没有发布安装包（发布页是空的）。请稍后再试，或者等作者发布 v0.1.0。"
+      return 1
+      ;;
+  esac
+  rm -f "$dest"
+  printf '%s\n' "没有下载成功。请稍后再试。"
+  return 1
 }
 
 extract_zip() {
@@ -108,7 +128,6 @@ install_main() {
   unpacked="${tmp}/unpack"
   printf '%s\n' "正在下载最新的 Cursor 汉化…"
   if ! download_release "$zip"; then
-    printf '%s\n' "没有下载成功。请到 GitHub 的发布页手动下载 Cursor-zh-hans-macOS.zip。"
     rm -rf "$tmp"
     return 1
   fi

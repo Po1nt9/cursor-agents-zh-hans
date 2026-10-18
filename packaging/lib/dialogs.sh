@@ -33,10 +33,18 @@ ui_confirm() {
 ui_menu() {
   local message="$1"
   local result=""
+  # choose from list has a real Cancel button. display dialog only allows three
+  # buttons, so Esc could not leave that menu.
   result="$(osascript -e 'on run argv
-    set theChoice to button returned of (display dialog (item 1 of argv) buttons {"检查状态", "恢复英文", "安装汉化"} default button "安装汉化" with title "Cursor 汉化")
-    return theChoice
+    set theChoice to choose from list {"安装汉化", "恢复英文", "检查状态"} with prompt (item 1 of argv) with title "Cursor 汉化" default items {"安装汉化"} OK button name "好" cancel button name "取消"
+    if theChoice is false then
+      error number -128
+    end if
+    return item 1 of theChoice
   end run' - "$message")" || return 1
+  case "$result" in
+    ""|false|取消) return 1 ;;
+  esac
   printf '%s\n' "$result"
 }
 
