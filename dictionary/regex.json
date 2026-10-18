@@ -6464,67 +6464,67 @@
   {
     "id": "weekly-any-0-minutes",
     "pattern": "^Weekly usage resets on ([^().]+) \\(0 minutes left\\)$",
-    "replacement": "每周用量将于 $1 重置（还剩 0 分钟）",
+    "replacement": "每周用量将于$1重置（还剩 0 分钟）",
     "flags": ""
   },
   {
     "id": "weekly-any-minute",
     "pattern": "^Weekly usage resets on ([^().]+) \\((\\d+) minute left\\)$",
-    "replacement": "每周用量将于 $1 重置（还剩 $2 分钟）",
+    "replacement": "每周用量将于$1重置（还剩 $2 分钟）",
     "flags": ""
   },
   {
     "id": "weekly-any-minutes",
     "pattern": "^Weekly usage resets on ([^().]+) \\((\\d+) minutes left\\)$",
-    "replacement": "每周用量将于 $1 重置（还剩 $2 分钟）",
+    "replacement": "每周用量将于$1重置（还剩 $2 分钟）",
     "flags": ""
   },
   {
     "id": "weekly-any-hour",
     "pattern": "^Weekly usage resets on ([^().]+) \\((\\d+) hour left\\)$",
-    "replacement": "每周用量将于 $1 重置（还剩 $2 小时）",
+    "replacement": "每周用量将于$1重置（还剩 $2 小时）",
     "flags": ""
   },
   {
     "id": "weekly-any-hours",
     "pattern": "^Weekly usage resets on ([^().]+) \\((\\d+) hours left\\)$",
-    "replacement": "每周用量将于 $1 重置（还剩 $2 小时）",
+    "replacement": "每周用量将于$1重置（还剩 $2 小时）",
     "flags": ""
   },
   {
     "id": "weekly-any-hour-minute",
     "pattern": "^Weekly usage resets on ([^().]+) \\((\\d+) hour and (\\d+) minute left\\)$",
-    "replacement": "每周用量将于 $1 重置（还剩 $2 小时 $3 分钟）",
+    "replacement": "每周用量将于$1重置（还剩 $2 小时 $3 分钟）",
     "flags": ""
   },
   {
     "id": "weekly-any-hour-minutes",
     "pattern": "^Weekly usage resets on ([^().]+) \\((\\d+) hour and (\\d+) minutes left\\)$",
-    "replacement": "每周用量将于 $1 重置（还剩 $2 小时 $3 分钟）",
+    "replacement": "每周用量将于$1重置（还剩 $2 小时 $3 分钟）",
     "flags": ""
   },
   {
     "id": "weekly-any-hours-minute",
     "pattern": "^Weekly usage resets on ([^().]+) \\((\\d+) hours and (\\d+) minute left\\)$",
-    "replacement": "每周用量将于 $1 重置（还剩 $2 小时 $3 分钟）",
+    "replacement": "每周用量将于$1重置（还剩 $2 小时 $3 分钟）",
     "flags": ""
   },
   {
     "id": "weekly-any-hours-minutes",
     "pattern": "^Weekly usage resets on ([^().]+) \\((\\d+) hours and (\\d+) minutes left\\)$",
-    "replacement": "每周用量将于 $1 重置（还剩 $2 小时 $3 分钟）",
+    "replacement": "每周用量将于$1重置（还剩 $2 小时 $3 分钟）",
     "flags": ""
   },
   {
     "id": "weekly-any-day",
     "pattern": "^Weekly usage resets on ([^().]+) \\((\\d+) day left\\)$",
-    "replacement": "每周用量将于 $1 重置（还剩 $2 天）",
+    "replacement": "每周用量将于$1重置（还剩 $2 天）",
     "flags": ""
   },
   {
     "id": "weekly-any-days",
     "pattern": "^Weekly usage resets on ([^().]+) \\((\\d+) days left\\)$",
-    "replacement": "每周用量将于 $1 重置（还剩 $2 天）",
+    "replacement": "每周用量将于$1重置（还剩 $2 天）",
     "flags": ""
   },
   {
@@ -7322,67 +7322,67 @@
   {
     "id": "limits-any-0-minutes",
     "pattern": "^Usage limits reset on (.+) \\(0 minutes left\\)$",
-    "replacement": "用量上限将于 $1 重置（还剩 0 分钟）",
+    "replacement": "用量上限将于$1重置（还剩 0 分钟）",
     "flags": ""
   },
   {
     "id": "limits-any-minute",
     "pattern": "^Usage limits reset on (.+) \\((\\d+) minute left\\)$",
-    "replacement": "用量上限将于 $1 重置（还剩 $2 分钟）",
+    "replacement": "用量上限将于$1重置（还剩 $2 分钟）",
     "flags": ""
   },
   {
     "id": "limits-any-minutes",
     "pattern": "^Usage limits reset on (.+) \\((\\d+) minutes left\\)$",
-    "replacement": "用量上限将于 $1 重置（还剩 $2 分钟）",
+    "replacement": "用量上限将于$1重置（还剩 $2 分钟）",
     "flags": ""
   },
   {
     "id": "limits-any-hour",
     "pattern": "^Usage limits reset on (.+) \\((\\d+) hour left\\)$",
-    "replacement": "用量上限将于 $1 重置（还剩 $2 小时）",
+    "replacement": "用量上限将于$1重置（还剩 $2 小时）",
     "flags": ""
   },
   {
     "id": "limits-any-hours",
     "pattern": "^Usage limits reset on (.+) \\((\\d+) hours left\\)$",
-    "replacement": "用量上限将于 $1 重置（还剩 $2 小时）",
+    "replacement": "用量上限将于$1重置（还剩 $2 小时）",
     "flags": ""
   },
   {
     "id": "limits-any-hour-minute",
     "pattern": "^Usage limits reset on (.+) \\((\\d+) hour and (\\d+) minute left\\)$",
-    "replacement": "用量上限将于 $1 重置（还剩 $2 小时 $3 分钟）",
+    "replacement": "用量上限将于$1重置（还剩 $2 小时 $3 分钟）",
     "flags": ""
   },
   {
     "id": "limits-any-hour-minutes",
     "pattern": "^Usage limits reset on (.+) \\((\\d+) hour and (\\d+) minutes left\\)$",
-    "replacement": "用量上限将于 $1 重置（还剩 $2 小时 $3 分钟）",
+    "replacement": "用量上限将于$1重置（还剩 $2 小时 $3 分钟）",
     "flags": ""
   },
   {
     "id": "limits-any-hours-minute",
     "pattern": "^Usage limits reset on (.+) \\((\\d+) hours and (\\d+) minute left\\)$",
-    "replacement": "用量上限将于 $1 重置（还剩 $2 小时 $3 分钟）",
+    "replacement": "用量上限将于$1重置（还剩 $2 小时 $3 分钟）",
     "flags": ""
   },
   {
     "id": "limits-any-hours-minutes",
     "pattern": "^Usage limits reset on (.+) \\((\\d+) hours and (\\d+) minutes left\\)$",
-    "replacement": "用量上限将于 $1 重置（还剩 $2 小时 $3 分钟）",
+    "replacement": "用量上限将于$1重置（还剩 $2 小时 $3 分钟）",
     "flags": ""
   },
   {
     "id": "limits-any-day",
     "pattern": "^Usage limits reset on (.+) \\((\\d+) day left\\)$",
-    "replacement": "用量上限将于 $1 重置（还剩 $2 天）",
+    "replacement": "用量上限将于$1重置（还剩 $2 天）",
     "flags": ""
   },
   {
     "id": "limits-any-days",
     "pattern": "^Usage limits reset on (.+) \\((\\d+) days left\\)$",
-    "replacement": "用量上限将于 $1 重置（还剩 $2 天）",
+    "replacement": "用量上限将于$1重置（还剩 $2 天）",
     "flags": ""
   },
   {
@@ -8785,7 +8785,7 @@
   },
   {
     "id": "usage-resets",
-    "pattern": "^Usage · Resets ([A-Za-z]+ \\d{1,2})$",
+    "pattern": "^Usage · Resets ((?:(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:t(?:ember)?)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?) \\d{1,2}|\\d{1,2}月\\d{1,2}日))$",
     "flags": "",
     "replacement": "用量 · $1重置"
   },
@@ -8977,19 +8977,19 @@
   },
   {
     "id": "usage-resets-on-days",
-    "pattern": "^Your usage resets on ([A-Za-z]+ \\d{1,2}) \\((\\d+) days?\\)\\.$",
+    "pattern": "^Your usage resets on ((?:(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:t(?:ember)?)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?) \\d{1,2}|\\d{1,2}月\\d{1,2}日)) \\((\\d+) days?\\)\\.$",
     "flags": "",
     "replacement": "你的用量将于 $1重置（$2 天后）。"
   },
   {
     "id": "usage-resets-on-date",
-    "pattern": "^Your usage resets on ([A-Za-z]+ \\d{1,2})\\.$",
+    "pattern": "^Your usage resets on ((?:(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:t(?:ember)?)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?) \\d{1,2}|\\d{1,2}月\\d{1,2}日))\\.$",
     "flags": "",
     "replacement": "你的用量将于 $1重置。"
   },
   {
     "id": "usage-paused-on-date",
-    "pattern": "^You're paused until your usage resets on ([A-Za-z]+ \\d{1,2})\\.$",
+    "pattern": "^You're paused until your usage resets on ((?:(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:t(?:ember)?)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?) \\d{1,2}|\\d{1,2}月\\d{1,2}日))\\.$",
     "flags": "",
     "replacement": "已暂停，直到用量于 $1重置。"
   },
@@ -9019,45 +9019,45 @@
   },
   {
     "id": "updated-month-day",
-    "pattern": "^Updated ((?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:t(?:ember)?)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?) \\d{1,2}(?:, \\d{4})?)$",
+    "pattern": "^Updated ((?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:t(?:ember)?)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?) \\d{1,2}(?:, \\d{4})?|\\d{4}年\\d{1,2}月\\d{1,2}日|\\d{1,2}月\\d{1,2}日)$",
     "flags": "",
     "replacement": "更新于 $1"
   },
   {
     "id": "updated-s-ago",
-    "pattern": "^Updated (\\d+)s ago$",
+    "pattern": "^Updated (\\d+)(?:s ago| seconds? ago| secs? ago|秒钟前|秒前)$",
     "flags": "",
     "replacement": "$1 秒前更新"
   },
   {
     "id": "updated-m-ago",
-    "pattern": "^Updated (\\d+)m ago$",
+    "pattern": "^Updated (\\d+)(?:m ago| minutes? ago| mins? ago|分钟前)$",
     "flags": "",
     "replacement": "$1 分钟前更新"
   },
   {
     "id": "updated-h-ago",
-    "pattern": "^Updated (\\d+)h ago$",
+    "pattern": "^Updated (\\d+)(?:h ago| hours? ago| hrs? ago|小时前)$",
     "flags": "",
     "replacement": "$1 小时前更新"
   },
   {
     "id": "updated-d-ago",
-    "pattern": "^Updated (\\d+)d ago$",
+    "pattern": "^Updated (\\d+)(?:d ago| days? ago|天前)$",
     "flags": "",
     "replacement": "$1 天前更新"
   },
   {
     "id": "updated-mo-ago",
-    "pattern": "^Updated (\\d+)mo ago$",
+    "pattern": "^Updated (\\d+)(?:mo ago| months? ago| mos? ago|个月前)$",
     "flags": "",
     "replacement": "$1 个月前更新"
   },
   {
     "id": "updated-y-ago",
-    "pattern": "^Updated (\\d+)y ago$",
+    "pattern": "^Updated (\\d+)(?:y ago| years? ago| yrs? ago|年前)$",
     "flags": "",
-    "replacement": "$1年前更新"
+    "replacement": "$1 年前更新"
   },
   {
     "id": "updated-now",
@@ -9067,7 +9067,7 @@
   },
   {
     "id": "updated-just-now",
-    "pattern": "^Updated just now$",
+    "pattern": "^Updated (?:just now|刚刚)$",
     "flags": "",
     "replacement": "刚刚更新"
   },
@@ -9097,13 +9097,19 @@
   },
   {
     "id": "resets-month-day",
-    "pattern": "^Resets ((?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:t(?:ember)?)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?) \\d{1,2})$",
+    "pattern": "^Resets ((?:(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:t(?:ember)?)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?) \\d{1,2}|\\d{1,2}月\\d{1,2}日))$",
     "flags": "",
     "replacement": "$1重置"
   },
   {
     "id": "dated-at-time",
-    "pattern": "^((?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:t(?:ember)?)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?) \\d{1,2}, \\d{4}) at (\\d{1,2}:\\d{2} [AP]M)$",
+    "pattern": "^(January|Jan|February|Feb|March|Mar|April|Apr|May|June|Jun|July|Jul|August|Aug|September|Sept|Sep|October|Oct|November|Nov|December|Dec) (\\d{1,2}), (\\d{4}) at (\\d{1,2}:\\d{2}:\\d{2}\\s*[AP]M|\\d{1,2}:\\d{2}\\s*[AP]M|[上下]午\\s*\\d{1,2}:\\d{2}:\\d{2}|[上下]午\\s*\\d{1,2}:\\d{2}|\\d{1,2}:\\d{2}:\\d{2}|\\d{1,2}:\\d{2})$",
+    "flags": "i",
+    "replacement": "$1 $2, $3 $4"
+  },
+  {
+    "id": "dated-at-time-zh",
+    "pattern": "^(\\d{4}年\\d{1,2}月\\d{1,2}日) at (\\d{1,2}:\\d{2}:\\d{2}\\s*[AP]M|\\d{1,2}:\\d{2}\\s*[AP]M|[上下]午\\s*\\d{1,2}:\\d{2}:\\d{2}|[上下]午\\s*\\d{1,2}:\\d{2}|\\d{1,2}:\\d{2}:\\d{2}|\\d{1,2}:\\d{2})$",
     "flags": "i",
     "replacement": "$1 $2"
   },
@@ -9151,55 +9157,55 @@
   },
   {
     "id": "weekday-at-monday",
-    "pattern": "^Monday at (\\d{1,2}:\\d{2} [AP]M)$",
+    "pattern": "^(?:Monday|星期一|周一) at (\\d{1,2}:\\d{2}:\\d{2}\\s*[AP]M|\\d{1,2}:\\d{2}\\s*[AP]M|[上下]午\\s*\\d{1,2}:\\d{2}:\\d{2}|[上下]午\\s*\\d{1,2}:\\d{2}|\\d{1,2}:\\d{2}:\\d{2}|\\d{1,2}:\\d{2})$",
     "flags": "i",
     "replacement": "周一 $1"
   },
   {
     "id": "weekday-at-tuesday",
-    "pattern": "^Tuesday at (\\d{1,2}:\\d{2} [AP]M)$",
+    "pattern": "^(?:Tuesday|星期二|周二) at (\\d{1,2}:\\d{2}:\\d{2}\\s*[AP]M|\\d{1,2}:\\d{2}\\s*[AP]M|[上下]午\\s*\\d{1,2}:\\d{2}:\\d{2}|[上下]午\\s*\\d{1,2}:\\d{2}|\\d{1,2}:\\d{2}:\\d{2}|\\d{1,2}:\\d{2})$",
     "flags": "i",
     "replacement": "周二 $1"
   },
   {
     "id": "weekday-at-wednesday",
-    "pattern": "^Wednesday at (\\d{1,2}:\\d{2} [AP]M)$",
+    "pattern": "^(?:Wednesday|星期三|周三) at (\\d{1,2}:\\d{2}:\\d{2}\\s*[AP]M|\\d{1,2}:\\d{2}\\s*[AP]M|[上下]午\\s*\\d{1,2}:\\d{2}:\\d{2}|[上下]午\\s*\\d{1,2}:\\d{2}|\\d{1,2}:\\d{2}:\\d{2}|\\d{1,2}:\\d{2})$",
     "flags": "i",
     "replacement": "周三 $1"
   },
   {
     "id": "weekday-at-thursday",
-    "pattern": "^Thursday at (\\d{1,2}:\\d{2} [AP]M)$",
+    "pattern": "^(?:Thursday|星期四|周四) at (\\d{1,2}:\\d{2}:\\d{2}\\s*[AP]M|\\d{1,2}:\\d{2}\\s*[AP]M|[上下]午\\s*\\d{1,2}:\\d{2}:\\d{2}|[上下]午\\s*\\d{1,2}:\\d{2}|\\d{1,2}:\\d{2}:\\d{2}|\\d{1,2}:\\d{2})$",
     "flags": "i",
     "replacement": "周四 $1"
   },
   {
     "id": "weekday-at-friday",
-    "pattern": "^Friday at (\\d{1,2}:\\d{2} [AP]M)$",
+    "pattern": "^(?:Friday|星期五|周五) at (\\d{1,2}:\\d{2}:\\d{2}\\s*[AP]M|\\d{1,2}:\\d{2}\\s*[AP]M|[上下]午\\s*\\d{1,2}:\\d{2}:\\d{2}|[上下]午\\s*\\d{1,2}:\\d{2}|\\d{1,2}:\\d{2}:\\d{2}|\\d{1,2}:\\d{2})$",
     "flags": "i",
     "replacement": "周五 $1"
   },
   {
     "id": "weekday-at-saturday",
-    "pattern": "^Saturday at (\\d{1,2}:\\d{2} [AP]M)$",
+    "pattern": "^(?:Saturday|星期六|周六) at (\\d{1,2}:\\d{2}:\\d{2}\\s*[AP]M|\\d{1,2}:\\d{2}\\s*[AP]M|[上下]午\\s*\\d{1,2}:\\d{2}:\\d{2}|[上下]午\\s*\\d{1,2}:\\d{2}|\\d{1,2}:\\d{2}:\\d{2}|\\d{1,2}:\\d{2})$",
     "flags": "i",
     "replacement": "周六 $1"
   },
   {
     "id": "weekday-at-sunday",
-    "pattern": "^Sunday at (\\d{1,2}:\\d{2} [AP]M)$",
+    "pattern": "^(?:Sunday|星期日|周日) at (\\d{1,2}:\\d{2}:\\d{2}\\s*[AP]M|\\d{1,2}:\\d{2}\\s*[AP]M|[上下]午\\s*\\d{1,2}:\\d{2}:\\d{2}|[上下]午\\s*\\d{1,2}:\\d{2}|\\d{1,2}:\\d{2}:\\d{2}|\\d{1,2}:\\d{2})$",
     "flags": "i",
     "replacement": "周日 $1"
   },
   {
     "id": "today-at",
-    "pattern": "^Today at (\\d{1,2}:\\d{2} [AP]M)$",
+    "pattern": "^Today at (\\d{1,2}:\\d{2}:\\d{2}\\s*[AP]M|\\d{1,2}:\\d{2}\\s*[AP]M|[上下]午\\s*\\d{1,2}:\\d{2}:\\d{2}|[上下]午\\s*\\d{1,2}:\\d{2}|\\d{1,2}:\\d{2}:\\d{2}|\\d{1,2}:\\d{2})$",
     "flags": "i",
     "replacement": "今天 $1"
   },
   {
     "id": "yesterday-at",
-    "pattern": "^Yesterday at (\\d{1,2}:\\d{2} [AP]M)$",
+    "pattern": "^Yesterday at (\\d{1,2}:\\d{2}:\\d{2}\\s*[AP]M|\\d{1,2}:\\d{2}\\s*[AP]M|[上下]午\\s*\\d{1,2}:\\d{2}:\\d{2}|[上下]午\\s*\\d{1,2}:\\d{2}|\\d{1,2}:\\d{2}:\\d{2}|\\d{1,2}:\\d{2})$",
     "flags": "i",
     "replacement": "昨天 $1"
   },
@@ -9340,5 +9346,53 @@
     "pattern": "^HTTP (\\d+) [A-Za-z][\\s\\S]*$",
     "flags": "",
     "replacement": "HTTP $1"
+  },
+  {
+    "id": "created-absolute",
+    "pattern": "^Created (January|Jan|February|Feb|March|Mar|April|Apr|May|June|Jun|July|Jul|August|Aug|September|Sept|Sep|October|Oct|November|Nov|December|Dec) (\\d{1,2}), (\\d{4}), (\\d{1,2}:\\d{2}:\\d{2}\\s*[AP]M|\\d{1,2}:\\d{2}\\s*[AP]M|[上下]午\\s*\\d{1,2}:\\d{2}:\\d{2}|[上下]午\\s*\\d{1,2}:\\d{2}|\\d{1,2}:\\d{2}:\\d{2}|\\d{1,2}:\\d{2})$",
+    "flags": "i",
+    "replacement": "创建于 $1 $2, $3 $4"
+  },
+  {
+    "id": "created-absolute-zh",
+    "pattern": "^Created (\\d{4}年\\d{1,2}月\\d{1,2}日) (\\d{1,2}:\\d{2}:\\d{2}\\s*[AP]M|\\d{1,2}:\\d{2}\\s*[AP]M|[上下]午\\s*\\d{1,2}:\\d{2}:\\d{2}|[上下]午\\s*\\d{1,2}:\\d{2}|\\d{1,2}:\\d{2}:\\d{2}|\\d{1,2}:\\d{2})$",
+    "flags": "i",
+    "replacement": "创建于 $1 $2"
+  },
+  {
+    "id": "last-accessed-absolute",
+    "pattern": "^Last accessed (January|Jan|February|Feb|March|Mar|April|Apr|May|June|Jun|July|Jul|August|Aug|September|Sept|Sep|October|Oct|November|Nov|December|Dec) (\\d{1,2}), (\\d{4}), (\\d{1,2}:\\d{2}:\\d{2}\\s*[AP]M|\\d{1,2}:\\d{2}\\s*[AP]M|[上下]午\\s*\\d{1,2}:\\d{2}:\\d{2}|[上下]午\\s*\\d{1,2}:\\d{2}|\\d{1,2}:\\d{2}:\\d{2}|\\d{1,2}:\\d{2})$",
+    "flags": "i",
+    "replacement": "上次访问于 $1 $2, $3 $4"
+  },
+  {
+    "id": "last-accessed-absolute-zh",
+    "pattern": "^Last accessed (\\d{4}年\\d{1,2}月\\d{1,2}日) (\\d{1,2}:\\d{2}:\\d{2}\\s*[AP]M|\\d{1,2}:\\d{2}\\s*[AP]M|[上下]午\\s*\\d{1,2}:\\d{2}:\\d{2}|[上下]午\\s*\\d{1,2}:\\d{2}|\\d{1,2}:\\d{2}:\\d{2}|\\d{1,2}:\\d{2})$",
+    "flags": "i",
+    "replacement": "上次访问于 $1 $2"
+  },
+  {
+    "id": "preview-of-branch",
+    "pattern": "^Preview of Branch$",
+    "flags": "",
+    "replacement": "“分支”预览"
+  },
+  {
+    "id": "select-project-aria",
+    "pattern": "^(.+), select project$",
+    "flags": "",
+    "replacement": "$1，选择项目"
+  },
+  {
+    "id": "branch-menu-aria",
+    "pattern": "^Branch (.+), open branch menu$",
+    "flags": "",
+    "replacement": "分支 $1，打开分支菜单"
+  },
+  {
+    "id": "cn-seconds-ago",
+    "pattern": "^(\\d+)秒钟前$",
+    "flags": "",
+    "replacement": "$1秒前"
   }
 ]

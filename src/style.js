@@ -4,7 +4,7 @@
 
 const HAN_LATIN = /[\u4e00-\u9fff][A-Za-z]|[A-Za-z][\u4e00-\u9fff]/;
 const HALF_PUNCT = /[\u4e00-\u9fff]\s*[,:;!?]|[,:;!?]\s*[\u4e00-\u9fff]/;
-const DATE_SPACE = /\d 月|\d 年|月 \d|月 \$(?:\{\d+\}|\d+)\s*日|\$\d+ 日|\d 日|[\u4e00-\u9fff] \d+月|[\u4e00-\u9fff] \d+年/;
+const DATE_SPACE = /\d 月|\d 年(?!前)|月 \d|月 \$(?:\{\d+\}|\d+)\s*日|\$\d+ 日|\d 日|[\u4e00-\u9fff] \d+月|[\u4e00-\u9fff] \d+年/;
 const HALF_PAREN = /[\u4e00-\u9fff][ \t]*\(|\([\u4e00-\u9fff]|[\u4e00-\u9fff][ \t]*\)|\)[ \t]*[\u4e00-\u9fff]/;
 const CODE_CALL = /\$\([^)\n]*\)|\b[\w$]+(?:\.[\w$]+)+\([^)\n]*\)|\b[A-Za-z_][\w$]*\([^)\n]*\)|\(\d+,\s*\d+\)/g;
 // Code calls stay half-width: render(), editor.update(), $(basename).

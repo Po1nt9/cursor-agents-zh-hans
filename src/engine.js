@@ -368,6 +368,7 @@ const MONTH_NAME = 'Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e
 const FULL_DATE = new RegExp(`\\b(${MONTH_NAME})\\s+(\\d{1,2}),\\s+(\\d{4})(?:,\\s+(\\d{1,2}):(\\d{2})(?::(\\d{2}))?\\s*(AM|PM))?\\b`, 'gi');
 const MONTH_DAY = new RegExp(`\\b(${MONTH_NAME})\\s+(\\d{1,2})\\b`, 'gi');
 const CLOCK = /\b(\d{1,2}):(\d{2})(?::(\d{2}))?\s*([AP]M)\b/gi;
+const CN_CLOCK = /([上下])午\s*(\d{1,2}):(\d{2})(?::(\d{2}))?/g;
 
 // "Oct 17, 2026, 10:15 PM" → "2026年10月17日 22:15". Month and day stay unpadded.
 function monthNumber(name) {
@@ -397,19 +398,30 @@ export function localizeEmbeddedDates(text) {
   });
 }
 
-// "10:15 AM" → "10:15", "2:14 PM" → "14:14". A dictionary replacement cannot add 12.
+function clock24(hour, minute, second, half) {
+  let h = Number(hour);
+  if (half === 'PM' || half === '下') {
+    if (h < 12) h += 12;
+  } else if ((half === 'AM' || half === '上') && h === 12) {
+    h = 0;
+  }
+  let out = `${String(h).padStart(2, '0')}:${minute}`;
+  if (second != null && second !== '') out += `:${second}`;
+  return out;
+}
+
+// "10:15 AM" / "2:14 PM" / "下午10:15" → 24-hour. A dictionary replacement cannot add 12.
 export function localizeClocks(text) {
   if (typeof text !== 'string' || !text) return text;
   CLOCK.lastIndex = 0;
-  return text.replace(CLOCK, (all, hour, minute, second, ampm) => {
-    let h = Number(hour);
-    const ap = String(ampm).toUpperCase();
-    if (ap === 'PM' && h < 12) h += 12;
-    if (ap === 'AM' && h === 12) h = 0;
-    let out = `${String(h).padStart(2, '0')}:${minute}`;
-    if (second != null && second !== '') out += `:${second}`;
-    return out;
-  });
+  CN_CLOCK.lastIndex = 0;
+  const ampm = text.replace(CLOCK, (all, hour, minute, second, half) => (
+    clock24(hour, minute, second, String(half).toUpperCase())
+  ));
+  CN_CLOCK.lastIndex = 0;
+  return ampm.replace(CN_CLOCK, (all, half, hour, minute, second) => (
+    clock24(hour, minute, second, half)
+  ));
 }
 
 // True when nothing but a date or a clock would remain. An English sentence
@@ -419,8 +431,17 @@ function dateOnlyText(text) {
   FULL_DATE.lastIndex = 0;
   MONTH_DAY.lastIndex = 0;
   CLOCK.lastIndex = 0;
-  const stripped = text.replace(FULL_DATE, ' ').replace(MONTH_DAY, ' ').replace(CLOCK, ' ');
+  CN_CLOCK.lastIndex = 0;
+  const stripped = text
+    .replace(FULL_DATE, ' ')
+    .replace(MONTH_DAY, ' ')
+    .replace(CLOCK, ' ')
+    .replace(CN_CLOCK, ' ');
   return !/[A-Za-z]{2,}/.test(stripped);
+}
+
+function foldDigits(text) {
+  return text.replace(/[\uFF10-\uFF19]/g, (ch) => String(ch.charCodeAt(0) - 0xFF10));
 }
 
 export function localizeArrowKeys(text) {
@@ -496,7 +517,7 @@ export function translateText(input, dictionary, depth = 2, seen = null) {
   }
   const loop = seen || new Set();
   // Zero-width characters sit on labels such as "High Fast". They are not part of the key.
-  const source = input.replace(ZERO_WIDTH, '');
+  const source = foldDigits(input.replace(ZERO_WIDTH, ''));
   const match = /^(\s*)([\s\S]*?)(\s*)$/.exec(source);
   const lead = match[1];
   const core = match[2];

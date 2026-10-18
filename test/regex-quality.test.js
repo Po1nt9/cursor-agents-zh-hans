@@ -118,7 +118,7 @@ test('field types, themes, resume, and the remaining review strings', () => {
   );
   assert.equal(
     translateText('Agent Review: Off under private inference', compiled).text,
-    '智能体审查：私密推理模式下已关闭',
+    '智能体审查：私有推理模式下已关闭',
   );
   assert.equal(
     translateText('Failed to add plugin to marketplace: Foo', compiled).text,
@@ -290,7 +290,8 @@ test('field types, themes, resume, and the remaining review strings', () => {
 test('dates stay inside English sentences and usage lines translate whole', () => {
   assert.equal(translateText('Nov 1', compiled).text, '11月1日');
   assert.equal(translateText('Oct 17, 2026, 10:15 PM', compiled).text, '2026年10月17日 22:15');
-  assert.equal(translateText('Created Oct 17, 2026, 10:15 PM', compiled).text, 'Created Oct 17, 2026, 10:15 PM');
+  assert.equal(translateText('Created Oct 17, 2026, 10:15 PM', compiled).text, '创建于 2026年10月17日 22:15');
+  assert.equal(translateText('Created tasks', compiled).text, 'Created tasks');
   assert.equal(translateText('See you on November 1 for the review.', compiled).text, 'See you on November 1 for the review.');
   assert.equal(translateText('Meet at 10:15 AM tomorrow', compiled).text, 'Meet at 10:15 AM tomorrow');
   assert.equal(translateText('10:15 AM', compiled).text, '10:15');
@@ -400,6 +401,169 @@ test('a multiline block stays consistent unless every line translates', () => {
   const noticeZh = translateText(notice, compiled).text;
   assert.match(noticeZh, /^扩展宿主启动超时。\n\n请重新加载窗口后再试/);
   assert.doesNotMatch(noticeZh, /Reload the window/);
+});
+
+test('date and time rules accept both en-US and zh-CN formats', () => {
+  const evening = new Date(2026, 9, 17, 22, 15);
+  const morning = new Date(2026, 10, 1, 10, 15);
+  const absolute = { month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true };
+  const longDay = { month: 'long', day: 'numeric' };
+  const shortDay = { month: 'short', day: 'numeric' };
+  const clock = { hour: 'numeric', minute: '2-digit' };
+  const clock12 = { hour: 'numeric', minute: '2-digit', hour12: true };
+  const weekday = { weekday: 'long' };
+
+  function pair(date, options) {
+    return {
+      en: new Intl.DateTimeFormat('en-US', options).format(date),
+      zh: new Intl.DateTimeFormat('zh-CN', options).format(date),
+    };
+  }
+
+  function same(build, expected) {
+    const samples = typeof build === 'function' ? null : build;
+    if (samples) {
+      assert.notEqual(samples.en, samples.zh);
+      assert.equal(translateText(samples.en, compiled).text, expected);
+      assert.equal(translateText(samples.zh, compiled).text, expected);
+      return;
+    }
+    const en = build('en-US');
+    const zh = build('zh-CN');
+    assert.notEqual(en, zh);
+    assert.equal(translateText(en, compiled).text, expected);
+    assert.equal(translateText(zh, compiled).text, expected);
+  }
+
+  const abs = pair(evening, absolute);
+  same(
+    { en: `Created ${abs.en}`, zh: `Created ${abs.zh}` },
+    '创建于 2026年10月17日 22:15',
+  );
+  same(
+    { en: `Last accessed ${abs.en}`, zh: `Last accessed ${abs.zh}` },
+    '上次访问于 2026年10月17日 22:15',
+  );
+  assert.equal(translateText('Last accessed by the owner', compiled).text, 'Last accessed by the owner');
+  assert.equal(translateText('Created 2026年10月17日 22:15', compiled).text, '创建于 2026年10月17日 22:15');
+  assert.equal(translateText('Last accessed 2026年10月17日 22:15', compiled).text, '上次访问于 2026年10月17日 22:15');
+
+  const resetDay = pair(morning, longDay);
+  same(
+    { en: `Your usage resets on ${resetDay.en} (13 days).`, zh: `Your usage resets on ${resetDay.zh} (13 days).` },
+    '你的用量将于 11月1日重置（13 天后）。',
+  );
+  same(
+    { en: `Your usage resets on ${resetDay.en}.`, zh: `Your usage resets on ${resetDay.zh}.` },
+    '你的用量将于 11月1日重置。',
+  );
+  same(
+    { en: `You're paused until your usage resets on ${resetDay.en}.`, zh: `You're paused until your usage resets on ${resetDay.zh}.` },
+    '已暂停，直到用量于 11月1日重置。',
+  );
+  same(
+    { en: `Resets ${resetDay.en}`, zh: `Resets ${resetDay.zh}` },
+    '11月1日重置',
+  );
+  same(
+    { en: `Usage · Resets ${pair(morning, shortDay).en}`, zh: `Usage · Resets ${pair(morning, shortDay).zh}` },
+    '用量 · 11月1日重置',
+  );
+
+  const used = pair(evening, shortDay);
+  same(
+    { en: `Updated ${used.en}`, zh: `Updated ${used.zh}` },
+    '更新于 10月17日',
+  );
+  same(
+    { en: `Paired with this computer · Last used ${used.en}`, zh: `Paired with this computer · Last used ${used.zh}` },
+    '已与这台计算机配对 · 上次使用 10月17日',
+  );
+
+  const time = pair(evening, clock);
+  const time12 = pair(evening, clock12);
+  same(
+    { en: `Today at ${time.en}`, zh: `Today at ${time.zh}` },
+    '今天 22:15',
+  );
+  same(
+    { en: `Today at ${time12.en}`, zh: `Today at ${time12.zh}` },
+    '今天 22:15',
+  );
+  same(
+    { en: `Yesterday at ${time.en}`, zh: `Yesterday at ${time.zh}` },
+    '昨天 22:15',
+  );
+  const dayName = pair(evening, weekday);
+  same(
+    { en: `${dayName.en} at ${time.en}`, zh: `${dayName.zh} at ${time.zh}` },
+    '周六 22:15',
+  );
+  same(
+    { en: `${dayName.en} at ${time12.en}`, zh: `${dayName.zh} at ${time12.zh}` },
+    '周六 22:15',
+  );
+  const stamped = pair(evening, { month: 'short', day: 'numeric', year: 'numeric' });
+  same(
+    { en: `${stamped.en} at ${time.en}`, zh: `${stamped.zh} at ${time.zh}` },
+    '2026年10月17日 22:15',
+  );
+
+  same(
+    (locale) => `Updated ${new Intl.RelativeTimeFormat(locale, { numeric: 'always' }).format(-5, 'minute')}`,
+    '5 分钟前更新',
+  );
+  same(
+    (locale) => `Updated ${new Intl.RelativeTimeFormat(locale, { numeric: 'always' }).format(-5, 'year')}`,
+    '5 年前更新',
+  );
+  same(
+    (locale) => new Intl.RelativeTimeFormat(locale, { numeric: 'always' }).format(-5, 'minute'),
+    '5分钟前',
+  );
+  same(
+    (locale) => new Intl.RelativeTimeFormat(locale, { numeric: 'always' }).format(-5, 'second'),
+    '5秒前',
+  );
+  same(
+    (locale) => new Intl.RelativeTimeFormat(locale, { numeric: 'always' }).format(-3, 'day'),
+    '3天前',
+  );
+  same(
+    (locale) => new Intl.RelativeTimeFormat(locale, { numeric: 'auto' }).format(-1, 'day'),
+    '昨天',
+  );
+  same(
+    (locale) => new Intl.RelativeTimeFormat(locale, { numeric: 'auto' }).format(-1, 'week'),
+    '上周',
+  );
+  same(
+    (locale) => `Paired with this computer · Last used ${new Intl.RelativeTimeFormat(locale, { numeric: 'always' }).format(-5, 'minute')}`,
+    '已与这台计算机配对 · 上次使用 5分钟前',
+  );
+  same(
+    { en: 'Weekly usage resets on November 1 (7 days left)', zh: 'Weekly usage resets on 11月1日 (7 days left)' },
+    '每周用量将于11月1日重置（还剩 7 天）',
+  );
+
+  assert.equal(translateText('Failed to capture screenshot', compiled).text, '无法捕获截图');
+  assert.equal(translateText('No Repo, select project', compiled).text, '无仓库，选择项目');
+  assert.equal(translateText('Branch main, open branch menu', compiled).text, '分支 main，打开分支菜单');
+  assert.equal(translateText('Preview of Branch', compiled).text, '“分支”预览');
+  assert.equal(translateText('Off under private inference', compiled).text, '私有推理模式下已关闭');
+  assert.equal(translateText('Updated 5y ago', compiled).text, '5 年前更新');
+  assert.equal(
+    translateText('True when the EXPLORER viewlet is visible.', compiled).text,
+    '当资源管理器 Viewlet 可见时为 True。',
+  );
+  assert.equal(
+    translateText('True when the focused item in the EXPLORER is a folder.', compiled).text,
+    '如果资源管理器中的焦点项是文件夹，则为 True。',
+  );
+  assert.equal(
+    translateText('Your usage resets on November １３ (１３ days).', compiled).text,
+    '你的用量将于 11月13日重置（13 天后）。',
+  );
 });
 
 test('replacements keep every capture and do not drop a dollar amount', () => {
