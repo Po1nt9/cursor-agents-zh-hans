@@ -1,0 +1,42 @@
+[
+  {
+    "from": "Agents Window",
+    "to": "智能体窗口"
+  },
+  {
+    "from": "Cloud Agent",
+    "to": "云端智能体"
+  },
+  {
+    "from": "Cloud Agents",
+    "to": "云端智能体"
+  },
+  {
+    "from": "Cloud agent",
+    "to": "云端智能体"
+  },
+  {
+    "from": "New Agent",
+    "to": "新建智能体"
+  },
+  {
+    "from": "New Chat",
+    "to": "新建聊天"
+  },
+  {
+    "from": "Open in IDE",
+    "to": "在 IDE 中打开"
+  },
+  {
+    "from": "Pull Request",
+    "to": "拉取请求"
+  },
+  {
+    "from": "pull request",
+    "to": "拉取请求"
+  },
+  {
+    "from": "side chat",
+    "to": "侧边聊天"
+  }
+]

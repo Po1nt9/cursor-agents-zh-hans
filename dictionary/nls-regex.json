@@ -1,0 +1,824 @@
+[
+  {
+    "id": "nls-inputBox-alertErrorMessage",
+    "pattern": "^Error: (.+)$",
+    "flags": "",
+    "replacement": "错误：$1"
+  },
+  {
+    "id": "nls-inputBox-alertWarningMessage",
+    "pattern": "^Warning: (.+)$",
+    "flags": "",
+    "replacement": "警告：$1"
+  },
+  {
+    "id": "nls-links-invalid-url",
+    "pattern": "^Failed to open this link because it is not well-formed: (.+)$",
+    "flags": "",
+    "replacement": "此链接格式不正确，无法打开：$1"
+  },
+  {
+    "id": "nls-configurationRegistry-config-property-languageDefault",
+    "pattern": "^Cannot register '(.+)'\\. This matches property pattern '\\\\\\\\\\[\\.\\*\\\\\\\\\\]\\$' for describing language specific editor settings\\. Use 'configurationDefaults' contribution\\.$",
+    "flags": "",
+    "replacement": "无法注册“$1”。它与描述特定语言编辑器设置的模式“\\[.*\\]$”匹配。请使用“configurationDefaults”。"
+  },
+  {
+    "id": "nls-configurationRegistry-config-property-duplicate",
+    "pattern": "^Cannot register '(.+)'\\. This property is already registered\\.$",
+    "flags": "",
+    "replacement": "无法注册“$1”。此属性已注册。"
+  },
+  {
+    "id": "nls-dialogs-moreFiles",
+    "pattern": "^\\.\\.\\.(.+) additional files not shown$",
+    "flags": "",
+    "replacement": "…另有 $1 个文件未显示"
+  },
+  {
+    "id": "nls-argvHelper-unknownOption",
+    "pattern": "^Warning: '(.+)' is not in the list of known options, but still passed to Electron/Chromium\\.$",
+    "flags": "",
+    "replacement": "警告：“$1”不在已知选项列表中，但仍传递给 Electron/Chromium。"
+  },
+  {
+    "id": "nls-abstractExtensionManagementService-malicious-extension",
+    "pattern": "^Can't install '(.+)' extension since it was reported to be problematic\\.$",
+    "flags": "",
+    "replacement": "无法安装“$1”扩展，因为有报告指出它存在问题。"
+  },
+  {
+    "id": "nls-abstractExtensionManagementService-notFoundReleaseExtension",
+    "pattern": "^Can't install release version of '(.+)' extension because it has no release version\\.$",
+    "flags": "",
+    "replacement": "“$1”扩展没有正式版，无法安装。"
+  },
+  {
+    "id": "nls-extensionManagementService-invalidManifest",
+    "pattern": "^Cannot install '(.+)' extension because of manifest mismatch with Marketplace$",
+    "flags": "",
+    "replacement": "无法安装“$1”扩展，因为清单与市场不匹配"
+  },
+  {
+    "id": "nls-extensionManagementService-cannot-read",
+    "pattern": "^Cannot read the extension from (.+)$",
+    "flags": "",
+    "replacement": "无法从 $1 读取扩展"
+  },
+  {
+    "id": "nls-extensionManagementService-restartCode",
+    "pattern": "^Please restart VS Code before reinstalling (.+)\\.$",
+    "flags": "",
+    "replacement": "请在重新安装$1之前重新启动 VS Code。"
+  },
+  {
+    "id": "nls-extensionValidator-versionSyntax",
+    "pattern": "^Could not parse `engines\\.vscode` value (.+)\\. Please use, for example: \\^1\\.22\\.0, \\^1\\.22\\.x, etc\\.$",
+    "flags": "",
+    "replacement": "无法解析“engines.vscode”的值 $1。请使用 ^1.22.0、^1.22.x 等格式。"
+  },
+  {
+    "id": "nls-externalTerminalService-ext-term-app-not-found",
+    "pattern": "^can't find terminal application '(.+)'$",
+    "flags": "",
+    "replacement": "找不到终端应用程序“$1”"
+  },
+  {
+    "id": "nls-fileService-invalidPath",
+    "pattern": "^Unable to resolve filesystem provider with relative file path '(.+)'$",
+    "flags": "",
+    "replacement": "无法为相对路径“$1”解析文件系统提供程序"
+  },
+  {
+    "id": "nls-fileService-fileNotFoundError",
+    "pattern": "^Unable to resolve nonexistent file '(.+)'$",
+    "flags": "",
+    "replacement": "无法解析不存在的文件“$1”"
+  },
+  {
+    "id": "nls-fileService-fileExists",
+    "pattern": "^Unable to create file '(.+)' that already exists when overwrite flag is not set$",
+    "flags": "",
+    "replacement": "如果未设置覆盖标记，则无法创建文件“$1”，因为它已存在"
+  },
+  {
+    "id": "nls-fileService-writeFailedUnlockUnsupported",
+    "pattern": "^Unable to unlock file '(.+)' because provider does not support it\\.$",
+    "flags": "",
+    "replacement": "无法解锁文件“$1”，因为提供程序不支持它。"
+  },
+  {
+    "id": "nls-fileService-writeFailedAtomicUnsupported1",
+    "pattern": "^Unable to atomically write file '(.+)' because provider does not support it\\.$",
+    "flags": "",
+    "replacement": "无法以原子方式写入文件“$1”，因为提供程序不支持。"
+  },
+  {
+    "id": "nls-fileService-writeFailedAtomicUnsupported2",
+    "pattern": "^Unable to atomically write file '(.+)' because provider does not support unbuffered writes\\.$",
+    "flags": "",
+    "replacement": "无法以原子方式写入文件“$1”，因为提供程序不支持无缓冲写入。"
+  },
+  {
+    "id": "nls-fileService-writeFailedAtomicUnlock",
+    "pattern": "^Unable to unlock file '(.+)' because atomic write is enabled\\.$",
+    "flags": "",
+    "replacement": "无法解锁文件“$1”，因为已启用原子写入。"
+  },
+  {
+    "id": "nls-fileService-fileIsDirectoryWriteError",
+    "pattern": "^Unable to write file '(.+)' that is actually a directory$",
+    "flags": "",
+    "replacement": "无法写入“$1”，因为它是目录"
+  },
+  {
+    "id": "nls-fileService-fileIsDirectoryReadError",
+    "pattern": "^Unable to read file '(.+)' that is actually a directory$",
+    "flags": "",
+    "replacement": "无法读取“$1”，因为它是目录"
+  },
+  {
+    "id": "nls-fileService-fileTooLargeError",
+    "pattern": "^Unable to read file '(.+)' that is too large to open$",
+    "flags": "",
+    "replacement": "无法读取文件“$1”，该文件太大，无法打开"
+  },
+  {
+    "id": "nls-fileService-mkdirExistsError",
+    "pattern": "^Unable to create folder '(.+)' that already exists but is not a directory$",
+    "flags": "",
+    "replacement": "无法创建文件夹“$1”：同名项已存在且不是目录"
+  },
+  {
+    "id": "nls-fileService-deleteFailedTrashUnsupported",
+    "pattern": "^Unable to delete file '(.+)' via trash because provider does not support it\\.$",
+    "flags": "",
+    "replacement": "无法通过回收站删除文件“$1”，因为提供程序不支持。"
+  },
+  {
+    "id": "nls-fileService-deleteFailedAtomicUnsupported",
+    "pattern": "^Unable to delete file '(.+)' atomically because provider does not support it\\.$",
+    "flags": "",
+    "replacement": "无法以原子方式删除文件“$1”，因为提供程序不支持。"
+  },
+  {
+    "id": "nls-fileService-deleteFailedTrashAndAtomicUnsupported",
+    "pattern": "^Unable to atomically delete file '(.+)' because using trash is enabled\\.$",
+    "flags": "",
+    "replacement": "无法以原子方式删除文件“$1”，因为已启用回收站。"
+  },
+  {
+    "id": "nls-fileService-deleteFailedNotFound",
+    "pattern": "^Unable to delete nonexistent file '(.+)'$",
+    "flags": "",
+    "replacement": "无法删除不存在的文件“$1”"
+  },
+  {
+    "id": "nls-fileService-deleteFailedNonEmptyFolder",
+    "pattern": "^Unable to delete non-empty folder '(.+)'\\.$",
+    "flags": "",
+    "replacement": "无法删除非空文件夹“$1”。"
+  },
+  {
+    "id": "nls-fileService-err-readonly",
+    "pattern": "^Unable to modify read-only file '(.+)'$",
+    "flags": "",
+    "replacement": "无法修改只读文件“$1”"
+  },
+  {
+    "id": "nls-nativeHostMainService-sourceMissing",
+    "pattern": "^Unable to find shell script in '(.+)'$",
+    "flags": "",
+    "replacement": "在“$1”中找不到 shell 脚本"
+  },
+  {
+    "id": "nls-nativeHostMainService-cantCreateBinFolder",
+    "pattern": "^Unable to install the shell command '(.+)'\\.$",
+    "flags": "",
+    "replacement": "无法安装 Shell 命令“$1”。"
+  },
+  {
+    "id": "nls-nativeHostMainService-cantUninstall",
+    "pattern": "^Unable to uninstall the shell command '(.+)'\\.$",
+    "flags": "",
+    "replacement": "无法卸载 Shell 命令“$1”。"
+  },
+  {
+    "id": "nls-shellEnv-resolveShellEnvError",
+    "pattern": "^Unable to resolve your shell environment: (.+)$",
+    "flags": "",
+    "replacement": "无法解析 shell 环境：$1"
+  },
+  {
+    "id": "nls-undoRedoService-cannotWorkspaceUndoDueToInMeantimeUndoRedo",
+    "pattern": "^Could not undo '(.+)' across all files because an undo or redo operation occurred in the meantime$",
+    "flags": "",
+    "replacement": "无法跨所有文件撤消“$1”，因为期间发生了撤消或重做操作"
+  },
+  {
+    "id": "nls-undoRedoService-cannotResourceUndoDueToInProgressUndoRedo",
+    "pattern": "^Could not undo '(.+)' because there is already an undo or redo operation running\\.$",
+    "flags": "",
+    "replacement": "无法撤消“$1”，因为已有撤消或重做操作正在运行。"
+  },
+  {
+    "id": "nls-undoRedoService-cannotWorkspaceRedoDueToInMeantimeUndoRedo",
+    "pattern": "^Could not redo '(.+)' across all files because an undo or redo operation occurred in the meantime$",
+    "flags": "",
+    "replacement": "无法跨所有文件重做“$1”，因为同时发生了一项撤消或重做操作"
+  },
+  {
+    "id": "nls-undoRedoService-cannotResourceRedoDueToInProgressUndoRedo",
+    "pattern": "^Could not redo '(.+)' because there is already an undo or redo operation running\\.$",
+    "flags": "",
+    "replacement": "无法重做“$1”，因为已有一项撤消或重做操作正在运行。"
+  },
+  {
+    "id": "nls-workspacesManagementMainService-workspaceOpenedMessage",
+    "pattern": "^Unable to save workspace '(.+)'$",
+    "flags": "",
+    "replacement": "无法保存工作区“$1”"
+  },
+  {
+    "id": "nls-mainThreadCLICommands-cannot-be-installed",
+    "pattern": "^Cannot install the '(.+)' extension because it is declared to not run in this setup\\.$",
+    "flags": "",
+    "replacement": "无法安装“$1”扩展，因为它声明不在当前环境中运行。"
+  },
+  {
+    "id": "nls-mainThreadWebviews-errorMessage",
+    "pattern": "^An error occurred while loading view: (.+)$",
+    "flags": "",
+    "replacement": "加载视图时出错：$1"
+  },
+  {
+    "id": "nls-viewsExtensionPoint-duplicateView1",
+    "pattern": "^Cannot register multiple views with same id `(.+)`$",
+    "flags": "",
+    "replacement": "无法注册具有相同 ID“$1”的多个视图"
+  },
+  {
+    "id": "nls-configurationExtensionPoint-config-property-preventDefaultConfiguration-warn",
+    "pattern": "^Cannot register configuration defaults for '(.+)'\\. This setting does not allow contributing configuration defaults\\.$",
+    "flags": "",
+    "replacement": "无法注册“$1”的配置默认值。此设置不允许提供配置默认值。"
+  },
+  {
+    "id": "nls-configurationExtensionPoint-config-property-defaultConfiguration-warning",
+    "pattern": "^Cannot register configuration defaults for '(.+)'\\. Only defaults for machine-overridable, window, resource and language overridable scoped settings are supported\\.$",
+    "flags": "",
+    "replacement": "无法注册“$1”的配置默认值。仅支持可按计算机覆盖、窗口、资源和可按语言覆盖作用域的设置。"
+  },
+  {
+    "id": "nls-extHostTerminalService-launchFail-idMissingOnExtHost",
+    "pattern": "^Could not find the terminal with id (.+) on the extension host$",
+    "flags": "",
+    "replacement": "在扩展宿主上找不到 ID 为 $1 的终端"
+  },
+  {
+    "id": "nls-editorPanes-editorOpenErrorDialog",
+    "pattern": "^Unable to open '(.+)'$",
+    "flags": "",
+    "replacement": "无法打开“$1”"
+  },
+  {
+    "id": "nls-notificationsAlerts-alertInfoMessage",
+    "pattern": "^Info: (.+)$",
+    "flags": "",
+    "replacement": "信息：$1"
+  },
+  {
+    "id": "nls-notificationsList-notificationAccessibleViewHint",
+    "pattern": "^Inspect the response in the accessible view with (.+)$",
+    "flags": "",
+    "replacement": "使用 $1 检查辅助视图中的响应"
+  },
+  {
+    "id": "nls-notificationsList-notificationAriaLabel",
+    "pattern": "^(.+), notification$",
+    "flags": "",
+    "replacement": "$1，通知"
+  },
+  {
+    "id": "nls-notificationsStatus-notifications",
+    "pattern": "^(.+) New Notifications$",
+    "flags": "",
+    "replacement": "$1 条新通知"
+  },
+  {
+    "id": "nls-notificationsStatus-noNotificationsWithProgress",
+    "pattern": "^No New Notifications \\((.+) in progress\\)$",
+    "flags": "",
+    "replacement": "无新通知（$1 正在进行中）"
+  },
+  {
+    "id": "nls-notificationsStatus-oneNotificationWithProgress",
+    "pattern": "^1 New Notification \\((.+) in progress\\)$",
+    "flags": "",
+    "replacement": "1 条新通知（$1 条正在进行中）"
+  },
+  {
+    "id": "nls-notificationsViewer-executeCommand",
+    "pattern": "^Click to execute command '(.+)'$",
+    "flags": "",
+    "replacement": "点击以执行命令“$1”"
+  },
+  {
+    "id": "nls-notificationsViewer-turnOnNotifications",
+    "pattern": "^Turn On All Notifications from '(.+)'$",
+    "flags": "",
+    "replacement": "启用来自“$1”的所有通知"
+  },
+  {
+    "id": "nls-notificationsViewer-turnOffNotifications",
+    "pattern": "^Turn Off Info and Warning Notifications from '(.+)'$",
+    "flags": "",
+    "replacement": "禁用来自“$1”的信息和警告通知"
+  },
+  {
+    "id": "nls-notificationsViewer-notificationSource",
+    "pattern": "^Source: (.+)$",
+    "flags": "",
+    "replacement": "来源：$1"
+  },
+  {
+    "id": "nls-bulkEditPane-conflict-1",
+    "pattern": "^Cannot apply refactoring because '(.+)' has changed in the meantime\\.$",
+    "flags": "",
+    "replacement": "无法应用重构，因为“$1”在此期间已更改。"
+  },
+  {
+    "id": "nls-bulkEditPane-conflict-N",
+    "pattern": "^Cannot apply refactoring because (.+) other files have changed in the meantime\\.$",
+    "flags": "",
+    "replacement": "无法应用重构，因为在此期间另有 $1 个文件已更改。"
+  },
+  {
+    "id": "nls-customEditorInput-editorCannotMove",
+    "pattern": "^Unable to move '(.+)': The editor contains changes that can only be saved in its current window\\.$",
+    "flags": "",
+    "replacement": "无法移动“$1”：编辑器包含只能保存在其当前窗口中的更改。"
+  },
+  {
+    "id": "nls-callStackWidget-failedToLoadFrames",
+    "pattern": "^Failed to load stack frames: (.+)$",
+    "flags": "",
+    "replacement": "无法加载堆栈帧：$1"
+  },
+  {
+    "id": "nls-debugConfigurationManager-DebugConfig-failed",
+    "pattern": "^Unable to create 'launch\\.json' file inside the '\\.vscode' folder \\((.+)\\)\\.$",
+    "flags": "",
+    "replacement": "无法在“.vscode”文件夹（$1）中创建“launch.json”文件。"
+  },
+  {
+    "id": "nls-debugService-noConfigurationNameInWorkspace",
+    "pattern": "^Could not find launch configuration '(.+)' in the workspace\\.$",
+    "flags": "",
+    "replacement": "在工作区中找不到启动配置“$1”。"
+  },
+  {
+    "id": "nls-debugTaskRunner-DebugTaskNotFoundWithTaskId",
+    "pattern": "^Could not find the task '(.+)'\\.$",
+    "flags": "",
+    "replacement": "找不到任务“$1”。"
+  },
+  {
+    "id": "nls-debugContentProvider-canNotResolveSource",
+    "pattern": "^Could not load source '(.+)'\\.$",
+    "flags": "",
+    "replacement": "无法加载源“$1”。"
+  },
+  {
+    "id": "nls-debugger-cannot-find-da",
+    "pattern": "^Cannot find debug adapter for type '(.+)'\\.$",
+    "flags": "",
+    "replacement": "找不到类型为“$1”的调试适配器。"
+  },
+  {
+    "id": "nls-debugAdapter-debugAdapterCannotDetermineExecutable",
+    "pattern": "^Cannot determine executable for debug adapter '(.+)'\\.$",
+    "flags": "",
+    "replacement": "无法确定调试适配器“$1”的可执行文件。"
+  },
+  {
+    "id": "nls-debugAdapter-unableToLaunchDebugAdapter",
+    "pattern": "^Unable to launch debug adapter from '(.+)'\\.$",
+    "flags": "",
+    "replacement": "无法从“$1”启动调试适配器。"
+  },
+  {
+    "id": "nls-extensionRecommendationNotificationService-extensionsFromPublisher",
+    "pattern": "^extensions from (.+)$",
+    "flags": "",
+    "replacement": "来自 $1 的扩展"
+  },
+  {
+    "id": "nls-extensionsActions-OpenExtensionsFile-failed",
+    "pattern": "^Unable to create 'extensions\\.json' file inside the '\\.vscode' folder \\((.+)\\)\\.$",
+    "flags": "",
+    "replacement": "无法在“.vscode”文件夹（$1）中创建“extensions.json”文件。"
+  },
+  {
+    "id": "nls-extensionsWorkbenchService-postUpdateRestartTooltip",
+    "pattern": "^Please restart (.+) to enable the updated extension\\.$",
+    "flags": "",
+    "replacement": "请重启 $1 以启用更新后的扩展。"
+  },
+  {
+    "id": "nls-extensionsWorkbenchService-cannot-be-installed",
+    "pattern": "^Cannot install the '(.+)' extension because it is not available in this setup\\.$",
+    "flags": "",
+    "replacement": "无法安装“$1”扩展，因为它在当前环境中不可用。"
+  },
+  {
+    "id": "nls-extensionsWorkbenchService-incompatible",
+    "pattern": "^Can't install '(.+)' extension because it is not compatible\\.$",
+    "flags": "",
+    "replacement": "无法安装“$1”扩展，因为它不兼容。"
+  },
+  {
+    "id": "nls-textFileSaveErrorHandler-staleSaveError",
+    "pattern": "^Failed to save '(.+)': The content of the file is newer\\. Please compare your version with the file contents or overwrite the content of the file with your changes\\.$",
+    "flags": "",
+    "replacement": "无法保存“$1”：文件内容较新。请比较你的版本和文件内容，或用你的更改覆盖文件。"
+  },
+  {
+    "id": "nls-textFileSaveErrorHandler-readonlySaveErrorAdmin",
+    "pattern": "^Failed to save '(.+)': File is read-only\\. Select 'Overwrite as Admin' to retry as administrator\\.$",
+    "flags": "",
+    "replacement": "无法保存“$1”：文件为只读。选择“以管理员身份覆盖”，以管理员身份重试。"
+  },
+  {
+    "id": "nls-textFileSaveErrorHandler-readonlySaveErrorSudo",
+    "pattern": "^Failed to save '(.+)': File is read-only\\. Select 'Overwrite as Sudo' to retry as superuser\\.$",
+    "flags": "",
+    "replacement": "无法保存“$1”：文件为只读。选择“以 Sudo 身份覆盖”，以超级用户身份重试。"
+  },
+  {
+    "id": "nls-textFileSaveErrorHandler-readonlySaveError",
+    "pattern": "^Failed to save '(.+)': File is read-only\\. Select 'Overwrite' to attempt to make it writeable\\.$",
+    "flags": "",
+    "replacement": "无法保存“$1”：文件为只读。选择“覆盖”尝试将其改为可写。"
+  },
+  {
+    "id": "nls-textFileSaveErrorHandler-permissionDeniedSaveError",
+    "pattern": "^Failed to save '(.+)': Insufficient permissions\\. Select 'Retry as Admin' to retry as administrator\\.$",
+    "flags": "",
+    "replacement": "无法保存“$1”：权限不足。选择“以管理员身份重试”。"
+  },
+  {
+    "id": "nls-textFileSaveErrorHandler-permissionDeniedSaveErrorSudo",
+    "pattern": "^Failed to save '(.+)': Insufficient permissions\\. Select 'Retry as Sudo' to retry as superuser\\.$",
+    "flags": "",
+    "replacement": "无法保存“$1”：权限不足。选择“以超级用户身份重试”。"
+  },
+  {
+    "id": "nls-explorerDecorationsProvider-canNotResolve",
+    "pattern": "^Unable to resolve workspace folder \\((.+)\\)$",
+    "flags": "",
+    "replacement": "无法解析工作区文件夹（$1）"
+  },
+  {
+    "id": "nls-localHistoryCommands-unableToRestore",
+    "pattern": "^Unable to restore '(.+)'\\.$",
+    "flags": "",
+    "replacement": "无法还原“$1”。"
+  },
+  {
+    "id": "nls-notebookEditor-fail-noEditor",
+    "pattern": "^Cannot open resource with notebook editor type '(.+)', please check if you have the right extension installed and enabled\\.$",
+    "flags": "",
+    "replacement": "无法打开笔记本编辑器类型为“$1”的资源，请检查是否已安装并启用正确的扩展。"
+  },
+  {
+    "id": "nls-remoteExplorer-remote-tunnelsView-notificationLink2",
+    "pattern": "^\\[See all forwarded ports\\]\\((.+)\\)$",
+    "flags": "",
+    "replacement": "[查看所有转发端口]($1)"
+  },
+  {
+    "id": "nls-remoteIndicator-unknownSetupError",
+    "pattern": "^An error occurred while setting up (.+)\\. Would you like to try again\\?$",
+    "flags": "",
+    "replacement": "设置 $1 时出错。是否要重试？"
+  },
+  {
+    "id": "nls-searchMessage-unable-to-open-trust",
+    "pattern": "^Unable to open command link from untrusted source: (.+)$",
+    "flags": "",
+    "replacement": "无法从不受信任的源打开命令链接：$1"
+  },
+  {
+    "id": "nls-searchMessage-unable-to-open",
+    "pattern": "^Unable to open unknown link: (.+)$",
+    "flags": "",
+    "replacement": "无法打开未知链接：$1"
+  },
+  {
+    "id": "nls-abstractTaskService-TaskService-providerUnavailable",
+    "pattern": "^Warning: (.+) tasks are unavailable in the current environment\\.$",
+    "flags": "",
+    "replacement": "警告：$1 任务在当前环境中不可用。"
+  },
+  {
+    "id": "nls-abstractTaskService-taskService-getSavedTasks-unresolved",
+    "pattern": "^Unable to resolve task (.+)$",
+    "flags": "",
+    "replacement": "无法解析任务 $1"
+  },
+  {
+    "id": "nls-abstractTaskService-TaskSystem-restartFailed",
+    "pattern": "^Failed to terminate and restart task (.+)$",
+    "flags": "",
+    "replacement": "无法终止并重启任务 $1"
+  },
+  {
+    "id": "nls-abstractTaskService-TaskSystem-invalidTaskJsonOther",
+    "pattern": "^Error: The content of the tasks json in (.+) has syntax errors\\. Please correct them before executing a task\\.$",
+    "flags": "",
+    "replacement": "错误：$1 中的 tasks.json 存在语法错误。请先修正再执行任务。"
+  },
+  {
+    "id": "nls-problemMatcher-ProblemPatternParser-invalidRegexp",
+    "pattern": "^Error: The string (.+) is not a valid regular expression\\.$",
+    "flags": "",
+    "replacement": "错误：字符串 $1 不是有效的正则表达式。"
+  },
+  {
+    "id": "nls-problemMatcher-ProblemMatcherParser-noProblemMatcher",
+    "pattern": "^Error: the description can't be converted into a problem matcher:\n(.+)$",
+    "flags": "",
+    "replacement": "错误：说明无法转换为问题匹配器：\n$1"
+  },
+  {
+    "id": "nls-problemMatcher-ProblemMatcherParser-noProblemPattern",
+    "pattern": "^Error: the description doesn't define a valid problem pattern:\n(.+)$",
+    "flags": "",
+    "replacement": "错误：说明未定义有效的问题模式：\n$1"
+  },
+  {
+    "id": "nls-problemMatcher-ProblemMatcherParser-noOwner",
+    "pattern": "^Error: the description doesn't define an owner:\n(.+)$",
+    "flags": "",
+    "replacement": "错误：说明未定义所有者：\n$1"
+  },
+  {
+    "id": "nls-problemMatcher-ProblemMatcherParser-noFileLocation",
+    "pattern": "^Error: the description doesn't define a file location:\n(.+)$",
+    "flags": "",
+    "replacement": "错误：说明未定义文件位置：\n$1"
+  },
+  {
+    "id": "nls-problemMatcher-ProblemMatcherParser-noDefinedPatter",
+    "pattern": "^Error: the pattern with the identifier (.+) doesn't exist\\.$",
+    "flags": "",
+    "replacement": "错误：标识符为 $1 的模式不存在。"
+  },
+  {
+    "id": "nls-problemMatcher-ProblemMatcherParser-noValidIdentifier",
+    "pattern": "^Error: the pattern property (.+) is not a valid pattern variable name\\.$",
+    "flags": "",
+    "replacement": "错误：模式属性 $1 是无效的模式变量名。"
+  },
+  {
+    "id": "nls-taskConfiguration-ConfigurationParser-invalidCWD",
+    "pattern": "^Warning: options\\.cwd must be of type string\\. Ignoring value (.+)$",
+    "flags": "",
+    "replacement": "警告：options.cwd 的类型必须是字符串。正在忽略值 $1"
+  },
+  {
+    "id": "nls-taskConfiguration-ConfigurationParser-inValidArg",
+    "pattern": "^Error: command argument must either be a string or a quoted string\\. Provided value is:\n(.+)$",
+    "flags": "",
+    "replacement": "错误：命令参数必须是字符串或带引号的字符串。提供的值为：$1"
+  },
+  {
+    "id": "nls-taskConfiguration-ConfigurationParser-noName",
+    "pattern": "^Error: Problem Matcher in declare scope must have a name:\n(.+)$",
+    "flags": "",
+    "replacement": "错误：声明范围中的问题匹配器必须具有名称：$1"
+  },
+  {
+    "id": "nls-taskConfiguration-ConfigurationParser-unknownMatcherKind",
+    "pattern": "^Warning: the defined problem matcher is unknown\\. Supported types are string \\| ProblemMatcher \\| Array<string \\| ProblemMatcher>\\.\n(.+)$",
+    "flags": "",
+    "replacement": "警告：定义的问题匹配器未知。支持的类型为 string | ProblemMatcher | Array<string | ProblemMatcher>。\r\n$1"
+  },
+  {
+    "id": "nls-taskConfiguration-ConfigurationParser-invalidVariableReference",
+    "pattern": "^Error: Invalid problemMatcher reference: (.+)$",
+    "flags": "",
+    "replacement": "错误：problemMatcher 引用无效：$1"
+  },
+  {
+    "id": "nls-taskConfiguration-ConfigurationParser-noTaskType",
+    "pattern": "^Error: tasks configuration must have a type property\\. The configuration will be ignored\\.\n(.+)$",
+    "flags": "",
+    "replacement": "错误：任务配置必须具有 type 属性。将忽略此配置。\r\n$1"
+  },
+  {
+    "id": "nls-taskConfiguration-ConfigurationParser-noTypeDefinition",
+    "pattern": "^Error: there is no registered task type '(.+)'\\. Did you miss installing an extension that provides a corresponding task provider\\?$",
+    "flags": "",
+    "replacement": "错误：没有已注册的任务类型“$1”。是否忘了安装提供相应任务提供程序的扩展？"
+  },
+  {
+    "id": "nls-taskConfiguration-ConfigurationParser-missingType",
+    "pattern": "^Error: the task configuration '(.+)' is missing the required property 'type'\\. The task configuration will be ignored\\.$",
+    "flags": "",
+    "replacement": "错误：任务配置“$1”缺少必需属性“type”。将忽略该配置。"
+  },
+  {
+    "id": "nls-taskConfiguration-ConfigurationParser-incorrectType",
+    "pattern": "^Error: the task configuration '(.+)' is using an unknown type\\. The task configuration will be ignored\\.$",
+    "flags": "",
+    "replacement": "错误：任务配置“$1”使用了未知类型。将忽略该配置。"
+  },
+  {
+    "id": "nls-taskConfiguration-ConfigurationParser-notCustom",
+    "pattern": "^Error: tasks is not declared as a custom task\\. The configuration will be ignored\\.\n(.+)$",
+    "flags": "",
+    "replacement": "错误：任务未声明为自定义任务。将忽略此配置。\r\n$1"
+  },
+  {
+    "id": "nls-taskConfiguration-ConfigurationParser-noTaskName",
+    "pattern": "^Error: a task must provide a label property\\. The task will be ignored\\.\n(.+)$",
+    "flags": "",
+    "replacement": "错误：任务必须提供 label 属性。将忽略该任务。\r\n$1"
+  },
+  {
+    "id": "nls-testingOutputPeek-testing-markdownPeekError",
+    "pattern": "^Could not open markdown preview: (.+)\\.\n\nPlease make sure the markdown extension is enabled\\.$",
+    "flags": "",
+    "replacement": "无法打开 Markdown 预览：$1。\r\n\r\n请确保已启用 Markdown 扩展。"
+  },
+  {
+    "id": "nls-testServiceImpl-testError",
+    "pattern": "^An error occurred attempting to run tests: (.+)$",
+    "flags": "",
+    "replacement": "尝试运行测试时出错：$1"
+  },
+  {
+    "id": "nls-themes-contribution-cannotToggle",
+    "pattern": "^Cannot toggle between light and dark themes when `(.+)` is enabled in settings\\.$",
+    "flags": "",
+    "replacement": "在设置中启用“$1”时，无法在浅色和深色主题之间切换。"
+  },
+  {
+    "id": "nls-configurationEditing-errorPolicyConfiguration",
+    "pattern": "^Unable to write (.+) because it is configured in system policy\\.$",
+    "flags": "",
+    "replacement": "无法写入 $1，因为它是在系统策略中配置的。"
+  },
+  {
+    "id": "nls-configurationEditing-errorInvalidWorkspaceConfigurationApplication",
+    "pattern": "^Unable to write (.+) to Workspace Settings\\. This setting can be written only into User settings\\.$",
+    "flags": "",
+    "replacement": "无法将 $1 写入“工作区设置”。此设置只能写入“用户设置”。"
+  },
+  {
+    "id": "nls-configurationEditing-errorInvalidFolderConfiguration",
+    "pattern": "^Unable to write to Folder Settings because (.+) does not support the folder resource scope\\.$",
+    "flags": "",
+    "replacement": "$1 不支持文件夹资源作用域，因此无法写入“文件夹设置”。"
+  },
+  {
+    "id": "nls-configurationEditing-errorInvalidUserTarget",
+    "pattern": "^Unable to write to User Settings because (.+) does not support for global scope\\.$",
+    "flags": "",
+    "replacement": "$1 不支持全局作用域，因此无法写入“用户设置”。"
+  },
+  {
+    "id": "nls-configurationEditing-errorInvalidWorkspaceTarget",
+    "pattern": "^Unable to write to Workspace Settings because (.+) does not support for workspace scope in a multi folder workspace\\.$",
+    "flags": "",
+    "replacement": "$1 在多文件夹工作区中不支持工作区作用域，因此无法写入“工作区设置”。"
+  },
+  {
+    "id": "nls-configurationEditing-errorInvalidResourceLanguageConfiguration",
+    "pattern": "^Unable to write to Language Settings because (.+) is not a resource language setting\\.$",
+    "flags": "",
+    "replacement": "无法写入语言设置，因为 $1 不是资源语言设置。"
+  },
+  {
+    "id": "nls-configurationEditing-errorNoWorkspaceOpened",
+    "pattern": "^Unable to write to (.+) because no workspace is opened\\. Please open a workspace first and try again\\.$",
+    "flags": "",
+    "replacement": "没有打开任何工作区，因此无法写入 $1。请先打开一个工作区，然后重试。"
+  },
+  {
+    "id": "nls-configurationEditing-errorInvalidConfigurationFolder",
+    "pattern": "^Unable to write into folder settings\\. Please open the '(.+)' folder settings to correct errors/warnings in it and try again\\.$",
+    "flags": "",
+    "replacement": "无法写入文件夹设置。请打开“$1”文件夹设置，更正其中的错误或警告，然后重试。"
+  },
+  {
+    "id": "nls-configurationEditing-errorConfigurationFileDirtyFolder",
+    "pattern": "^Unable to write into folder settings because the file has unsaved changes\\. Please save the '(.+)' folder settings file first and then try again\\.$",
+    "flags": "",
+    "replacement": "文件夹设置文件有未保存的更改，无法写入。请先保存“$1”文件夹设置文件再重试。"
+  },
+  {
+    "id": "nls-configurationEditing-errorUnknown",
+    "pattern": "^Unable to write to (.+) because of an internal error\\.$",
+    "flags": "",
+    "replacement": "由于内部错误，无法写入 $1。"
+  },
+  {
+    "id": "nls-baseConfigurationResolverService-commandVariable-noStringType",
+    "pattern": "^Cannot substitute command variable '(.+)' because command did not return a result of type string\\.$",
+    "flags": "",
+    "replacement": "无法替换命令变量“$1”，因为命令没有返回字符串类型的结果。"
+  },
+  {
+    "id": "nls-abstractFileDialogService-saveChangesMessage",
+    "pattern": "^Do you want to save the changes you made to (.+)\\?$",
+    "flags": "",
+    "replacement": "是否要保存对 $1 的更改？"
+  },
+  {
+    "id": "nls-abstractFileDialogService-saveChangesMessages",
+    "pattern": "^Do you want to save the changes to the following (.+) files\\?$",
+    "flags": "",
+    "replacement": "是否要保存对下列 $1 个文件的更改？"
+  },
+  {
+    "id": "nls-simpleFileDialog-remoteFileDialog-notConnectedToRemote",
+    "pattern": "^File system provider for (.+) is not available\\.$",
+    "flags": "",
+    "replacement": "$1 的文件系统提供程序不可用。"
+  },
+  {
+    "id": "nls-simpleFileDialog-remoteFileDialog-validateExisting",
+    "pattern": "^(.+) already exists\\. Are you sure you want to overwrite it\\?$",
+    "flags": "",
+    "replacement": "$1 已存在。是否确实要覆盖？"
+  },
+  {
+    "id": "nls-simpleFileDialog-remoteFileDialog-validateCreateDirectory",
+    "pattern": "^The folder (.+) does not exist\\. Would you like to create it\\?$",
+    "flags": "",
+    "replacement": "文件夹 $1 不存在。是否要创建它？"
+  },
+  {
+    "id": "nls-extensionEnablementService-cannot-disable-language-pack-extension",
+    "pattern": "^Cannot change enablement of (.+) extension because it contributes language packs\\.$",
+    "flags": "",
+    "replacement": "无法启用或禁用 $1 扩展，因为它提供语言包。"
+  },
+  {
+    "id": "nls-extensionEnablementService-cannot-change-enablement-environment",
+    "pattern": "^Cannot change enablement of (.+) extension because it is enabled in environment$",
+    "flags": "",
+    "replacement": "无法更改 $1 扩展的启用状态，因为它已在环境中启用"
+  },
+  {
+    "id": "nls-extensionEnablementService-cannot-change-disablement-environment",
+    "pattern": "^Cannot change enablement of (.+) extension because it is disabled in environment$",
+    "flags": "",
+    "replacement": "无法更改 $1 扩展的启用状态，因为它已在环境中禁用"
+  },
+  {
+    "id": "nls-extensionEnablementService-cannot-change-enablement-malicious",
+    "pattern": "^Cannot change enablement of (.+) extension because it is malicious$",
+    "flags": "",
+    "replacement": "无法更改 $1 扩展的启用状态，因为它已被标记为恶意扩展"
+  },
+  {
+    "id": "nls-extensionEnablementService-cannot-change-enablement-virtual-workspace",
+    "pattern": "^Cannot change enablement of (.+) extension because it does not support virtual workspaces$",
+    "flags": "",
+    "replacement": "无法更改 $1 扩展的启用状态，因为它不支持虚拟工作区"
+  },
+  {
+    "id": "nls-extensionEnablementService-cannot-change-enablement-extension-kind",
+    "pattern": "^Cannot change enablement of (.+) extension because of its extension kind$",
+    "flags": "",
+    "replacement": "由于扩展类型的限制，无法更改 $1 扩展的启用状态"
+  },
+  {
+    "id": "nls-extensionEnablementService-cannot-change-disallowed-extension-enablement",
+    "pattern": "^Cannot change enablement of (.+) extension because it is disallowed$",
+    "flags": "",
+    "replacement": "无法更改 $1 扩展的启用状态，因为该扩展已被禁止"
+  },
+  {
+    "id": "nls-extensionEnablementService-cannot-change-invalid-extension-enablement",
+    "pattern": "^Cannot change enablement of (.+) extension because of it is invalid$",
+    "flags": "",
+    "replacement": "无法更改 $1 扩展的启用状态，因为它无效"
+  },
+  {
+    "id": "nls-extensionManagementService-main-notFound",
+    "pattern": "^Cannot activate because (.+) not found$",
+    "flags": "",
+    "replacement": "无法激活，因为找不到 $1"
+  },
+  {
+    "id": "nls-storedFileWorkingCopy-staleSaveError",
+    "pattern": "^Failed to save '(.+)': The content of the file is newer\\. Do you want to overwrite the file with your changes\\?$",
+    "flags": "",
+    "replacement": "无法保存“$1”：文件内容较新。要用你的更改覆盖该文件吗？"
+  }
+]

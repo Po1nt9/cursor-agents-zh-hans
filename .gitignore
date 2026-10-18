@@ -147,3 +147,11 @@ vite.config.ts.timestamp-*
 
 # Turbo Repo
 .turbo
+
+# Local Cursor installs, extracted bundles, and scan dumps. Never commit Cursor files.
+*.AppImage
+*.deb
+*.rpm
+scan-report.json
+scan-report.txt
+.cursor-zh-hans/

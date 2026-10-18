@@ -1,0 +1,550 @@
+{
+  "target": "out/vs/workbench/workbench.glass.main.js",
+  "note": "Optional. Counts are for Cursor 3.25.6. Other versions skip rules with no expectedHits. A mismatch aborts the static edit and leaves the bundle untouched.",
+  "rules": [
+    {
+      "id": "give-agents-computer",
+      "literal": "Give Agents a Computer",
+      "translation": "给智能体一台计算机",
+      "expectedHits": {
+        "3.25.6": 3
+      }
+    },
+    {
+      "id": "give-cloud-machine",
+      "literal": "Give cloud agents a machine to install, run, test, and demo your code.",
+      "translation": "给云端智能体一台计算机，用来安装、运行、测试和演示代码。",
+      "expectedHits": {
+        "3.25.6": 2
+      }
+    },
+    {
+      "id": "open-or-focus-agents-window",
+      "literal": "Open or Focus Agents Window (Glass)",
+      "translation": "打开或聚焦智能体窗口（Glass）",
+      "expectedHits": {
+        "3.25.6": 1
+      }
+    },
+    {
+      "id": "switch-agents-window",
+      "literal": "Switch to Agents Window (Glass)",
+      "translation": "切换到智能体窗口（Glass）",
+      "expectedHits": {
+        "3.25.6": 2
+      }
+    },
+    {
+      "id": "new-agents-window-glass",
+      "literal": "New Agents Window (Glass)",
+      "translation": "新建智能体窗口（Glass）",
+      "expectedHits": {
+        "3.25.6": 2
+      }
+    },
+    {
+      "id": "open-agents-and-cloud",
+      "literal": "Open Agents Window and Start Cloud Agent",
+      "translation": "打开智能体窗口并启动云端智能体",
+      "expectedHits": {
+        "3.25.6": 1
+      }
+    },
+    {
+      "id": "open-agents-on-startup",
+      "literal": "Open Agents Window on Startup",
+      "translation": "启动时打开智能体窗口",
+      "expectedHits": {
+        "3.25.6": 1
+      }
+    },
+    {
+      "id": "use-in-agents-window",
+      "literal": "Use in Agents Window",
+      "translation": "在智能体窗口中使用",
+      "expectedHits": {
+        "3.25.6": 1
+      }
+    },
+    {
+      "id": "rules-skills-subagents",
+      "literal": "Rules, Skills, Subagents",
+      "translation": "规则、技能、子智能体",
+      "expectedHits": {
+        "3.25.6": 3
+      }
+    },
+    {
+      "id": "apply-to-main-workdir",
+      "literal": "Apply changes to the main working directory",
+      "translation": "将更改应用到主工作目录",
+      "expectedHits": {
+        "3.25.6": 3
+      }
+    },
+    {
+      "id": "allow-web-search",
+      "literal": "Allow Agent to search the web for relevant information",
+      "translation": "允许智能体搜索网页以获取相关信息",
+      "expectedHits": {
+        "3.25.6": 2
+      }
+    },
+    {
+      "id": "allow-fetch-urls",
+      "literal": "Allow Agent to fetch content from URLs",
+      "translation": "允许智能体从 URL 获取内容",
+      "expectedHits": {
+        "3.25.6": 2
+      }
+    },
+    {
+      "id": "agent-no-branch",
+      "literal": "This agent is not associated with a branch yet.",
+      "translation": "此智能体尚未关联分支。",
+      "expectedHits": {
+        "3.25.6": 3
+      }
+    },
+    {
+      "id": "rate-limit",
+      "literal": "You've hit your rate limit on your current plan",
+      "translation": "已达到当前套餐的速率限制",
+      "expectedHits": {
+        "3.25.6": 3
+      }
+    },
+    {
+      "id": "keep-other-agent-changes",
+      "literal": "Do you want to keep changes from the other agent(s)?",
+      "translation": "要保留其他智能体所做的更改吗？",
+      "expectedHits": {
+        "3.25.6": 2
+      }
+    },
+    {
+      "id": "nested-side-chat",
+      "literal": "Cannot create a side chat inside a side chat. Return to the main thread first.",
+      "translation": "不能在侧边聊天中再开侧边聊天。请先回到主对话。",
+      "expectedHits": {
+        "3.25.6": 2
+      }
+    },
+    {
+      "id": "structured-plans",
+      "literal": "Create structured plans with implementation steps",
+      "translation": "创建包含实施步骤的结构化计划",
+      "expectedHits": {
+        "3.25.6": 2
+      }
+    },
+    {
+      "id": "parallel-subagents",
+      "literal": "Execute the plan across parallel subagents.",
+      "translation": "通过并行子智能体执行此计划。",
+      "expectedHits": {
+        "3.25.6": 2
+      }
+    },
+    {
+      "id": "chat-title-hint",
+      "literal": "Chat title. Right-click for more actions.",
+      "translation": "聊天标题。右键可查看更多操作。",
+      "expectedHits": {
+        "3.25.6": 2
+      }
+    },
+    {
+      "id": "continue-chatting",
+      "literal": "Continue chatting in Cursor",
+      "translation": "在 Cursor 中继续聊天",
+      "expectedHits": {
+        "3.25.6": 2
+      }
+    },
+    {
+      "id": "choose-different-model",
+      "literal": "Choose a Different Model",
+      "translation": "选择其他模型",
+      "expectedHits": {
+        "3.25.6": 2
+      }
+    },
+    {
+      "id": "generate-commit-message",
+      "literal": "Generate Commit Message",
+      "translation": "生成提交说明",
+      "expectedHits": {
+        "3.25.6": 2
+      }
+    },
+    {
+      "id": "planning-next-moves",
+      "literal": "Planning next moves",
+      "translation": "正在规划下一步",
+      "expectedHits": {
+        "3.25.6": 5
+      }
+    },
+    {
+      "id": "dev-additional-window",
+      "literal": "Developer: New Additional Agents Window",
+      "translation": "开发者：新建额外的智能体窗口",
+      "expectedHits": {
+        "3.25.6": 2
+      }
+    },
+    {
+      "id": "send-while-running",
+      "literal": "Adjust the default behavior of sending a message while Agent is running",
+      "translation": "调整智能体运行期间发送消息的默认行为",
+      "expectedHits": {
+        "3.25.6": 2
+      }
+    },
+    {
+      "id": "switched-cursor-models",
+      "literal": "Switched to Cursor Models. Other Models limit reached.",
+      "translation": "已切换到 Cursor 模型。其他模型的用量已达上限。",
+      "expectedHits": {
+        "3.25.6": 3
+      }
+    },
+    {
+      "id": "failed-start-cloud",
+      "literal": "Failed to start Cloud Agent",
+      "translation": "无法启动云端智能体",
+      "expectedHits": {
+        "3.25.6": 3
+      }
+    },
+    {
+      "id": "new-agents-window",
+      "literal": "New Agents Window",
+      "translation": "新建智能体窗口",
+      "expectedHits": {
+        "3.25.6": 2
+      }
+    },
+    {
+      "id": "markdown-plan-editor",
+      "literal": "Markdown Plan Editor",
+      "translation": "Markdown 计划编辑器",
+      "expectedHits": {
+        "3.25.6": 8
+      }
+    },
+    {
+      "id": "other-agent-applied",
+      "literal": "Another agent's changes have been applied",
+      "translation": "已应用其他智能体的更改",
+      "expectedHits": {
+        "3.25.6": 2
+      }
+    },
+    {
+      "id": "copied-pr-url",
+      "literal": "Copied pull request URL to clipboard",
+      "translation": "已将拉取请求 URL 复制到剪贴板",
+      "expectedHits": {
+        "3.25.6": 3
+      }
+    },
+    {
+      "id": "draft-no-queue",
+      "literal": "Draft agents do not support queue operations.",
+      "translation": "草稿智能体不支持队列操作。",
+      "expectedHits": {
+        "3.25.6": 4
+      }
+    },
+    {
+      "id": "fork-failed",
+      "literal": "Failed to fork agent. Please try again.",
+      "translation": "无法派生智能体。请重试。",
+      "expectedHits": {
+        "3.25.6": 4
+      }
+    },
+    {
+      "id": "awaiting-terminal",
+      "literal": "Awaiting terminal approval",
+      "translation": "正在等待终端批准",
+      "expectedHits": {
+        "3.25.6": 2
+      }
+    },
+    {
+      "id": "configure-local-agent",
+      "literal": "Configure Local Agent",
+      "translation": "配置本地智能体",
+      "expectedHits": {
+        "3.25.6": 2
+      }
+    },
+    {
+      "id": "cloud-artifacts",
+      "literal": "Cloud Agent Artifacts",
+      "translation": "云端智能体产物",
+      "expectedHits": {
+        "3.25.6": 2
+      }
+    },
+    {
+      "id": "branch-diff-main",
+      "literal": "Branch (Diff with Main)",
+      "translation": "分支（与主分支的差异）",
+      "expectedHits": {
+        "3.25.6": 2
+      }
+    },
+    {
+      "id": "next-diff-file",
+      "literal": "Go to Next Diff File",
+      "translation": "转到下一个差异文件",
+      "expectedHits": {
+        "3.25.6": 2
+      }
+    },
+    {
+      "id": "prev-diff-file",
+      "literal": "Go to Previous Diff File",
+      "translation": "转到上一个差异文件",
+      "expectedHits": {
+        "3.25.6": 2
+      }
+    },
+    {
+      "id": "focus-location-bar",
+      "literal": "Focus Browser Location Bar",
+      "translation": "聚焦浏览器地址栏",
+      "expectedHits": {
+        "3.25.6": 2
+      }
+    },
+    {
+      "id": "delete-chats-days",
+      "literal": "Delete chats older than how many days?",
+      "translation": "删除多少天之前的聊天？",
+      "expectedHits": {
+        "3.25.6": 2
+      }
+    },
+    {
+      "id": "pro-upsell",
+      "literal": "Get 3x more usage than Pro, unlock higher limits on Agent, and more.",
+      "translation": "用量可达 Pro 的 3 倍，并解锁更高的智能体限额。",
+      "expectedHits": {
+        "3.25.6": 2
+      }
+    },
+    {
+      "id": "continue-interrupted",
+      "literal": "Continue Interrupted Agents",
+      "translation": "继续已中断的智能体",
+      "expectedHits": {
+        "3.25.6": 2
+      }
+    },
+    {
+      "id": "edit-pr-title",
+      "literal": "Edit pull request title",
+      "translation": "编辑拉取请求标题",
+      "expectedHits": {
+        "3.25.6": 2
+      }
+    },
+    {
+      "id": "fix-ci-cloud",
+      "literal": "Fix CI, conflicts, and comments in cloud subagent",
+      "translation": "在云端子智能体中修复 CI、冲突和评论",
+      "expectedHits": {
+        "3.25.6": 2
+      }
+    },
+    {
+      "id": "add-agents-context",
+      "literal": "Add agents, context, tools",
+      "translation": "添加智能体、上下文和工具",
+      "expectedHits": {
+        "3.25.6": 2
+      }
+    },
+    {
+      "id": "you-re-out-of-usage",
+      "literal": "You're out of usage",
+      "translation": "用量已用完",
+      "expectedHits": {
+        "3.25.6": 3
+      }
+    },
+    {
+      "id": "add-more-optional-details",
+      "literal": "Add more optional details",
+      "translation": "补充更多可选细节",
+      "expectedHits": {
+        "3.25.6": 1
+      }
+    },
+    {
+      "id": "add-more-optional-details-ellipsis",
+      "literal": "Add more optional details...",
+      "translation": "补充更多可选细节…",
+      "expectedHits": {
+        "3.25.6": 2
+      }
+    },
+    {
+      "id": "issue-reproduced-please-proceed",
+      "literal": "Issue reproduced, please proceed",
+      "translation": "问题已复现，请继续",
+      "expectedHits": {
+        "3.25.6": 5
+      }
+    },
+    {
+      "id": "the-issue-has-been-fixed-please-clean-up-the-ins",
+      "literal": "The issue has been fixed. Please clean up the instrumentation.",
+      "translation": "问题已修复。请清理调试插桩代码。",
+      "expectedHits": {
+        "3.25.6": 4
+      }
+    },
+    {
+      "id": "enter-additional-context-about-the-issue",
+      "literal": "Enter additional context about the issue",
+      "translation": "补充关于该问题的上下文",
+      "expectedHits": {
+        "3.25.6": 1
+      }
+    },
+    {
+      "id": "build-research-debug-at-a-longer-horizon",
+      "literal": "Build, research, debug at a longer horizon",
+      "translation": "处理耗时更长的构建、研究和调试任务",
+      "expectedHits": {
+        "3.25.6": 1
+      }
+    },
+    {
+      "id": "let-s-kick-something-off",
+      "literal": "Let's kick something off",
+      "translation": "来做点什么吧",
+      "expectedHits": {
+        "3.25.6": 1
+      }
+    },
+    {
+      "id": "steer-without-interrupting",
+      "literal": "Steer without interrupting",
+      "translation": "不打断智能体，直接补充说明",
+      "expectedHits": {
+        "3.25.6": 2
+      }
+    },
+    {
+      "id": "editing-queued-message",
+      "literal": "Editing queued message...",
+      "translation": "正在编辑排队的消息…",
+      "expectedHits": {
+        "3.25.6": 1
+      }
+    },
+    {
+      "id": "editing-goal",
+      "literal": "Editing goal...",
+      "translation": "正在编辑目标…",
+      "expectedHits": {
+        "3.25.6": 1
+      }
+    },
+    {
+      "id": "ask-follow-ups-to-the-cloud-agent",
+      "literal": "Ask follow-ups to the Cloud Agent...",
+      "translation": "向云端智能体继续追问…",
+      "expectedHits": {
+        "3.25.6": 1
+      }
+    },
+    {
+      "id": "start-writing-your-plan",
+      "literal": "Start writing your plan...",
+      "translation": "开始写计划…",
+      "expectedHits": {
+        "3.25.6": 1
+      }
+    },
+    {
+      "id": "plan-changes",
+      "literal": "Plan changes",
+      "translation": "计划改动",
+      "expectedHits": {
+        "3.25.6": 1
+      }
+    },
+    {
+      "id": "debug-issues",
+      "literal": "Debug issues",
+      "translation": "调试问题",
+      "expectedHits": {
+        "3.25.6": 1
+      }
+    },
+    {
+      "id": "ask-questions",
+      "literal": "Ask questions",
+      "translation": "提出问题",
+      "expectedHits": {
+        "3.25.6": 1
+      }
+    },
+    {
+      "id": "coordinate-tasks",
+      "literal": "Coordinate tasks",
+      "translation": "协调任务",
+      "expectedHits": {
+        "3.25.6": 1
+      }
+    },
+    {
+      "id": "set-up-origin",
+      "literal": "Set Up Origin",
+      "translation": "设置 Origin",
+      "expectedHits": {
+        "3.25.6": 1
+      }
+    },
+    {
+      "id": "create-an-origin-namespace-to-save-and-publish-y",
+      "literal": "Create an Origin namespace to save and publish your work easily",
+      "translation": "创建 Origin 命名空间，方便保存和发布工作",
+      "expectedHits": {
+        "3.25.6": 1
+      }
+    },
+    {
+      "id": "origin-is-set-up-you-can-start-a-new-project",
+      "literal": "Origin is set up. You can start a new project.",
+      "translation": "Origin 已设置。你可以开始一个新项目。",
+      "expectedHits": {
+        "3.25.6": 1
+      }
+    },
+    {
+      "id": "a-newer-version-of-cursor-is-available-we-recomm",
+      "literal": "A newer version of Cursor is available. We recommend updating for the best experience.",
+      "translation": "有新版本的 Cursor 可用。建议更新以获得最佳体验。",
+      "expectedHits": {
+        "3.25.6": 1
+      }
+    },
+    {
+      "id": "this-version-of-cursor-is-no-longer-supported-pl",
+      "literal": "This version of Cursor is no longer supported. Please update to continue.",
+      "translation": "此版本的 Cursor 已不再受支持。请更新后继续使用。",
+      "expectedHits": {
+        "3.25.6": 1
+      }
+    }
+  ]
+}
