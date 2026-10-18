@@ -1,10 +1,93 @@
 # Cursor 智能体窗口简体中文（非官方）
 
-把 Cursor 3.x 智能体窗口（内部代号 Glass）以及经典窗口里硬编码的英文界面，补成简体中文。macOS 是主要目标，Windows 和 Linux 尽量可用。
+把 Cursor 的智能体窗口改成简体中文。Mac 上不用打开终端。
 
 **这是非官方项目，与 Anysphere 无关，也不是 Cursor 团队的语言包。** Cursor 服务条款限制修改、翻译和衍生作品。使用即表示你自行承担风险，包括更新后补丁失效、启动时出现「安装已损坏 / Unsupported」、以及 macOS 上需要重新签名。本仓库只发布补丁程序和我们自己写的译文，不包含 Cursor 的安装包、修改后的 Cursor 文件，或从 bundle 里抽出来的代码。它不绕过登录、授权或付费。
 
-VS Code 原有界面请另行安装微软的中文语言包（扩展市场中的 `MS-CEINTL.vscode-language-pack-zh-hans`）。不要把那个语言包打进本仓库。
+屏幕最上面的菜单栏，请另外在扩展市场安装微软的中文语言包 `MS-CEINTL.vscode-language-pack-zh-hans`。
+
+## 三步装上
+
+Intel 和 Apple 芯片都可以。Cursor 可以在「应用程序」、家里的 Applications，或其他文件夹里。
+
+1. **下载** [最新版本](https://github.com/Po1nt9/cursor-agents-zh-hans/releases/latest) 里的 `Cursor-zh-hans-macOS.zip`。
+2. **双击**压缩包，再双击里面的「Cursor 汉化」。
+3. **点「安装汉化」**。Cursor 如果开着，按提示退出。装好后会自己重新打开。
+
+装好时如果问要不要在 Cursor 更新后自动再装一次，选「要」即可。
+
+如果钥匙串弹出「Cursor Safe Storage」，点「始终允许」。
+
+## 第一次如果提示「无法打开」
+
+这个小工具没有苹果签名。系统拦住是正常的，不是病毒。macOS 14 和 macOS 15 都一样，任选一种：
+
+- 在「Cursor 汉化」上按住 Control 再点（或右键），选「打开」，再点「打开」。
+- 先双击一次，然后打开「系统设置 → 隐私与安全性」，滑到最下面，点「仍要打开」。
+
+第一次这样打开之后，以后可以直接双击。
+
+## 用一行命令安装
+
+不想跟「无法打开」打交道，可以把下面这一行粘贴到「终端」。不需要安装 git 或 Node.js，也不会弹出那个提示。
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/Po1nt9/cursor-agents-zh-hans/main/install.sh | bash
+```
+
+程序会放到你的「个人应用程序」文件夹（家里的 Applications），然后打开同样的窗口。
+
+恢复英文：
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/Po1nt9/cursor-agents-zh-hans/main/install.sh | bash -s -- --uninstall
+```
+
+## 怎么变回英文
+
+再双击「Cursor 汉化」，点「恢复英文」。自动重新安装会一起关掉。
+
+## 常见问题
+
+### Cursor 更新后变回英文怎么办
+
+更新会换掉界面文件，汉化会跟着消失。如果安装时选了自动重新安装，等 Cursor 退出后会自己装上，并给你一条通知。当时 Cursor 还开着的话，先完全退出，过一会儿再看。
+
+没有选自动安装的话，再双击「Cursor 汉化」，点一次「安装汉化」。
+
+汉化程序本身有新版本时，重新下载压缩包，再点一次安装。
+
+### 钥匙串弹窗
+
+重做签名之后，钥匙串可能问是否允许访问「Cursor Safe Storage」。点「始终允许」。点不允许的话，Cursor 会像退出了登录。麦克风或摄像头如果再问一次，按你自己的需要选。
+
+### 提示「无法打开」
+
+看上面的「第一次如果提示无法打开」。右键选「打开」，或到「系统设置 → 隐私与安全性」点「仍要打开」。也可以改用上面的一行命令。
+
+### 怎么卸载
+
+再打开「Cursor 汉化」，点「恢复英文」。或者用上面带 `--uninstall` 的那一行命令。
+
+安装没有成功时，窗口里可以点「复制详细信息」。完整记录在 `~/Library/Logs/cursor-zh-hans.log`。如果提示系统权限是空的，请到 [cursor.com](https://cursor.com) 重新安装 Cursor，然后再打开「Cursor 汉化」点一次「安装汉化」。
+
+## Windows 和 Linux
+
+命令行方式仍然可用，见下面的「开发者」。Windows 上如果已经装了 Node.js 18 或更新版本，可以在完全退出 Cursor 之后运行仓库里的 `install.ps1`（加 `-Uninstall` 则恢复英文）。Mac 不需要这个文件。
+
+## 开发者
+
+下面是给维护和命令行用的。普通安装看上面即可。
+
+打包双击程序（在 Linux 上即可，不必有 Mac）：
+
+```bash
+bash packaging/macos/build-app.sh
+```
+
+产物是 `dist/Cursor-zh-hans-macOS.zip`。里面是手写的 `Cursor 汉化.app`（`Info.plist` 加 shell 启动器），并带有官方 Node.js 的 arm64 与 x64。`bash packaging/macos/build-app.sh --stub` 不下载 Node，只用来检查压缩包结构。打 `v*` 标签或手动跑 `.github/workflows/release.yml` 时，会构建同一个 zip；只有标签会挂到 GitHub Release。
+
+启动器按 `uname -m` 选择 Node。找 Cursor 时用 Spotlight `mdfind kMDItemCFBundleIdentifier == 'com.todesktop.230313mzl4w4u92'`，再加上 `/Applications`、`~/Applications` 和下面一层子目录。找到 0 个或多于 1 个时弹出选择文件。只有 `.app` 不可写时，才用 `osascript … with administrator privileges` 提权，并带上原来的 `SUDO_USER`。安装结束时可以写入用户 LaunchAgent `com.po1nt9.cursor-zh-hans.watch`，监视 `product.json`，在 Cursor 没在运行时静默再执行 `apply --update-checksums`。点「恢复英文」会删掉这个 Agent。
 
 ## 它做什么
 
@@ -212,7 +295,14 @@ node --test
 
 Unofficial Simplified Chinese patcher for Cursor's Agents Window (Glass) and the hardcoded Cursor strings in the classic window. Not affiliated with Anysphere. Cursor's terms restrict modification and derivative works; use at your own risk. This repo ships only the patcher and our translations. It does not bypass sign-in or billing.
 
-Quit Cursor completely, then:
+On a Mac, download `Cursor-zh-hans-macOS.zip` from the latest release and double-click 「Cursor 汉化」. The app is unsigned: the first open on macOS 14 and 15 needs Control-click → Open, or System Settings → Privacy & Security → Open Anyway. A terminal alternative that does not show that warning:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/Po1nt9/cursor-agents-zh-hans/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/Po1nt9/cursor-agents-zh-hans/main/install.sh | bash -s -- --uninstall
+```
+
+The command-line tool still works. Quit Cursor completely, then:
 
 ```bash
 node bin/cursor-zh.js apply --update-checksums
