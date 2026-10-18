@@ -250,7 +250,7 @@ test('field types, themes, resume, and the remaining review strings', () => {
   assert.doesNotMatch(debugZh, /did not start/);
   assert.equal(
     translateText("Error: the description doesn't define a file location:\nfoo", compiled).text,
-    '错误：说明未定义文件位置：foo',
+    '错误：说明未定义文件位置：\nfoo',
   );
   assert.equal(
     translateText('Invalid response: HTTP 500 Internal Server Error during CORS', compiled).text,
@@ -285,6 +285,121 @@ test('field types, themes, resume, and the remaining review strings', () => {
     translateText('Failed to add plugin to marketplaces: Foo', compiled).text,
     '无法把插件添加到插件市场：Foo',
   );
+});
+
+test('dates stay inside English sentences and usage lines translate whole', () => {
+  assert.equal(translateText('Nov 1', compiled).text, '11月1日');
+  assert.equal(translateText('Oct 17, 2026, 10:15 PM', compiled).text, '2026年10月17日 22:15');
+  assert.equal(translateText('Created Oct 17, 2026, 10:15 PM', compiled).text, 'Created Oct 17, 2026, 10:15 PM');
+  assert.equal(translateText('See you on November 1 for the review.', compiled).text, 'See you on November 1 for the review.');
+  assert.equal(translateText('Meet at 10:15 AM tomorrow', compiled).text, 'Meet at 10:15 AM tomorrow');
+  assert.equal(translateText('10:15 AM', compiled).text, '10:15');
+  assert.equal(
+    translateText('Your usage resets on November 1 (13 days).', compiled).text,
+    '你的用量将于 11月1日重置（13 天后）。',
+  );
+  assert.equal(
+    translateText('Your usage resets on November 1 (1 day).', compiled).text,
+    '你的用量将于 11月1日重置（1 天后）。',
+  );
+  assert.equal(translateText('Your usage resets on November 1.', compiled).text, '你的用量将于 11月1日重置。');
+  assert.equal(
+    translateText("You're paused until your usage resets on November 1.", compiled).text,
+    '已暂停，直到用量于 11月1日重置。',
+  );
+  assert.equal(
+    translateText("You're paused until your usage resets in 3 days.", compiled).text,
+    '已暂停，直到用量在 3 天后重置。',
+  );
+  assert.equal(
+    translateText("You're paused until your usage resets in 1 day.", compiled).text,
+    '已暂停，直到用量在 1 天后重置。',
+  );
+  assert.equal(translateText("You're paused until your usage resets.", compiled).text, '已暂停，直到用量重置。');
+  assert.equal(
+    translateText('Paired with this computer · Last used Oct 17', compiled).text,
+    '已与这台计算机配对 · 上次使用 10月17日',
+  );
+  assert.equal(
+    translateText('Paired with this computer · Last used 5 minutes ago', compiled).text,
+    '已与这台计算机配对 · 上次使用 5分钟前',
+  );
+  assert.equal(translateText('Paired with this computer · Not used yet', compiled).text, '已与这台计算机配对 · 尚未使用');
+  assert.equal(translateText('Updated Oct 17', compiled).text, '更新于 10月17日');
+  assert.equal(translateText('Updated 5m ago', compiled).text, '5 分钟前更新');
+  assert.equal(translateText('Updated 5h ago', compiled).text, '5 小时前更新');
+  assert.equal(translateText('Updated now', compiled).text, '刚刚更新');
+  assert.equal(translateText('Updated canvas', compiled).text, 'Updated canvas');
+  assert.equal(translateText('Resets Nov 1', compiled).text, '11月1日重置');
+  assert.equal(translateText('Resets Nov 1.', compiled).text, '11月1日重置。');
+  assert.equal(translateText('Usage · Resets Nov 1', compiled).text, '用量 · 11月1日重置');
+  assert.equal(translateText('Today at 10:15 AM', compiled).text, '今天 10:15');
+  assert.equal(translateText('Yesterday at 2:14 PM', compiled).text, '昨天 14:14');
+  assert.equal(translateText('Monday at 10:15 AM', compiled).text, '周一 10:15');
+  assert.equal(translateText('3 days ago', compiled).text, '3天前');
+  assert.equal(translateText('1 day ago', compiled).text, '1天前');
+  assert.equal(translateText('earlier today', compiled).text, '今天早些时候');
+  assert.equal(translateText('Oct 17, 2026 at 10:15 AM', compiled).text, '2026年10月17日 10:15');
+  assert.equal(
+    translateText('Adjust your limits to continue, or upgrade to Ultra.', compiled).text,
+    '请调整用量上限以继续，或升级到 Ultra。',
+  );
+  assert.equal(
+    translateText('Adjust your limits to continue, or upgrade to Pro+.', compiled).text,
+    '请调整用量上限以继续，或升级到 Pro+。',
+  );
+  assert.equal(translateText('Adjust your limits to keep going.', compiled).text, '请调整用量上限以继续。');
+  assert.equal(translateText('Upgrade to Pro+ to keep going.', compiled).text, '升级到 Pro+ 以继续。');
+  assert.equal(translateText('Upgrade to keep going.', compiled).text, '升级以继续。');
+  assert.equal(translateText('Get more usage to continue', compiled).text, '获取更多用量以继续');
+  assert.equal(translateText('Get more usage to switch models', compiled).text, '获取更多用量以切换模型');
+  assert.equal(translateText('On-demand limit saved.', compiled).text, '已保存按需用量上限。');
+  assert.equal(
+    translateText("You've reached your limit. Responses may be slower. Upgrade to Ultra for 20x more usage.", compiled).text,
+    '已达到用量上限。响应可能会变慢。升级到 Ultra 可获得 20 倍用量。',
+  );
+  assert.equal(translateText("You've reached your team's usage limit.", compiled).text, '已达到团队的用量上限。');
+  assert.equal(translateText("You've reached your usage limit.", compiled).text, '已达到用量上限。');
+  assert.equal(
+    translateText('Failed to capture screenshot: disk full', compiled).text,
+    '无法捕获截图：disk full',
+  );
+  assert.equal(
+    translateText('Invalid response: HTTP 500 Internal Server Error', compiled).text,
+    '响应无效：HTTP 500 服务器内部错误',
+  );
+  assert.equal(translateText('HTTP 404 Not Found', compiled).text, 'HTTP 404 未找到');
+  assert.equal(translateText("Invalid response: HTTP 418 I'm a teapot", compiled).text, '响应无效：HTTP 418');
+  assert.equal(translateText('Focus Second Side in Active Editor', compiled).text, '在活动编辑器中聚焦到第二侧');
+  assert.equal(
+    translateText('True when the focus is inside the EXPLORER view.', compiled).text,
+    '当焦点位于资源管理器视图内时为 True。',
+  );
+  assert.equal(
+    translateText('True when the focused item in the EXPLORER view is a compact item.', compiled).text,
+    '如果资源管理器视图中的焦点项是精简项，则为 True。',
+  );
+  assert.equal(translateText('Please enter a valid integer for Port', compiled).text, '请输入 Port 的有效整数');
+});
+
+test('a multiline block stays consistent unless every line translates', () => {
+  const update = 'Configure whether you receive automatic updates. Requires a restart after change. The updates are fetched from a Microsoft online service.\n\n**⚠️ Warning**: When \'silentlyApplyOnQuit\' is selected, updates will be downloaded and applied automatically without prompting. Updates will be applied when you next restart the application.';
+  const updateZh = translateText(update, compiled).text;
+  assert.match(updateZh, /^配置是否接收自动更新/);
+  assert.match(updateZh, /\n\n\*\*⚠️ 警告\*\*：选择“silentlyApplyOnQuit”后/);
+  assert.doesNotMatch(updateZh, /Warning/);
+  const sentry = 'Sentry SDK failed to establish connection with the Electron main process.\n  - Ensure you have initialized the SDK in the main process\n  - If your renderers use custom sessions, be sure to set \'getSessions\' in the main process options\n  - If you are bundling your main process code and using Electron < v5, you\'ll need to manually configure a preload script';
+  const sentryZh = translateText(sentry, compiled).text;
+  assert.match(sentryZh, /^Sentry SDK 无法与 Electron 主进程建立连接。/);
+  assert.match(sentryZh, /getSessions/);
+  assert.doesNotMatch(sentryZh, /Ensure you have/);
+  assert.doesNotMatch(sentryZh, /preload script/);
+  const mixed = 'This line has no translation zz.\n\nThe extension host did not start in time.';
+  assert.equal(translateText(mixed, compiled).text, mixed);
+  const notice = 'The extension host did not start in time.\n\nReload the window and try again. If this keeps happening, disable recently added extensions or others that may slow extension host startup.';
+  const noticeZh = translateText(notice, compiled).text;
+  assert.match(noticeZh, /^扩展宿主启动超时。\n\n请重新加载窗口后再试/);
+  assert.doesNotMatch(noticeZh, /Reload the window/);
 });
 
 test('replacements keep every capture and do not drop a dollar amount', () => {

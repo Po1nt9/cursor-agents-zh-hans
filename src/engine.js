@@ -367,6 +367,7 @@ const MONTH_INDEX = {
 const MONTH_NAME = 'Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:t(?:ember)?)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?';
 const FULL_DATE = new RegExp(`\\b(${MONTH_NAME})\\s+(\\d{1,2}),\\s+(\\d{4})(?:,\\s+(\\d{1,2}):(\\d{2})(?::(\\d{2}))?\\s*(AM|PM))?\\b`, 'gi');
 const MONTH_DAY = new RegExp(`\\b(${MONTH_NAME})\\s+(\\d{1,2})\\b`, 'gi');
+const CLOCK = /\b(\d{1,2}):(\d{2})(?::(\d{2}))?\s*([AP]M)\b/gi;
 
 // "Oct 17, 2026, 10:15 PM" → "2026年10月17日 22:15". Month and day stay unpadded.
 function monthNumber(name) {
@@ -396,6 +397,32 @@ export function localizeEmbeddedDates(text) {
   });
 }
 
+// "10:15 AM" → "10:15", "2:14 PM" → "14:14". A dictionary replacement cannot add 12.
+export function localizeClocks(text) {
+  if (typeof text !== 'string' || !text) return text;
+  CLOCK.lastIndex = 0;
+  return text.replace(CLOCK, (all, hour, minute, second, ampm) => {
+    let h = Number(hour);
+    const ap = String(ampm).toUpperCase();
+    if (ap === 'PM' && h < 12) h += 12;
+    if (ap === 'AM' && h === 12) h = 0;
+    let out = `${String(h).padStart(2, '0')}:${minute}`;
+    if (second != null && second !== '') out += `:${second}`;
+    return out;
+  });
+}
+
+// True when nothing but a date or a clock would remain. An English sentence
+// that merely contains "November 1" stays English.
+function dateOnlyText(text) {
+  if (typeof text !== 'string' || !text) return false;
+  FULL_DATE.lastIndex = 0;
+  MONTH_DAY.lastIndex = 0;
+  CLOCK.lastIndex = 0;
+  const stripped = text.replace(FULL_DATE, ' ').replace(MONTH_DAY, ' ').replace(CLOCK, ' ');
+  return !/[A-Za-z]{2,}/.test(stripped);
+}
+
 export function localizeArrowKeys(text) {
   if (typeof text !== 'string' || !/[\u4e00-\u9fff]/.test(text)) return text;
   return text
@@ -406,7 +433,9 @@ export function localizeArrowKeys(text) {
 }
 
 function polishTranslated(text) {
-  return localizeEmbeddedDates(localizeArrowKeys(text));
+  const dated = localizeEmbeddedDates(localizeArrowKeys(text));
+  if (/[\u4e00-\u9fff]/.test(dated) || dateOnlyText(dated)) return localizeClocks(dated);
+  return dated;
 }
 
 function packResult(text, input, tier, open) {
@@ -498,22 +527,42 @@ export function translateText(input, dictionary, depth = 2, seen = null) {
     return packResult(lead + frag.to + tail, input, 'fragment');
   }
 
-  // A multiline notice is several sentences. Match each line when the whole
-  // block has no rule, and keep the blank lines between them.
+  // A multiline notice is several sentences. The whole block is tried above.
+  // Per-line is a fallback only when every English sentence translates. A
+  // name or other single token may stay, and blank lines stay put. If any
+  // sentence is still English, the block stays as it was.
   if (normalizedCore.includes('\n')) {
     const lines = normalizedCore.split('\n');
-    let any = false;
-    const next = lines.map((line) => {
-      if (!line.trim()) return line;
+    const next = [];
+    let complete = false;
+    for (let i = 0; i < lines.length; i += 1) {
+      const line = lines[i];
+      if (!line.trim()) {
+        next.push(line);
+        continue;
+      }
       const part = translateText(line, dictionary, depth, loop);
-      if (part.changed && part.text !== line) any = true;
-      return part.changed ? part.text : line;
-    });
-    if (any) return packResult(lead + next.join('\n') + tail, input, 'regex');
+      if (part.changed && part.text !== line) {
+        complete = true;
+        next.push(part.text);
+        continue;
+      }
+      const words = line.match(/[A-Za-z]{2,}/g);
+      if (words && words.length >= 2) {
+        complete = false;
+        next.length = 0;
+        break;
+      }
+      complete = true;
+      next.push(line);
+    }
+    if (complete) return packResult(lead + next.join('\n') + tail, input, 'regex');
   }
 
-  const dated = localizeEmbeddedDates(input);
-  if (dated !== input) return { text: dated, changed: true, tier: 'regex' };
+  if (dateOnlyText(normalizedCore)) {
+    const dated = localizeClocks(localizeEmbeddedDates(input));
+    if (dated !== input) return { text: dated, changed: true, tier: 'regex' };
+  }
   return { text: input, changed: false, tier: null };
 }
 

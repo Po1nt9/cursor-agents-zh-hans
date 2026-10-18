@@ -4309,9 +4309,9 @@
   },
   {
     "id": "glass-1156",
-    "pattern": "^Failed\\ to\\ capture\\ screenshot([\\s\\S]+)$",
+    "pattern": "^Failed\\ to\\ capture\\ screenshot:\\ ([\\s\\S]+)$",
     "flags": "",
-    "replacement": "无法捕获截图$1"
+    "replacement": "无法捕获截图：$1"
   },
   {
     "id": "glass-1191",
@@ -8467,7 +8467,7 @@
   },
   {
     "id": "throw-http",
-    "pattern": "^Invalid response: HTTP ([\\s\\S]+)$",
+    "pattern": "^Invalid response: HTTP (\\d+)(?: [\\s\\S]+)?$",
     "flags": "",
     "replacement": "响应无效：HTTP $1"
   },
@@ -8835,7 +8835,7 @@
     "id": "ext-host-notice",
     "pattern": "^The extension host did not start in time\\.\\s+Reload the window and try again\\. If this keeps happening, disable recently added extensions or others that may slow extension host startup\\.$",
     "flags": "",
-    "replacement": "扩展宿主启动超时。请重新加载窗口后再试。如果问题仍然出现，请禁用最近添加的扩展，或其他可能拖慢扩展宿主启动的扩展。"
+    "replacement": "扩展宿主启动超时。\n\n请重新加载窗口后再试。如果问题仍然出现，请禁用最近添加的扩展，或其他可能拖慢扩展宿主启动的扩展。"
   },
   {
     "id": "debug-server-notice",
@@ -8974,5 +8974,371 @@
     "pattern": "^Please check the \\[NDJSON port setting\\]\\((.+?)\\) and ensure:$",
     "flags": "",
     "replacement": "请检查 [NDJSON 端口设置]($1)，并确认："
+  },
+  {
+    "id": "usage-resets-on-days",
+    "pattern": "^Your usage resets on ([A-Za-z]+ \\d{1,2}) \\((\\d+) days?\\)\\.$",
+    "flags": "",
+    "replacement": "你的用量将于 $1重置（$2 天后）。"
+  },
+  {
+    "id": "usage-resets-on-date",
+    "pattern": "^Your usage resets on ([A-Za-z]+ \\d{1,2})\\.$",
+    "flags": "",
+    "replacement": "你的用量将于 $1重置。"
+  },
+  {
+    "id": "usage-paused-on-date",
+    "pattern": "^You're paused until your usage resets on ([A-Za-z]+ \\d{1,2})\\.$",
+    "flags": "",
+    "replacement": "已暂停，直到用量于 $1重置。"
+  },
+  {
+    "id": "usage-paused-in-days",
+    "pattern": "^You're paused until your usage resets in (\\d+) days?\\.$",
+    "flags": "",
+    "replacement": "已暂停，直到用量在 $1 天后重置。"
+  },
+  {
+    "id": "adjust-limits-upgrade",
+    "pattern": "^Adjust your limits to continue, or upgrade to (Pro\\+|Pro|Ultra)\\.$",
+    "flags": "",
+    "replacement": "请调整用量上限以继续，或升级到 $1。"
+  },
+  {
+    "id": "upgrade-plan-keep",
+    "pattern": "^Upgrade to (Pro\\+|Pro|Ultra) to keep going\\.$",
+    "flags": "",
+    "replacement": "升级到 $1 以继续。"
+  },
+  {
+    "id": "paired-last-used",
+    "pattern": "^Paired with this computer · Last used (.+)$",
+    "flags": "",
+    "replacement": "已与这台计算机配对 · 上次使用 $1"
+  },
+  {
+    "id": "updated-month-day",
+    "pattern": "^Updated ((?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:t(?:ember)?)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?) \\d{1,2}(?:, \\d{4})?)$",
+    "flags": "",
+    "replacement": "更新于 $1"
+  },
+  {
+    "id": "updated-s-ago",
+    "pattern": "^Updated (\\d+)s ago$",
+    "flags": "",
+    "replacement": "$1 秒前更新"
+  },
+  {
+    "id": "updated-m-ago",
+    "pattern": "^Updated (\\d+)m ago$",
+    "flags": "",
+    "replacement": "$1 分钟前更新"
+  },
+  {
+    "id": "updated-h-ago",
+    "pattern": "^Updated (\\d+)h ago$",
+    "flags": "",
+    "replacement": "$1 小时前更新"
+  },
+  {
+    "id": "updated-d-ago",
+    "pattern": "^Updated (\\d+)d ago$",
+    "flags": "",
+    "replacement": "$1 天前更新"
+  },
+  {
+    "id": "updated-mo-ago",
+    "pattern": "^Updated (\\d+)mo ago$",
+    "flags": "",
+    "replacement": "$1 个月前更新"
+  },
+  {
+    "id": "updated-y-ago",
+    "pattern": "^Updated (\\d+)y ago$",
+    "flags": "",
+    "replacement": "$1年前更新"
+  },
+  {
+    "id": "updated-now",
+    "pattern": "^Updated now$",
+    "flags": "",
+    "replacement": "刚刚更新"
+  },
+  {
+    "id": "updated-just-now",
+    "pattern": "^Updated just now$",
+    "flags": "",
+    "replacement": "刚刚更新"
+  },
+  {
+    "id": "updated-sampled-just",
+    "pattern": "^Updated just now · sampled every (\\d+) s$",
+    "flags": "",
+    "replacement": "刚刚更新 · 每 $1 秒采样"
+  },
+  {
+    "id": "updated-sampled-s",
+    "pattern": "^Updated (\\d+)s ago · sampled every (\\d+) s$",
+    "flags": "",
+    "replacement": "$1 秒前更新 · 每 $2 秒采样"
+  },
+  {
+    "id": "updated-sampled-m",
+    "pattern": "^Updated (\\d+)m ago · sampled every (\\d+) s$",
+    "flags": "",
+    "replacement": "$1 分钟前更新 · 每 $2 秒采样"
+  },
+  {
+    "id": "updated-sampled-h",
+    "pattern": "^Updated (\\d+)h ago · sampled every (\\d+) s$",
+    "flags": "",
+    "replacement": "$1 小时前更新 · 每 $2 秒采样"
+  },
+  {
+    "id": "resets-month-day",
+    "pattern": "^Resets ((?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:t(?:ember)?)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?) \\d{1,2})$",
+    "flags": "",
+    "replacement": "$1重置"
+  },
+  {
+    "id": "dated-at-time",
+    "pattern": "^((?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:t(?:ember)?)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?) \\d{1,2}, \\d{4}) at (\\d{1,2}:\\d{2} [AP]M)$",
+    "flags": "i",
+    "replacement": "$1 $2"
+  },
+  {
+    "id": "seconds-ago-words",
+    "pattern": "^(\\d+) (?:sec|secs|second|seconds) ago$",
+    "flags": "",
+    "replacement": "$1秒前"
+  },
+  {
+    "id": "minutes-ago-words",
+    "pattern": "^(\\d+) (?:min|mins|minute|minutes) ago$",
+    "flags": "",
+    "replacement": "$1分钟前"
+  },
+  {
+    "id": "hours-ago-words",
+    "pattern": "^(\\d+) (?:hr|hrs|hour|hours) ago$",
+    "flags": "",
+    "replacement": "$1小时前"
+  },
+  {
+    "id": "days-ago-words",
+    "pattern": "^(\\d+) days? ago$",
+    "flags": "",
+    "replacement": "$1天前"
+  },
+  {
+    "id": "weeks-ago-words",
+    "pattern": "^(\\d+) (?:wk|wks|week|weeks) ago$",
+    "flags": "",
+    "replacement": "$1周前"
+  },
+  {
+    "id": "months-ago-words",
+    "pattern": "^(\\d+) (?:mo|mos|month|months) ago$",
+    "flags": "",
+    "replacement": "$1个月前"
+  },
+  {
+    "id": "years-ago-words",
+    "pattern": "^(\\d+) (?:yr|yrs|year|years) ago$",
+    "flags": "",
+    "replacement": "$1年前"
+  },
+  {
+    "id": "weekday-at-monday",
+    "pattern": "^Monday at (\\d{1,2}:\\d{2} [AP]M)$",
+    "flags": "i",
+    "replacement": "周一 $1"
+  },
+  {
+    "id": "weekday-at-tuesday",
+    "pattern": "^Tuesday at (\\d{1,2}:\\d{2} [AP]M)$",
+    "flags": "i",
+    "replacement": "周二 $1"
+  },
+  {
+    "id": "weekday-at-wednesday",
+    "pattern": "^Wednesday at (\\d{1,2}:\\d{2} [AP]M)$",
+    "flags": "i",
+    "replacement": "周三 $1"
+  },
+  {
+    "id": "weekday-at-thursday",
+    "pattern": "^Thursday at (\\d{1,2}:\\d{2} [AP]M)$",
+    "flags": "i",
+    "replacement": "周四 $1"
+  },
+  {
+    "id": "weekday-at-friday",
+    "pattern": "^Friday at (\\d{1,2}:\\d{2} [AP]M)$",
+    "flags": "i",
+    "replacement": "周五 $1"
+  },
+  {
+    "id": "weekday-at-saturday",
+    "pattern": "^Saturday at (\\d{1,2}:\\d{2} [AP]M)$",
+    "flags": "i",
+    "replacement": "周六 $1"
+  },
+  {
+    "id": "weekday-at-sunday",
+    "pattern": "^Sunday at (\\d{1,2}:\\d{2} [AP]M)$",
+    "flags": "i",
+    "replacement": "周日 $1"
+  },
+  {
+    "id": "today-at",
+    "pattern": "^Today at (\\d{1,2}:\\d{2} [AP]M)$",
+    "flags": "i",
+    "replacement": "今天 $1"
+  },
+  {
+    "id": "yesterday-at",
+    "pattern": "^Yesterday at (\\d{1,2}:\\d{2} [AP]M)$",
+    "flags": "i",
+    "replacement": "昨天 $1"
+  },
+  {
+    "id": "http-reason-bad-request",
+    "pattern": "^Invalid response: HTTP (\\d+) Bad Request$",
+    "flags": "",
+    "replacement": "响应无效：HTTP $1 错误请求"
+  },
+  {
+    "id": "http-status-bad-request",
+    "pattern": "^HTTP (\\d+) Bad Request$",
+    "flags": "",
+    "replacement": "HTTP $1 错误请求"
+  },
+  {
+    "id": "http-reason-unauthorized",
+    "pattern": "^Invalid response: HTTP (\\d+) Unauthorized$",
+    "flags": "",
+    "replacement": "响应无效：HTTP $1 未授权"
+  },
+  {
+    "id": "http-status-unauthorized",
+    "pattern": "^HTTP (\\d+) Unauthorized$",
+    "flags": "",
+    "replacement": "HTTP $1 未授权"
+  },
+  {
+    "id": "http-reason-forbidden",
+    "pattern": "^Invalid response: HTTP (\\d+) Forbidden$",
+    "flags": "",
+    "replacement": "响应无效：HTTP $1 禁止访问"
+  },
+  {
+    "id": "http-status-forbidden",
+    "pattern": "^HTTP (\\d+) Forbidden$",
+    "flags": "",
+    "replacement": "HTTP $1 禁止访问"
+  },
+  {
+    "id": "http-reason-not-found",
+    "pattern": "^Invalid response: HTTP (\\d+) Not Found$",
+    "flags": "",
+    "replacement": "响应无效：HTTP $1 未找到"
+  },
+  {
+    "id": "http-status-not-found",
+    "pattern": "^HTTP (\\d+) Not Found$",
+    "flags": "",
+    "replacement": "HTTP $1 未找到"
+  },
+  {
+    "id": "http-reason-request-timeout",
+    "pattern": "^Invalid response: HTTP (\\d+) Request Timeout$",
+    "flags": "",
+    "replacement": "响应无效：HTTP $1 请求超时"
+  },
+  {
+    "id": "http-status-request-timeout",
+    "pattern": "^HTTP (\\d+) Request Timeout$",
+    "flags": "",
+    "replacement": "HTTP $1 请求超时"
+  },
+  {
+    "id": "http-reason-conflict",
+    "pattern": "^Invalid response: HTTP (\\d+) Conflict$",
+    "flags": "",
+    "replacement": "响应无效：HTTP $1 冲突"
+  },
+  {
+    "id": "http-status-conflict",
+    "pattern": "^HTTP (\\d+) Conflict$",
+    "flags": "",
+    "replacement": "HTTP $1 冲突"
+  },
+  {
+    "id": "http-reason-too-many-requests",
+    "pattern": "^Invalid response: HTTP (\\d+) Too Many Requests$",
+    "flags": "",
+    "replacement": "响应无效：HTTP $1 请求过多"
+  },
+  {
+    "id": "http-status-too-many-requests",
+    "pattern": "^HTTP (\\d+) Too Many Requests$",
+    "flags": "",
+    "replacement": "HTTP $1 请求过多"
+  },
+  {
+    "id": "http-reason-internal-server-error",
+    "pattern": "^Invalid response: HTTP (\\d+) Internal Server Error$",
+    "flags": "",
+    "replacement": "响应无效：HTTP $1 服务器内部错误"
+  },
+  {
+    "id": "http-status-internal-server-error",
+    "pattern": "^HTTP (\\d+) Internal Server Error$",
+    "flags": "",
+    "replacement": "HTTP $1 服务器内部错误"
+  },
+  {
+    "id": "http-reason-bad-gateway",
+    "pattern": "^Invalid response: HTTP (\\d+) Bad Gateway$",
+    "flags": "",
+    "replacement": "响应无效：HTTP $1 网关错误"
+  },
+  {
+    "id": "http-status-bad-gateway",
+    "pattern": "^HTTP (\\d+) Bad Gateway$",
+    "flags": "",
+    "replacement": "HTTP $1 网关错误"
+  },
+  {
+    "id": "http-reason-service-unavailable",
+    "pattern": "^Invalid response: HTTP (\\d+) Service Unavailable$",
+    "flags": "",
+    "replacement": "响应无效：HTTP $1 服务不可用"
+  },
+  {
+    "id": "http-status-service-unavailable",
+    "pattern": "^HTTP (\\d+) Service Unavailable$",
+    "flags": "",
+    "replacement": "HTTP $1 服务不可用"
+  },
+  {
+    "id": "http-reason-gateway-timeout",
+    "pattern": "^Invalid response: HTTP (\\d+) Gateway Timeout$",
+    "flags": "",
+    "replacement": "响应无效：HTTP $1 网关超时"
+  },
+  {
+    "id": "http-status-gateway-timeout",
+    "pattern": "^HTTP (\\d+) Gateway Timeout$",
+    "flags": "",
+    "replacement": "HTTP $1 网关超时"
+  },
+  {
+    "id": "http-status-unknown",
+    "pattern": "^HTTP (\\d+) [A-Za-z][\\s\\S]*$",
+    "flags": "",
+    "replacement": "HTTP $1"
   }
 ]

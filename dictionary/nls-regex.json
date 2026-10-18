@@ -549,25 +549,25 @@
     "id": "nls-problemMatcher-ProblemMatcherParser-noProblemMatcher",
     "pattern": "^Error: the description can't be converted into a problem matcher:\n(.+)$",
     "flags": "",
-    "replacement": "错误：说明无法转换为问题匹配器：$1"
+    "replacement": "错误：说明无法转换为问题匹配器：\n$1"
   },
   {
     "id": "nls-problemMatcher-ProblemMatcherParser-noProblemPattern",
     "pattern": "^Error: the description doesn't define a valid problem pattern:\n(.+)$",
     "flags": "",
-    "replacement": "错误：说明未定义有效的问题模式：$1"
+    "replacement": "错误：说明未定义有效的问题模式：\n$1"
   },
   {
     "id": "nls-problemMatcher-ProblemMatcherParser-noOwner",
     "pattern": "^Error: the description doesn't define an owner:\n(.+)$",
     "flags": "",
-    "replacement": "错误：说明未定义所有者：$1"
+    "replacement": "错误：说明未定义所有者：\n$1"
   },
   {
     "id": "nls-problemMatcher-ProblemMatcherParser-noFileLocation",
     "pattern": "^Error: the description doesn't define a file location:\n(.+)$",
     "flags": "",
-    "replacement": "错误：说明未定义文件位置：$1"
+    "replacement": "错误：说明未定义文件位置：\n$1"
   },
   {
     "id": "nls-problemMatcher-ProblemMatcherParser-noDefinedPatter",

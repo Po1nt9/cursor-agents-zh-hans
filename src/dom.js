@@ -919,7 +919,22 @@ export function startDomTranslator(api, env) {
     // Other labels on that editor, such as aria-label Prompt, still translate.
     // A terminal buffer stays skipped; its screen-reader label does not.
     if (skip && !isComposerSurface(el) && !terminalLabel) return;
-    if (cooled(el)) return;
+    if (cooled(el)) {
+      // A tab switch writes the English aria-label back after the write
+      // budget is spent. Queue one rewrite so the Chinese label returns.
+      if (viaAttributeEvent && viaAttributeEvent !== 'retry') {
+        for (let i = 0; i < TRANSLATABLE_ATTRS.length; i += 1) {
+          const attr = TRANSLATABLE_ATTRS[i];
+          if (terminalLabel && attr !== 'aria-label') continue;
+          if (skip && frozenPlaceholder(attr)) continue;
+          if (typeof el.hasAttribute === 'function' && !el.hasAttribute(attr)) continue;
+          const raw = el.getAttribute(attr);
+          if (raw == null) continue;
+          scheduleAttrRetry(el, attr, raw);
+        }
+      }
+      return;
+    }
     nodeCalls = 0;
     const memo = attrMemoOf(el);
     for (let i = 0; i < TRANSLATABLE_ATTRS.length; i += 1) {
@@ -943,11 +958,11 @@ export function startDomTranslator(api, env) {
   }
 
   // Each new node shares a short global window so a placeholder rebuild cannot
-  // spin. React also writes the English aria-label back onto the same button;
-  // those attribute events get their own per-element budget, then one delayed
-  // rewrite if the English value is what stuck.
-  const attrRetryPending = new Set();
-  const attrRetryCount = new Map();
+  // spin. React also writes the English aria-label back onto the same button.
+  // The retry belongs to that element: three "Close bash" tabs must not share
+  // one cap, and a later tab switch has to be allowed to translate again.
+  const attrRetryPending = new WeakMap();
+  const attrRetryCount = new WeakMap();
   const textRetryCount = new WeakMap();
   const RETRY_CAP = 4;
 
@@ -974,26 +989,31 @@ export function startDomTranslator(api, env) {
   }
 
   function scheduleAttrRetry(el, name, source) {
-    if (!name || source == null) return;
+    if (!el || !name || source == null) return;
     const key = `${name}\n${source}`;
-    const used = attrRetryCount.get(key) || 0;
-    if (used >= RETRY_CAP || attrRetryPending.has(key)) return;
+    if (attrRetryPending.get(el) === key) return;
     const host = env.window;
     const timer = host && host.setTimeout;
     if (typeof timer !== 'function') return;
-    attrRetryPending.add(key);
-    attrRetryCount.set(key, used + 1);
+    const used = attrRetryCount.get(el) || 0;
+    if (used >= RETRY_CAP) return;
+    attrRetryPending.set(el, key);
+    attrRetryCount.set(el, used + 1);
     timer.call(host, () => {
-      attrRetryPending.delete(key);
-      if (!el || !el.parentElement) return;
-      if (el.getAttribute?.(name) !== source) return;
+      if (attrRetryPending.get(el) === key) attrRetryPending.delete(el);
+      attrRetryCount.delete(el);
+      if (!el.parentElement && !el.parentNode) return;
       const state = writeState.get(el);
       if (state) {
         state.count = 0;
         state.cooledUntil = 0;
       }
       const loops = attrLoops.get(el);
-      if (loops) loops.coolUntil = 0;
+      if (loops) {
+        loops.coolUntil = 0;
+        loops.resets = 0;
+        loops.count = 0;
+      }
       translateAttrs(el, 'retry');
     }, COOLDOWN_MS + 40);
   }
@@ -1004,7 +1024,13 @@ export function startDomTranslator(api, env) {
     let state = attrLoops.get(el);
     if (!state || state.name !== name || state.source !== source) {
       state = { name, source, count: 0, resets: 0, coolUntil: 0 };
-    } else if (state.coolUntil && t < state.coolUntil && viaAttributeEvent !== 'retry') {
+    } else if (state.coolUntil && t >= state.coolUntil) {
+      state.coolUntil = 0;
+      state.resets = 0;
+      state.count = 0;
+      attrRetryCount.delete(el);
+    }
+    if (state.coolUntil && t < state.coolUntil && viaAttributeEvent !== 'retry') {
       attrLoops.set(el, state);
       scheduleAttrRetry(el, name, source);
       return true;

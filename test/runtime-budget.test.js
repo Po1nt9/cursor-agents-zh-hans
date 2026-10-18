@@ -1313,6 +1313,51 @@ test('three tabs with the same close label all translate', () => {
   for (const tab of tabs) assert.equal(tab.attrs['aria-label'], '关闭 bash');
 });
 
+test('close bash aria comes back after a tab switch spends the write budget', () => {
+  const { compiled } = loadDictionary();
+  const h = harness();
+  let now = 0;
+  const timers = [];
+  const tabs = [0, 1, 2].map(() => h.makeElement('BUTTON', { attrs: { 'aria-label': 'Close bash' } }));
+  const { root, body } = mount(tabs, h);
+  startDomTranslator({
+    translateText,
+    shouldSkipElement,
+    shouldSkipAttributeTarget,
+    dictionary: compiled,
+    version: 'bash-stick',
+  }, {
+    document: { body, documentElement: root },
+    MutationObserver: h.MockObserver,
+    Element: class {},
+    window: {
+      setTimeout(fn, ms) {
+        timers.push({ fn, at: now + ms });
+        return timers.length;
+      },
+    },
+    now: () => now,
+    budgetMs: 2000,
+  });
+  for (const tab of tabs) assert.equal(tab.attrs['aria-label'], '关闭 bash');
+  function revert(tab) {
+    tab.attrs['aria-label'] = 'Close bash';
+    h.observerRef.current.emit([{ type: 'attributes', target: tab, attributeName: 'aria-label' }]);
+  }
+  for (let i = 0; i < 6; i += 1) {
+    for (const tab of tabs) revert(tab);
+  }
+  for (const tab of tabs) assert.equal(tab.attrs['aria-label'], 'Close bash');
+  now = 5000;
+  for (const timer of timers) {
+    if (timer.at <= now) timer.fn();
+  }
+  for (const tab of tabs) assert.equal(tab.attrs['aria-label'], '关闭 bash');
+  now = 20000;
+  for (const tab of tabs) revert(tab);
+  for (const tab of tabs) assert.equal(tab.attrs['aria-label'], '关闭 bash');
+});
+
 test('a chat timestamp and an automation row localize compact ages', () => {
   const { compiled } = loadDictionary();
   const h = harness();
