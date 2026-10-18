@@ -9,7 +9,7 @@ const HALF_PAREN = /[\u4e00-\u9fff][ \t]*\(|\([\u4e00-\u9fff]|[\u4e00-\u9fff][ \
 const CODE_CALL = /\$\([^)\n]*\)|\b[\w$]+(?:\.[\w$]+)+\([^)\n]*\)|\b[A-Za-z_][\w$]*\([^)\n]*\)|\(\d+,\s*\d+\)/g;
 // Code calls stay half-width: render(), editor.update(), $(basename).
 // Full-width parentheses after a name are prose when they hold Han, spaces, or a URL.
-const FULLWIDTH_CODE = /\$（[^）\n]*）|(?<![0-9.])[A-Za-z_][\w$]*\.[A-Za-z_][\w$]*（[^）\n]*）|(?<![0-9.])[A-Za-z_][\w$]*（\s*）|(?<![0-9.])[A-Za-z_][\w$]*（[\w$.]+）|（\s*\d+\s*[,，]\s*\d+\s*）/;
+const FULLWIDTH_CODE = /\$（[^）\n]*）|(?<![0-9.])[A-Za-z_][\w$]*\.[A-Za-z_][\w$]*（[^）\n]*）|(?<![0-9.])[A-Za-z_][\w$]*（\s*）|(?<![0-9.])[A-Za-z_][\w$]*（(?!\$\d+）)[\w$.]+）|（\s*\d+\s*[,，]\s*\d+\s*）/;
 
 function skipPunct(text) {
   return /https?:\/\/|\/[a-z][a-z0-9-]*|shift\+|Ctrl|Alt|Shift|⌘|⌥|⇧/.test(text);

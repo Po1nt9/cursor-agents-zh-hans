@@ -373,9 +373,9 @@
   },
   {
     "id": "glass-1699",
-    "pattern": "^Tool\\ blocked\\ because\\ this\\ hook\\ is\\ configured\\ to\\ fail\\ closed\\ \\(block\\ when\\ it\\ fails\\)\\.\\ Hook\\ \"([\\s\\S]+?)\"\\ failed\\ with\\ exit\\ code\\ ([\\s\\S]+?)([\\s\\S]+)$",
+    "pattern": "^Tool blocked because this hook is configured to fail closed \\(block when it fails\\)\\. Hook \"([\\s\\S]+?)\" failed with exit code (\\d+): ([\\s\\S]+)$",
     "flags": "",
-    "replacement": "工具已被阻止，因为此钩子配置为失败即阻止（失败时拦截）。钩子“$1”失败，退出码为 $2$3"
+    "replacement": "工具已被阻止，因为此钩子配置为失败即阻止（失败时拦截）。钩子“$1”失败，退出码为 $2：$3"
   },
   {
     "id": "glass-567",
@@ -1191,7 +1191,7 @@
     "id": "glass-2263",
     "pattern": "^Cannot\\ get\\ default\\ system\\ shell\\ when\\ there\\ is\\ no\\ backend\\ for\\ remote\\ authority\\ '([\\s\\S]+)'$",
     "flags": "",
-    "replacement": "无法获取默认系统 Shell，因为远程颁发机构“$1”没有后端"
+    "replacement": "无法获取默认系统 Shell，因为远程主机“$1”没有后端"
   },
   {
     "id": "glass-803",
@@ -1455,7 +1455,7 @@
     "id": "glass-2264",
     "pattern": "^Cannot\\ get\\ environment\\ when\\ there\\ is\\ no\\ backend\\ for\\ remote\\ authority\\ '([\\s\\S]+)'$",
     "flags": "",
-    "replacement": "无法获取环境，因为远程颁发机构“$1”没有后端"
+    "replacement": "无法获取环境，因为远程主机“$1”没有后端"
   },
   {
     "id": "glass-305",
@@ -2337,7 +2337,7 @@
     "id": "glass-989",
     "pattern": "^Failed\\ to\\ unpublish\\ canvas\\ \\(([\\s\\S]+)\\)\\.\\ Try\\ again\\ later\\.$",
     "flags": "",
-    "replacement": "无法取消发布 Canvas($1)。请稍后重试。"
+    "replacement": "无法取消发布 Canvas（$1）。请稍后重试。"
   },
   {
     "id": "glass-994",
@@ -4479,7 +4479,7 @@
     "id": "glass-1649",
     "pattern": "^Failed\\ to\\ stash\\ changes:\\ ([\\s\\S]+)$",
     "flags": "",
-    "replacement": "无法贮藏更改：$1"
+    "replacement": "无法储藏更改：$1"
   },
   {
     "id": "glass-1730",
@@ -8515,9 +8515,9 @@
   },
   {
     "id": "throw-plugin-add",
-    "pattern": "^Failed to add plugin to ([\\s\\S]+)$",
+    "pattern": "^Failed to add plugin to marketplaces?: ([\\s\\S]+)$",
     "flags": "",
-    "replacement": "无法把插件添加到 $1"
+    "replacement": "无法把插件添加到插件市场：$1"
   },
   {
     "id": "throw-install-ext",
@@ -8752,5 +8752,227 @@
     "pattern": "^Failed to load composer data for agent: ([\\s\\S]+)$",
     "flags": "",
     "replacement": "无法加载智能体的聊天数据：$1"
+  },
+  {
+    "id": "import-ide-themes",
+    "pattern": "^Imported (\\d+) themes? from the IDE\\.$",
+    "flags": "",
+    "replacement": "已从 IDE 导入 $1 个主题。"
+  },
+  {
+    "id": "valid-number",
+    "pattern": "^Please enter a valid number for ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "请为 $1 输入有效的数字"
+  },
+  {
+    "id": "valid-string",
+    "pattern": "^Please enter a valid string for ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "请为 $1 输入有效的字符串"
+  },
+  {
+    "id": "valid-boolean",
+    "pattern": "^Please enter a valid boolean for ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "请为 $1 输入有效的布尔值"
+  },
+  {
+    "id": "resume-hours",
+    "pattern": "^This run will resume automatically when it's back \\(waits up to (\\d+) hours?\\)\\.$",
+    "flags": "",
+    "replacement": "恢复后，这次运行会自动继续（最多等待 $1 小时）。"
+  },
+  {
+    "id": "usage-resets",
+    "pattern": "^Usage · Resets ([A-Za-z]+ \\d{1,2})$",
+    "flags": "",
+    "replacement": "用量 · $1重置"
+  },
+  {
+    "id": "hook-exit-code",
+    "pattern": "^Tool blocked because this hook is configured to fail closed \\(block when it fails\\)\\. Hook \"([\\s\\S]+?)\" failed with exit code (\\d+)$",
+    "flags": "",
+    "replacement": "工具已被阻止，因为此钩子配置为失败即阻止（失败时拦截）。钩子“$1”失败，退出码为 $2。"
+  },
+  {
+    "id": "agent-review-state",
+    "pattern": "^Agent Review: ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "智能体审查：$1"
+  },
+  {
+    "id": "cors-internal-via",
+    "pattern": "^Invalid response: HTTP (\\d+) Internal Server Error via ([\\s\\S]+) during CORS$",
+    "flags": "",
+    "replacement": "响应无效：跨域请求期间，经由 $2 返回 HTTP $1 内部服务器错误"
+  },
+  {
+    "id": "cors-internal",
+    "pattern": "^Invalid response: HTTP (\\d+) Internal Server Error during CORS$",
+    "flags": "",
+    "replacement": "响应无效：跨域请求期间返回 HTTP $1 内部服务器错误"
+  },
+  {
+    "id": "cors-via",
+    "pattern": "^Invalid response: HTTP (\\d+) ([\\s\\S]+) via ([\\s\\S]+) during CORS$",
+    "flags": "",
+    "replacement": "响应无效：跨域请求期间 HTTP $1（$2，经由 $3）"
+  },
+  {
+    "id": "cors-tail",
+    "pattern": "^Invalid response: HTTP (\\d+) ([\\s\\S]+) during CORS$",
+    "flags": "",
+    "replacement": "响应无效：跨域请求期间 HTTP $1 $2"
+  },
+  {
+    "id": "sub-events",
+    "pattern": "^Received (\\d+) subscription events? while this conversation was busy or offline\\.$",
+    "flags": "",
+    "replacement": "此对话忙碌或离线时，收到了 $1 条订阅事件。"
+  },
+  {
+    "id": "ext-host-notice",
+    "pattern": "^The extension host did not start in time\\.\\s+Reload the window and try again\\. If this keeps happening, disable recently added extensions or others that may slow extension host startup\\.$",
+    "flags": "",
+    "replacement": "扩展宿主启动超时。请重新加载窗口后再试。如果问题仍然出现，请禁用最近添加的扩展，或其他可能拖慢扩展宿主启动的扩展。"
+  },
+  {
+    "id": "debug-server-notice",
+    "pattern": "^The debug server did not start in time\\.\\s+Please check the \\[NDJSON port setting\\]\\((.+?)\\) and ensure:\\s+- The port is not already in use by another service\\s+- You have permission to use the port \\(try a port above 1024\\)$",
+    "flags": "",
+    "replacement": "调试服务器启动超时。请检查 [NDJSON 端口设置]($1)，并确认：端口没有被其他服务占用。你有权使用该端口（可尝试 1024 以上的端口）。"
+  },
+  {
+    "id": "throw-private-worker-quoted",
+    "pattern": "^Cannot use private worker: unable to determine repository from remote URL \"([\\s\\S]+)\"\\. Please ensure this is a valid Git repository URL\\.$",
+    "flags": "",
+    "replacement": "无法使用私有工作节点：无法从远程 URL“$1”确定仓库。请确认这是有效的 Git 仓库 URL。"
+  },
+  {
+    "id": "throw-private-worker",
+    "pattern": "^Cannot use private worker: unable to determine repository from remote URL\\. Please ensure this is a valid Git repository URL\\.$",
+    "flags": "",
+    "replacement": "无法使用私有工作节点：无法从远程 URL 确定仓库。请确认这是有效的 Git 仓库 URL。"
+  },
+  {
+    "id": "throw-image-disk",
+    "pattern": "^Image selected in conversation was not found on disk: ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "对话中选择的图片在磁盘上不存在：$1"
+  },
+  {
+    "id": "throw-automerge-enable",
+    "pattern": "^Cannot enable pull request auto-merge: missing prUrl for agent ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法启用拉取请求的自动合并：智能体 $1 缺少 prUrl"
+  },
+  {
+    "id": "throw-automerge-disable",
+    "pattern": "^Cannot disable pull request auto-merge: missing prUrl for agent ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法禁用拉取请求的自动合并：智能体 $1 缺少 prUrl"
+  },
+  {
+    "id": "throw-repo-access",
+    "pattern": "^([\\s\\S]+) repository access failed$",
+    "flags": "",
+    "replacement": "$1 的仓库访问失败"
+  },
+  {
+    "id": "throw-norepo-env",
+    "pattern": "^No-repo team automation environment was created but could not be located in the refetched list\\.$",
+    "flags": "",
+    "replacement": "已创建无仓库的团队自动化环境，但在重新获取的列表中找不到它。"
+  },
+  {
+    "id": "throw-browser-origin",
+    "pattern": "^Browser tool ([\\s\\S]+) is blocked because the current page origin cannot be determined\\. Allowed origins: ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "浏览器工具 $1 已被阻止，因为无法确定当前页面的来源。允许的来源：$2"
+  },
+  {
+    "id": "throw-browser-url",
+    "pattern": "^Browser tool ([\\s\\S]+) is blocked because the current page URL is invalid\\. Allowed origins: ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "浏览器工具 $1 已被阻止，因为当前页面的 URL 无效。允许的来源：$2"
+  },
+  {
+    "id": "throw-browser-admin",
+    "pattern": "^Browser tool ([\\s\\S]+) is blocked on origin ([\\s\\S]+) by administrator settings\\. Allowed origins: ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "管理员设置已阻止浏览器工具 $1 访问来源 $2。允许的来源：$3"
+  },
+  {
+    "id": "throw-open-cloud",
+    "pattern": "^Could not open cloud agent ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法打开云端智能体 $1"
+  },
+  {
+    "id": "throw-add-local",
+    "pattern": "^Adding a local agent to a cloud Project is not enabled \\(agent ([\\s\\S]+)\\)$",
+    "flags": "",
+    "replacement": "未启用将本地智能体添加到云端项目（智能体 $1）"
+  },
+  {
+    "id": "throw-remote-control",
+    "pattern": "^Remote Control is not available for agent ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "智能体 $1 不能使用远程控制"
+  },
+  {
+    "id": "throw-pull-branch",
+    "pattern": "^Cannot pull cloud branch \"([\\s\\S]+)\": no matching remote branch found$",
+    "flags": "",
+    "replacement": "无法拉取云端分支“$1”：未找到匹配的远程分支"
+  },
+  {
+    "id": "throw-pull-multirepo",
+    "pattern": "^Cannot pull a multi-repo cloud agent into a workspace with different repositories$",
+    "flags": "",
+    "replacement": "无法把多仓库云端智能体拉入包含不同仓库的工作区"
+  },
+  {
+    "id": "throw-undo-reason",
+    "pattern": "^Undo failed for \"([\\s\\S]+)\": ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法撤消“$1”：$2"
+  },
+  {
+    "id": "throw-archive-state",
+    "pattern": "^Composer archive state could not be persisted: ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法保存聊天的归档状态：$1"
+  },
+  {
+    "id": "throw-json-theme",
+    "pattern": "^Invalid format for JSON theme file: ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "JSON 主题文件的格式无效：$1"
+  },
+  {
+    "id": "throw-theme-selector",
+    "pattern": "^Problem parsing color theme file: ([\\s\\S]+)\\. Property 'semanticTokenColors' contains a invalid selector$",
+    "flags": "",
+    "replacement": "解析颜色主题文件时出错：$1。属性 semanticTokenColors 包含无效的选择器"
+  },
+  {
+    "id": "throw-profile-status",
+    "pattern": "^Failed to get profile from URL: ([\\s\\S]+)\\. Status code: ([\\s\\S]+)\\. Message: ([\\s\\S]+)$",
+    "flags": "",
+    "replacement": "无法从 URL 获取配置文件：$1。状态码：$2。消息：$3"
+  },
+  {
+    "id": "throw-task-sequence",
+    "pattern": "^Task \"([\\s\\S]+?)\" uses sequential dependencies that are not supported in Glass task terminals\\.$",
+    "flags": "",
+    "replacement": "Glass 任务终端不支持任务“$1”使用的顺序依赖。"
+  },
+  {
+    "id": "ndjson-check",
+    "pattern": "^Please check the \\[NDJSON port setting\\]\\((.+?)\\) and ensure:$",
+    "flags": "",
+    "replacement": "请检查 [NDJSON 端口设置]($1)，并确认："
   }
 ]

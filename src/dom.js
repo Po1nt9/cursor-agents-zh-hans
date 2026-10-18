@@ -210,6 +210,14 @@ export function startDomTranslator(api, env) {
     return String(text || '').replace(/\s+/g, ' ').trim();
   }
 
+  // Newlines separate sentences. Collapsing them first makes a "\\n" rule miss
+  // and glues an untranslated tail onto a shorter match.
+  function sourceForTranslate(text) {
+    const raw = String(text || '');
+    if (/[\r\n]/.test(raw)) return raw.replace(/\r\n/g, '\n').trim();
+    return normalized(raw);
+  }
+
   function continuesSentence(hostText, core) {
     if (hostText == null) return false;
     const all = normalized(hostText);
@@ -771,7 +779,7 @@ export function startDomTranslator(api, env) {
       if (shape === 'mixed') break;
       const raw = narrowText(host);
       if (raw == null) break;
-      const compact = normalized(raw);
+      const compact = sourceForTranslate(raw);
       const badge = badgeLabel(host, compact);
       if (badge) {
         best = { host, text: badge, inline: false, tier: 'exact', badge: true };
@@ -803,7 +811,7 @@ export function startDomTranslator(api, env) {
       }
     }
 
-    const core = normalized(node.nodeValue);
+    const core = sourceForTranslate(node.nodeValue);
     const marked = badgeLabel(parent, core);
     if (marked) {
       if (cooled(node)) return;
@@ -832,6 +840,39 @@ export function startDomTranslator(api, env) {
       attrMemo.set(el, memo);
     }
     return memo;
+  }
+
+  function shellHost(el) {
+    if (!el || el.nodeType !== 1) return false;
+    if (classHas(el, 'composer-human-message') || classHas(el, 'composer-human-message-content')
+      || classHas(el, 'human-message-inline-body') || classHas(el, 'terminal-wrapper')) return true;
+    const kind = el.getAttribute?.('data-message-kind');
+    return kind === 'human' || kind === 'assistant';
+  }
+
+  function proseLeaf(el) {
+    if (!el || el.nodeType !== 1) return false;
+    if (el.isContentEditable) return true;
+    const editable = el.getAttribute?.('contenteditable');
+    if (editable != null && editable !== 'false') return true;
+    return classHas(el, 'ProseMirror') || classHas(el, 'tiptap') || classHas(el, 'xterm')
+      || classHas(el, 'xterm-screen') || classHas(el, 'monaco-editor') || classHas(el, 'view-lines')
+      || classHas(el, 'composer-message-codeblock') || classHas(el, 'composer-message-markdown')
+      || (classHas(el, 'markdown-root') && shouldSkipElement(el));
+  }
+
+  function descendShell(el) {
+    if (proseLeaf(el)) return false;
+    if (shellHost(el)) return true;
+    let cur = el.parentElement || null;
+    const seen = new Set();
+    while (cur && !seen.has(cur)) {
+      seen.add(cur);
+      if (proseLeaf(cur)) return false;
+      if (shellHost(cur)) return true;
+      cur = cur.parentElement || null;
+    }
+    return false;
   }
 
   function isComposerSurface(el) {
@@ -1048,7 +1089,9 @@ export function startDomTranslator(api, env) {
     if (!shouldSkipAttributeTarget(node) || isComposerSurface(node)) translateAttrs(node);
     // Chat markdown and editors stop here. A model-picker label is markdown too,
     // but its text is a control name and still needs a walk.
-    if (shouldSkipElement(node) && !isInlinePhrase(node)) return;
+    // A message shell and the wrappers inside it still walk, so edit-mode
+    // chrome (the Auto chip, the add button, Close bash) is reached.
+    if (shouldSkipElement(node) && !isInlinePhrase(node) && !descendShell(node)) return;
     if (node.shadowRoot) {
       observe(node.shadowRoot);
       enqueue(node.shadowRoot);

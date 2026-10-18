@@ -166,6 +166,26 @@ test('skips editor, terminal, diff, chat, and inputs, and translates other label
   assert.equal(shouldSkipAttributeTarget(chip), false);
   const typed = element({ classes: ['human-message'], parent: human });
   assert.equal(shouldSkipElement(typed), true);
+  const shell = element({ classes: ['composer-human-message'], attrs: { 'data-message-kind': 'human' } });
+  const proseEditor = element({ classes: ['ProseMirror'], editable: true, parent: shell });
+  const typedInEditor = { nodeType: 3, parentElement: proseEditor, nodeValue: 'hello' };
+  const toolbar = element({ parent: shell });
+  const plus = element({ tag: 'BUTTON', attrs: { 'aria-label': 'Add agents, context, tools' }, parent: toolbar });
+  const auto = element({ classes: ['ui-model-picker__trigger-text'], parent: toolbar });
+  assert.equal(shouldSkipElement(typedInEditor), true);
+  assert.equal(shouldSkipElement(plus), false);
+  assert.equal(shouldSkipAttributeTarget(plus), false);
+  assert.equal(shouldSkipElement(auto), false);
+  assert.equal(skipReason(auto), null);
+  const terminal = element({ classes: ['terminal-wrapper'] });
+  const closeBash = element({ tag: 'BUTTON', attrs: { 'aria-label': 'Close bash' }, parent: terminal });
+  const screen = element({ classes: ['xterm'], parent: terminal });
+  assert.equal(shouldSkipElement(closeBash), false);
+  assert.equal(shouldSkipAttributeTarget(closeBash), false);
+  assert.equal(shouldSkipElement(screen), true);
+  const triggerText = element({ classes: ['ui-model-picker__trigger-text'], parent: shell });
+  assert.equal(shouldSkipElement(triggerText), false);
+  assert.equal(skipReason(triggerText), null);
   const assistant = element({ attrs: { 'data-message-kind': 'assistant' } });
   const errorBubble = element({ classes: ['composer-error-message'], parent: assistant });
   assert.equal(shouldSkipElement(errorBubble), false);
@@ -518,4 +538,112 @@ test('placeholders inside editors translate, and chat chrome does too, while mes
   assert.equal(key.nodeValue, 'Tab');
   assert.equal(headingText.nodeValue, '补全');
   assert.equal(language.nodeValue, '英语');
+});
+
+test('edit-message chrome translates and the typed message stays', () => {
+  function makeElement(tag = 'DIV', options = {}) {
+    const classes = options.classes || [];
+    const el = {
+      nodeType: 1,
+      tagName: tag,
+      className: classes.join(' '),
+      classList: { contains: (name) => classes.includes(name) },
+      parentElement: null,
+      childNodes: [],
+      attrs: { ...(options.attrs || {}) },
+      isContentEditable: Boolean(options.editable),
+      shadowRoot: null,
+      getAttribute(name) { return Object.prototype.hasOwnProperty.call(this.attrs, name) ? this.attrs[name] : null; },
+      setAttribute(name, value) { this.attrs[name] = value; },
+      hasAttribute(name) { return Object.prototype.hasOwnProperty.call(this.attrs, name); },
+      appendChild(child) {
+        child.parentElement = this;
+        this.childNodes.push(child);
+        return child;
+      },
+      getRootNode() { return { host: null }; },
+    };
+    return el;
+  }
+  function makeText(value) {
+    return { nodeType: 3, nodeValue: value, parentElement: null };
+  }
+  class MockObserver {
+    constructor() {}
+    observe() {}
+    disconnect() {}
+  }
+
+  const compiled = compileDictionary({
+    exact: {
+      Auto: '自动',
+      'Add agents, context, tools': '添加智能体、上下文和工具',
+      'Close bash': '关闭 bash',
+      'Delete this secret?': '删除此密钥？',
+      'This action cannot be undone.': '此操作无法撤消。',
+    },
+    fragments: [],
+    regex: [],
+  });
+
+  const body = makeElement('BODY');
+  const root = makeElement('HTML');
+  root.appendChild(body);
+  const shell = makeElement('DIV', {
+    classes: ['composer-human-message'],
+    attrs: { 'data-message-kind': 'human' },
+  });
+  const editor = makeElement('DIV', { classes: ['ProseMirror'], editable: true, attrs: { contenteditable: 'true' } });
+  const typed = makeText('keep my words');
+  editor.appendChild(typed);
+  const toolbar = makeElement('DIV', { classes: ['ui-prompt-input-toolbar'] });
+  const plus = makeElement('BUTTON', {
+    classes: ['ui-icon-button'],
+    attrs: { 'aria-label': 'Add agents, context, tools', 'data-prompt-input-compact-visible-slot': 'true' },
+  });
+  const chip = makeElement('SPAN', { classes: ['ui-model-picker__trigger-text'] });
+  const auto = makeText('Auto');
+  chip.appendChild(auto);
+  toolbar.appendChild(plus);
+  toolbar.appendChild(chip);
+  shell.appendChild(editor);
+  shell.appendChild(toolbar);
+  body.appendChild(shell);
+
+  const terminal = makeElement('DIV', { classes: ['terminal-wrapper'] });
+  const closeBash = makeElement('BUTTON', {
+    classes: ['ui-icon-button'],
+    attrs: { 'aria-label': 'Close bash' },
+  });
+  const screen = makeElement('DIV', { classes: ['xterm'] });
+  const buffer = makeText('Close bash');
+  screen.appendChild(buffer);
+  terminal.appendChild(closeBash);
+  terminal.appendChild(screen);
+  body.appendChild(terminal);
+
+  const secretHost = makeElement('DIV');
+  const secret = makeText('Delete this secret?\n\nname\n\nThis action cannot be undone.');
+  secretHost.appendChild(secret);
+  body.appendChild(secretHost);
+
+  startDomTranslator({
+    translateText,
+    shouldSkipElement,
+    shouldSkipAttributeTarget,
+    dictionary: compiled,
+    version: 'test',
+  }, {
+    document: { body, documentElement: root },
+    MutationObserver: MockObserver,
+    Element: class {},
+    window: {},
+  });
+
+  assert.equal(typed.nodeValue, 'keep my words');
+  assert.equal(auto.nodeValue, '自动');
+  assert.equal(plus.attrs['aria-label'], '添加智能体、上下文和工具');
+  assert.equal(closeBash.attrs['aria-label'], '关闭 bash');
+  assert.equal(buffer.nodeValue, 'Close bash');
+  assert.equal(secret.nodeValue, '删除此密钥？\n\nname\n\n此操作无法撤消。');
 });

@@ -364,13 +364,19 @@ const MONTH_INDEX = {
   dec: 12, december: 12,
 };
 
-const FULL_DATE = /\b(Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:t(?:ember)?)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)\s+(\d{1,2}),\s+(\d{4})(?:,\s+(\d{1,2}):(\d{2})(?::(\d{2}))?\s*(AM|PM))?\b/gi;
+const MONTH_NAME = 'Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:t(?:ember)?)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?';
+const FULL_DATE = new RegExp(`\\b(${MONTH_NAME})\\s+(\\d{1,2}),\\s+(\\d{4})(?:,\\s+(\\d{1,2}):(\\d{2})(?::(\\d{2}))?\\s*(AM|PM))?\\b`, 'gi');
+const MONTH_DAY = new RegExp(`\\b(${MONTH_NAME})\\s+(\\d{1,2})\\b`, 'gi');
 
 // "Oct 17, 2026, 10:15 PM" → "2026年10月17日 22:15". Month and day stay unpadded.
+function monthNumber(name) {
+  return MONTH_INDEX[String(name || '').toLowerCase()] || 0;
+}
+
 export function localizeEmbeddedDates(text) {
   if (typeof text !== 'string' || !text) return text;
-  return text.replace(FULL_DATE, (all, month, day, year, hour, minute, second, ampm) => {
-    const m = MONTH_INDEX[String(month).toLowerCase()];
+  const dated = text.replace(FULL_DATE, (all, month, day, year, hour, minute, second, ampm) => {
+    const m = monthNumber(month);
     if (!m) return all;
     let out = `${year}年${m}月${Number(day)}日`;
     if (hour != null && minute != null) {
@@ -382,6 +388,11 @@ export function localizeEmbeddedDates(text) {
       if (second != null) out += `:${String(second).padStart(2, '0')}`;
     }
     return out;
+  });
+  return dated.replace(MONTH_DAY, (all, month, day) => {
+    const m = monthNumber(month);
+    if (!m) return all;
+    return `${m}月${Number(day)}日`;
   });
 }
 
@@ -487,6 +498,20 @@ export function translateText(input, dictionary, depth = 2, seen = null) {
     return packResult(lead + frag.to + tail, input, 'fragment');
   }
 
+  // A multiline notice is several sentences. Match each line when the whole
+  // block has no rule, and keep the blank lines between them.
+  if (normalizedCore.includes('\n')) {
+    const lines = normalizedCore.split('\n');
+    let any = false;
+    const next = lines.map((line) => {
+      if (!line.trim()) return line;
+      const part = translateText(line, dictionary, depth, loop);
+      if (part.changed && part.text !== line) any = true;
+      return part.changed ? part.text : line;
+    });
+    if (any) return packResult(lead + next.join('\n') + tail, input, 'regex');
+  }
+
   const dated = localizeEmbeddedDates(input);
   if (dated !== input) return { text: dated, changed: true, tier: 'regex' };
   return { text: input, changed: false, tier: null };
@@ -567,6 +592,7 @@ const MODEL_PICKER_LABEL_CLASSES = [
   'ui-model-picker__item-content',
   'ui-model-picker__menu',
   'ui-model-picker__trigger',
+  'ui-model-picker__trigger-text',
 ];
 
 function isModelPickerLabel(el) {
@@ -599,7 +625,8 @@ function isMessageChrome(el) {
   if (hasClass(el, 'ui-button') || hasClass(el, 'ui-icon-button')
     || hasClass(el, 'ui-prompt-input-toolbar') || hasClass(el, 'ui-prompt-input-submit-button')
     || hasClass(el, 'vscode-model-picker__trigger') || hasClass(el, 'vscode-model-picker__trigger-text')
-    || hasClass(el, 'vscode-model-picker__trigger-markdown')) return true;
+    || hasClass(el, 'vscode-model-picker__trigger-markdown')
+    || hasClass(el, 'ui-model-picker__trigger-text')) return true;
   return isModelPickerLabel(el);
 }
 
@@ -636,6 +663,16 @@ function markedBetween(origin, boundary, predicate) {
   return false;
 }
 
+function isMessageShell(node) {
+  if (!node || node.nodeType === 3) return false;
+  const kind = node.getAttribute?.('data-message-kind');
+  if (kind && PROTECTED_MESSAGE_KINDS.has(String(kind))) return true;
+  return hasClass(node, 'composer-human-message')
+    || hasClass(node, 'composer-human-message-content')
+    || hasClass(node, 'human-message-inline-body')
+    || hasClass(node, 'terminal-wrapper');
+}
+
 function chromeInsideMessage(origin, boundary) {
   return markedBetween(origin, boundary, isMessageChrome);
 }
@@ -657,8 +694,8 @@ export function shouldSkipElement(el) {
     // Model names and the Auto row are markdown. That is a label, not a chat message.
     if (markdownInModelPicker(node)) return false;
     if (hasClass(node, 'markdown-root') && errorInsideMessage(el, node)) return false;
-    const kind = node.getAttribute?.('data-message-kind');
-    if (kind && PROTECTED_MESSAGE_KINDS.has(String(kind))
+    // Edit-message chrome and a terminal's close button sit inside a skipped shell.
+    if ((isMessageShell(node) || isEditableControl(node))
       && (chromeInsideMessage(el, node) || errorInsideMessage(el, node))) return false;
     return true;
   });
@@ -699,7 +736,11 @@ export function skipReason(el) {
         cur = cur.parentElement || null;
         continue;
       }
-      if ((reason.startsWith('message-kind:') || reason.startsWith('editable:'))
+      if ((reason.startsWith('message-kind:') || reason.startsWith('editable:')
+        || reason === 'class:composer-human-message'
+        || reason === 'class:composer-human-message-content'
+        || reason === 'class:human-message-inline-body'
+        || reason === 'class:terminal-wrapper')
         && (chromeInsideMessage(el, cur) || errorInsideMessage(el, cur))) {
         cur = cur.parentElement || null;
         continue;
@@ -727,12 +768,8 @@ export function shouldSkipAttributeTarget(el) {
     // Anything inside a contenteditable, ProseMirror, or tiptap editor is.
     const tag = tagNameOf(node);
     if ((tag === 'INPUT' || tag === 'TEXTAREA') && node === el) return false;
-    const kind = node.getAttribute?.('data-message-kind');
-    if (kind && PROTECTED_MESSAGE_KINDS.has(String(kind))
+    if ((isMessageShell(node) || isEditableControl(node))
       && (chromeInsideMessage(el, node) || errorInsideMessage(el, node))) return false;
-    if (isEditableControl(node) && (chromeInsideMessage(el, node) || errorInsideMessage(el, node))) {
-      return false;
-    }
     return true;
   });
 }
