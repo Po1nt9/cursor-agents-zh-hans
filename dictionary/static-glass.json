@@ -365,7 +365,7 @@
     {
       "id": "add-agents-context",
       "literal": "Add agents, context, tools",
-      "translation": "添加智能体、上下文、工具",
+      "translation": "添加智能体、上下文和工具",
       "expectedHits": {
         "3.25.6": 2
       }

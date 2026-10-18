@@ -279,10 +279,12 @@ export function startDomTranslator(api, env) {
       if (child.nodeType !== 1 || !isPhrasePart(child)) continue;
       const token = inlineToken(child);
       if (!token) return false;
-      const at = translated.indexOf(token, pos);
+      const at = translated.toLowerCase().indexOf(token.toLowerCase(), pos);
       if (at < 0) return false;
-      cuts.push({ at, end: at + token.length });
-      pos = at + token.length;
+      const shown = translated.slice(at, at + token.length);
+      if (shown !== token) writeChipText(child, shown);
+      cuts.push({ at, end: at + shown.length });
+      pos = at + shown.length;
     }
     if (!cuts.length) return false;
     const writes = [];
@@ -467,6 +469,17 @@ export function startDomTranslator(api, env) {
     }
   }
 
+  function writeChipText(chip, text) {
+    const kids = chip.childNodes || [];
+    for (let i = 0; i < kids.length; i += 1) {
+      const child = kids[i];
+      if (child.nodeType === 3 && String(child.nodeValue || '').trim()) {
+        if (child.nodeValue !== text) child.nodeValue = text;
+        return;
+      }
+    }
+  }
+
   function latchWordSpan(el) {
     const flat = [];
     flattenWordSpan(el, flat);
@@ -495,11 +508,13 @@ export function startDomTranslator(api, env) {
         split = false;
         break;
       }
-      const at = translated.indexOf(token, pos);
+      const at = translated.toLowerCase().indexOf(token.toLowerCase(), pos);
       if (at < 0) {
         split = false;
         break;
       }
+      const shown = translated.slice(at, at + token.length);
+      if (shown !== token) writeChipText(chips[i], shown);
       cuts.push({ at, end: at + token.length });
       pos = at + token.length;
     }
@@ -699,6 +714,9 @@ export function startDomTranslator(api, env) {
     let host = start;
     for (let depth = 0; depth < ANCESTOR_DEPTH && host; depth += 1) {
       if (isWordSpanSentence(host)) return host;
+      const tag = String(host.tagName || '').toUpperCase();
+      const role = String(host.getAttribute?.('role') || '');
+      if (tag === 'BUTTON' || role === 'button' || classHas(host, 'model-picker')) return null;
       host = host.parentElement || null;
     }
     return null;
@@ -706,7 +724,10 @@ export function startDomTranslator(api, env) {
 
   function translateTextNode(node) {
     if (!node || node.nodeType !== 3) return;
-    if (cooled(node)) return;
+    if (cooled(node)) {
+      scheduleTextRetry(node);
+      return;
+    }
     const parent = node.parentElement;
     if (!parent || shouldSkipElement(parent)) return;
     if (textMemo.get(node) === node.nodeValue) return;
@@ -828,18 +849,42 @@ export function startDomTranslator(api, env) {
     return name === 'placeholder' || name === 'data-placeholder' || name === 'aria-placeholder';
   }
 
+  // Visible composer placeholders are drawn from data-placeholder by CSS.
+  // The screen-reader aria-placeholder can change without breaking that.
+  function frozenPlaceholder(name) {
+    return name === 'placeholder' || name === 'data-placeholder';
+  }
+
+  const TERMINAL_CLASSES = ['xterm', 'xterm-screen', 'terminal-wrapper'];
+
+  function underTerminal(el) {
+    let cur = el;
+    const seen = new Set();
+    while (cur && !seen.has(cur)) {
+      seen.add(cur);
+      for (let i = 0; i < TERMINAL_CLASSES.length; i += 1) {
+        if (classHas(cur, TERMINAL_CLASSES[i])) return true;
+      }
+      cur = cur.parentElement || null;
+    }
+    return false;
+  }
+
   function translateAttrs(el, viaAttributeEvent) {
     if (!el || el.nodeType !== 1 || typeof el.getAttribute !== 'function') return;
     const skip = shouldSkipAttributeTarget(el);
+    const terminalLabel = skip && underTerminal(el);
     // Placeholder text inside the composer is drawn by the injected CSS.
     // Other labels on that editor, such as aria-label Prompt, still translate.
-    if (skip && !isComposerSurface(el)) return;
+    // A terminal buffer stays skipped; its screen-reader label does not.
+    if (skip && !isComposerSurface(el) && !terminalLabel) return;
     if (cooled(el)) return;
     nodeCalls = 0;
     const memo = attrMemoOf(el);
     for (let i = 0; i < TRANSLATABLE_ATTRS.length; i += 1) {
       const attr = TRANSLATABLE_ATTRS[i];
-      if (skip && placeholderAttr(attr)) continue;
+      if (terminalLabel && attr !== 'aria-label') continue;
+      if (skip && frozenPlaceholder(attr)) continue;
       if (typeof el.hasAttribute === 'function' && !el.hasAttribute(attr)) continue;
       const raw = el.getAttribute(attr);
       if (raw == null || memo[attr] === raw) continue;
@@ -861,20 +906,55 @@ export function startDomTranslator(api, env) {
   // those attribute events get their own per-element budget, then one delayed
   // rewrite if the English value is what stuck.
   const attrRetryPending = new Set();
+  const attrRetryCount = new Map();
+  const textRetryCount = new WeakMap();
+  const RETRY_CAP = 4;
+
+  function scheduleTextRetry(node) {
+    const host = env.window;
+    const timer = host && host.setTimeout;
+    if (typeof timer !== 'function' || !node) return;
+    const used = textRetryCount.get(node) || 0;
+    if (used >= RETRY_CAP) return;
+    const source = node.nodeValue;
+    if (!source || !source.trim()) return;
+    textRetryCount.set(node, used + 1);
+    timer.call(host, () => {
+      if (!node.parentElement && !node.parentNode) return;
+      if (node.nodeValue !== source) return;
+      const state = writeState.get(node);
+      if (state) {
+        state.count = 0;
+        state.cooledUntil = 0;
+      }
+      textMemo.delete(node);
+      translateTextNode(node);
+    }, COOLDOWN_MS + 40);
+  }
 
   function scheduleAttrRetry(el, name, source) {
+    if (!name || source == null) return;
     const key = `${name}\n${source}`;
-    if (attrRetryPending.has(key)) return;
+    const used = attrRetryCount.get(key) || 0;
+    if (used >= RETRY_CAP || attrRetryPending.has(key)) return;
     const host = env.window;
     const timer = host && host.setTimeout;
     if (typeof timer !== 'function') return;
     attrRetryPending.add(key);
+    attrRetryCount.set(key, used + 1);
     timer.call(host, () => {
       attrRetryPending.delete(key);
       if (!el || !el.parentElement) return;
       if (el.getAttribute?.(name) !== source) return;
+      const state = writeState.get(el);
+      if (state) {
+        state.count = 0;
+        state.cooledUntil = 0;
+      }
+      const loops = attrLoops.get(el);
+      if (loops) loops.coolUntil = 0;
       translateAttrs(el, 'retry');
-    }, LOOP_WINDOW_MS + COOLDOWN_MS);
+    }, COOLDOWN_MS + 40);
   }
 
   function attributeLooping(el, name, source, viaAttributeEvent) {
@@ -885,10 +965,12 @@ export function startDomTranslator(api, env) {
       state = { name, source, count: 0, resets: 0, coolUntil: 0 };
     } else if (state.coolUntil && t < state.coolUntil && viaAttributeEvent !== 'retry') {
       attrLoops.set(el, state);
+      scheduleAttrRetry(el, name, source);
       return true;
     }
     if (viaAttributeEvent === 'retry') {
-      state.coolUntil = t + COOLDOWN_MS;
+      state.coolUntil = 0;
+      state.resets = 0;
       attrLoops.set(el, state);
       return false;
     }
@@ -911,6 +993,7 @@ export function startDomTranslator(api, env) {
       attrWrites.set(key, global);
       state.coolUntil = t + COOLDOWN_MS;
       attrLoops.set(el, state);
+      scheduleAttrRetry(el, name, source);
       return true;
     }
     global.count += 1;

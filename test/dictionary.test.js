@@ -30,8 +30,8 @@ test('the shipped dictionary compiles and static rules agree with it', () => {
   assert.equal(raw.exact['New Agent'], '新建智能体');
   assert.equal(raw.exact.Agent, '智能体');
   assert.equal(raw.exact.Terminal, '终端');
-  assert.equal(translateText('Worked for 2m 15s', compiled).text, '工作了 2 分 15 秒');
-  assert.equal(translateText('Worked for 6s', compiled).text, '工作了 6 秒');
+  assert.equal(translateText('Worked for 2m 15s', compiled).text, '工作了 2分15秒');
+  assert.equal(translateText('Worked for 6s', compiled).text, '工作了 6秒');
   assert.equal(translateText('26m ago', compiled).text, '26分钟前');
   assert.equal(translateText('4h ago', compiled).text, '4小时前');
   assert.equal(translateText('4h\u202fago', compiled).text, '4小时前');
@@ -138,8 +138,8 @@ test('the shipped dictionary compiles and static rules agree with it', () => {
   assert.equal(translateText('New Automation', compiled).text, '新建自动化');
   assert.equal(translateText('Find critical bugs', compiled).text, '查找严重缺陷');
   assert.equal(translateText('6% used', compiled).text, '已用 6%');
-  assert.equal(translateText('Worked for 6s', compiled).text, '工作了 6 秒');
-  assert.equal(translateText('for 6s', compiled).text, '6 秒');
+  assert.equal(translateText('Worked for 6s', compiled).text, '工作了 6秒');
+  assert.equal(translateText('for 6s', compiled).text, '6秒');
   assert.equal(translateText('Prompt', compiled).text, '提示词输入框');
   assert.equal(translateText('Skip step 3 of 3', compiled).text, '跳过第 3 步，共 3 步');
   assert.equal(translateText('Context 11%', compiled).text, '上下文已用 11%');
@@ -162,7 +162,7 @@ test('the shipped dictionary compiles and static rules agree with it', () => {
   assert.equal(translateText('Partial Accepts keybinding: Ctrl+RightArrow', compiled).text, '部分接受快捷键：Ctrl+→');
   assert.equal(
     translateText('Message sent at Oct 17, 2026, 10:15 PM. Worked for 6s', compiled).text,
-    '消息发送于 2026年10月17日 22:15，工作了 6 秒',
+    '消息发送于 2026年10月17日 22:15，工作了 6秒',
   );
   assert.equal(translateText('Oct 17, 2026, 10:15 PM', compiled).text, '2026年10月17日 22:15');
   assert.equal(raw.exact.Composer, '聊天');

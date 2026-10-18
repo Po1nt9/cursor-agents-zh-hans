@@ -166,6 +166,12 @@ test('skips editor, terminal, diff, chat, and inputs, and translates other label
   assert.equal(shouldSkipAttributeTarget(chip), false);
   const typed = element({ classes: ['human-message'], parent: human });
   assert.equal(shouldSkipElement(typed), true);
+  const assistant = element({ attrs: { 'data-message-kind': 'assistant' } });
+  const errorBubble = element({ classes: ['composer-error-message'], parent: assistant });
+  assert.equal(shouldSkipElement(errorBubble), false);
+  assert.equal(skipReason(errorBubble), null);
+  const assistantProse = element({ classes: ['markdown-root'], parent: assistant });
+  assert.equal(shouldSkipElement(assistantProse), true);
   assert.equal(shouldSkipAttributeTarget(element({ tag: 'INPUT' })), false);
   assert.equal(shouldSkipAttributeTarget(element({ tag: 'TEXTAREA' })), false);
   assert.equal(shouldSkipAttributeTarget(element({ editable: true })), true);
@@ -401,7 +407,7 @@ test('placeholders inside editors translate, and chat chrome does too, while mes
   }
 
   const plan = 'Plan, Build, / for skills, @ for context';
-  const planZh = '计划、构建，/ 调用技能，@ 添加上下文';
+  const planZh = '计划、构建，输入 / 使用技能，输入 @ 添加上下文';
   const compiled = compileDictionary({
     exact: {
       [plan]: planZh,
@@ -499,7 +505,7 @@ test('placeholders inside editors translate, and chat chrome does too, while mes
   assert.equal(typed.nodeValue, 'Keep this reply');
   assert.equal(followLine.attrs['data-placeholder'], 'Send follow-up');
   const css = head.childNodes.map((node) => (node.childNodes || []).map((child) => child.nodeValue || '').join('')).join('\n');
-  assert.match(css, /计划、构建，\/ 调用技能，@ 添加上下文/);
+  assert.match(css, /计划、构建，输入 \/ 使用技能，输入 @ 添加上下文/);
   assert.match(css, /is-editor-mention-only/);
   assert.match(css, /::before/);
   assert.equal(typeof host.__cursorZhHans.disconnect, 'function');

@@ -4,18 +4,26 @@
 
 const HAN_LATIN = /[\u4e00-\u9fff][A-Za-z]|[A-Za-z][\u4e00-\u9fff]/;
 const HALF_PUNCT = /[\u4e00-\u9fff]\s*[,:;!?]|[,:;!?]\s*[\u4e00-\u9fff]/;
-const DATE_SPACE = /\d 月|\d 年|月 \d|月 \$|\$\d+ 日|\d 日|[\u4e00-\u9fff] \d+月|[\u4e00-\u9fff] \d+年/;
+const DATE_SPACE = /\d 月|\d 年|月 \d|月 \$(?:\{\d+\}|\d+)\s*日|\$\d+ 日|\d 日|[\u4e00-\u9fff] \d+月|[\u4e00-\u9fff] \d+年/;
 const HALF_PAREN = /[\u4e00-\u9fff][ \t]*\(|\([\u4e00-\u9fff]|[\u4e00-\u9fff][ \t]*\)|\)[ \t]*[\u4e00-\u9fff]/;
 const CODE_CALL = /\$\([^)\n]*\)|\b[\w$]+(?:\.[\w$]+)+\([^)\n]*\)|\b[A-Za-z_][\w$]*\([^)\n]*\)|\(\d+,\s*\d+\)/g;
-const FULLWIDTH_CODE = /\$（[^）\n]*）|(?<![0-9.])[A-Za-z_][\w$]*(?:\.[A-Za-z_][\w$]*)*（[^）\n]*）|（\s*\d+\s*[,，]\s*\d+\s*）/;
+// Code calls stay half-width: render(), editor.update(), $(basename).
+// Full-width parentheses after a name are prose when they hold Han, spaces, or a URL.
+const FULLWIDTH_CODE = /\$（[^）\n]*）|(?<![0-9.])[A-Za-z_][\w$]*\.[A-Za-z_][\w$]*（[^）\n]*）|(?<![0-9.])[A-Za-z_][\w$]*（\s*）|(?<![0-9.])[A-Za-z_][\w$]*（[\w$.]+）|（\s*\d+\s*[,，]\s*\d+\s*）/;
 
 function skipPunct(text) {
   return /https?:\/\/|\/[a-z][a-z0-9-]*|shift\+|Ctrl|Alt|Shift|⌘|⌥|⇧/.test(text);
 }
 
+function stripQuotedCommands(text) {
+  return String(text)
+    .replace(/`[^`]*`/g, ' ')
+    .replace(/"[^"\n]*"/g, (part) => (/git |agent |npm |--[a-z]/i.test(part) ? ' ' : part));
+}
+
 // AI prompt noun. Dialog, auth, and "when prompted" stay 提示.
 export function promptNoun(english) {
-  const en = String(english || '');
+  const en = String(english || '').replace(/\\+/g, '');
   if (!/\bprompts?\b/i.test(en)) return false;
   if (/\bprompted\b/i.test(en)) return false;
   if (/when prompted/i.test(en)) return false;
@@ -28,6 +36,8 @@ export function promptNoun(english) {
   if (/approval prompt/i.test(en)) return false;
   if (/github prompt/i.test(en)) return false;
   if (/never show/i.test(en)) return false;
+  if (/prompt[- ]quality/i.test(en)) return false;
+  if (/install prompt/i.test(en)) return false;
   return true;
 }
 
@@ -61,8 +71,9 @@ export function lintChinese(english, chinese) {
   if (/\b[Ss]teer\b/.test(en) && (zh.includes('引导') || zh.includes('转向'))) issues.push('steer-calque');
   if (HAN_LATIN.test(zh) && !/\/[A-Za-z]/.test(zh)) issues.push('missing-space');
   if (!skipPunct(zh) && HALF_PUNCT.test(zh)) issues.push('halfwidth-punct');
-  if (/[\u4e00-\u9fff]/.test(zh) && /[A-Za-z]{4,}/.test(zh)) {
-    const leftovers = zh.match(/\b(?:Used|before|your|credits|Unable|Failed|Please|configuration|Restart)\b/);
+  const proseQuotes = stripQuotedCommands(zh);
+  if (/[\u4e00-\u9fff]/.test(proseQuotes) && /[A-Za-z]{4,}/.test(proseQuotes)) {
+    const leftovers = proseQuotes.match(/\b(?:Used|before|your|credits|Unable|Failed|Please|configuration|Restart)\b/);
     if (leftovers) issues.push('mixed-english');
   }
   if (zh.includes('编写器')) issues.push('composer-calque');
@@ -86,7 +97,7 @@ export function lintChinese(english, chinese) {
   if (createsPullRequest(en) && /打开 PR|打开拉取请求/.test(zh)) issues.push('open-pr');
   if (/「|」/.test(zh)) issues.push('corner-quotes');
   if (/[\u4e00-\u9fff]/.test(zh)) {
-    const stripped = zh.replace(/[A-Za-z]'[A-Za-z]/g, '');
+    const stripped = stripQuotedCommands(zh).replace(/[A-Za-z]'[A-Za-z]/g, '');
     if (stripped.includes('"') || stripped.includes("'")) issues.push('ascii-quotes');
   }
   if (FULLWIDTH_CODE.test(zh)) issues.push('fullwidth-code-paren');

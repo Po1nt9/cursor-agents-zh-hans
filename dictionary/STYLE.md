@@ -22,7 +22,7 @@
 - 同一概念只用一个词：侧边栏、身份验证、仪表盘、这台计算机、快捷键、提供程序、仓库、固定。标签页是 tab，标签是 tag 或 label。键盘快捷方式只用作菜单名。
 - Failed to / Unable to / Could not / Cannot 用「无法」开头。保存失败一律「无法保存」。
 - composer 译成聊天；后台 composer 和 Background Agent 译成云端智能体。Prompt 译成提示词，提示留给 Tips。Triage 用分类处理或排查。创建 PR 用创建或提交，打开只表示查看已有 PR。on a schedule 用定时或定期。窗格 / 平铺视图，不用磁贴。
-- 产品名、协议名、斜杠命令、快捷键原样保留：Cursor、Slack、MCP、`/create-skill`、`shift+tab`、`⌘Enter`。
+- 产品名、协议名、斜杠命令、快捷键原样保留：Cursor、Slack、MCP、`/create-skill`、`⌘Enter`。快捷键仍是拉丁字母，大小写按键帽书写：`Shift+Tab`。
 
 ## 快捷键
 

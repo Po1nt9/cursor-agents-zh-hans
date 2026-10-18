@@ -395,7 +395,7 @@ function probe(pattern) {
 
 test('a ProseMirror placeholder that rebuilds on every attribute write settles', () => {
   const english = 'Plan, Build, / for skills, @ for context';
-  const chinese = '计划、构建，/ 调用技能，@ 添加上下文';
+  const chinese = '计划、构建，输入 / 使用技能，输入 @ 添加上下文';
   const dictionary = compileDictionary({
     exact: { [english]: chinese },
     fragments: [],
@@ -459,7 +459,7 @@ test('a ProseMirror placeholder that rebuilds on every attribute write settles',
   const css = head.childNodes
     .map((node) => (node.childNodes || []).map((child) => child.nodeValue || '').join(''))
     .join('\n');
-  assert.match(css, /计划、构建，\/ 调用技能，@ 添加上下文/);
+  assert.match(css, /计划、构建，输入 \/ 使用技能，输入 @ 添加上下文/);
   assert.match(css, /is-editor-empty/);
   assert.match(css, /is-editor-mention-only/);
   assert.equal(typeof host.__cursorZhHans.disconnect, 'function');
@@ -877,7 +877,7 @@ test('every rotating tip renders with its slash token kept', () => {
     assert.ok(expected, tips[i]);
     const token = tips[i].match(/\/[a-z-]+|@[a-z-]+|shift\+tab/);
     assert.equal(visibleText(rendered[i]), expected, tips[i]);
-    if (token) assert.ok(visibleText(rendered[i]).includes(token[0]), tips[i]);
+    if (token) assert.ok(visibleText(rendered[i]).toLowerCase().includes(token[0].toLowerCase()), tips[i]);
   }
 });
 
@@ -1141,9 +1141,9 @@ test('a key chip stays inside the translated home tip', () => {
   translateTree([tip], compiled);
   assert.equal(
     visibleText(tip),
-    '提问模式用只读智能体研究代码库。按 shift+tab 开始。',
+    '提问模式用只读智能体研究代码库。按 Shift+Tab 开始。',
   );
-  assert.equal(kbd.childNodes[0].nodeValue, 'shift+tab');
+  assert.equal(kbd.childNodes[0].nodeValue, 'Shift+Tab');
 });
 
 test('report lists English leftovers with a reason', () => {
@@ -1197,7 +1197,7 @@ test('a whole 6% used label translates', () => {
   worked.appendChild(h.makeText('Worked for 6s'));
   translateTree([label, worked], compiled);
   assert.equal(visibleText(label), '已用 6%');
-  assert.equal(visibleText(worked), '工作了 6 秒');
+  assert.equal(visibleText(worked), '工作了 6秒');
 });
 
 function wordTip(h, sentence, chipWord) {
@@ -1238,7 +1238,7 @@ test('a word-span home tip translates as one sentence and keeps the key chip', (
   }
   translateTree([tip, rule, loose], compiled);
   assert.equal(visibleText(tip), compiled.exact.get(english));
-  assert.equal(tip.childNodes.find((node) => node.tagName === 'KBD').childNodes[0].nodeValue, 'shift+tab');
+  assert.equal(tip.childNodes.find((node) => node.tagName === 'KBD').childNodes[0].nodeValue, 'Shift+Tab');
   assert.equal(visibleText(rule), compiled.exact.get(plain));
   assert.equal(loose.childNodes[1].childNodes[0].nodeValue, 'New');
   assert.equal(visibleText(loose), 'PleaseNewleavethiswholesentence');
@@ -1281,7 +1281,7 @@ test('report skips css-covered composer placeholders and hidden nodes', () => {
     budgetMs: 2000,
   });
   assert.equal(editor.attrs['aria-label'], '提示词输入框');
-  assert.equal(editor.attrs['aria-placeholder'], 'Plan, Build, / for skills, @ for context');
+  assert.equal(editor.attrs['aria-placeholder'], '计划、构建，输入 / 使用技能，输入 @ 添加上下文');
   const all = windowHost.__cursorZhHans.report();
   assert.equal(all.entries.some((entry) => entry.text.startsWith('Plan, Build')), false);
   assert.equal(all.entries.some((entry) => entry.text === 'Zzzz hidden english'), true);

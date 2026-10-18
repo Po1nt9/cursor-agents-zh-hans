@@ -192,6 +192,7 @@ export function compileDictionary(raw) {
       index: regex.length,
       route: regexRoute(item.pattern),
       open: patternIsOpen(item.pattern),
+      literal: literalScore(item.pattern),
     });
   }
 
@@ -203,6 +204,9 @@ export function compileDictionary(raw) {
       regexBuckets.set(entry.route, list);
     }
     list.push(entry);
+  }
+  for (const list of regexBuckets.values()) {
+    list.sort(bySpecificity);
   }
 
   const placeholders = [];
@@ -262,9 +266,13 @@ function regexRoute(pattern) {
   return prefix ? prefix[0] : 'any';
 }
 
+function bySpecificity(a, b) {
+  return b.literal - a.literal || a.index - b.index;
+}
+
 function regexCandidates(core, dictionary) {
   const buckets = dictionary.regexBuckets;
-  if (!buckets) return dictionary.regex;
+  if (!buckets) return [...dictionary.regex].sort(bySpecificity);
   const first = core[0];
   const parts = [];
   if (first >= '0' && first <= '9') {
@@ -277,7 +285,42 @@ function regexCandidates(core, dictionary) {
   if (any) parts.push(any);
   if (parts.length === 0) return [];
   if (parts.length === 1) return parts[0];
-  return parts.flat().sort((a, b) => a.index - b.index);
+  return parts.flat().sort(bySpecificity);
+}
+
+// Longer literal text wins over a catch-all that also matches.
+function literalScore(pattern) {
+  let score = 0;
+  for (let i = 0; i < pattern.length; i += 1) {
+    const ch = pattern[i];
+    if (ch === '\\') {
+      const next = pattern[i + 1] || '';
+      i += 1;
+      if ('sSdDwWbBA'.includes(next)) continue;
+      if (next) score += 1;
+      continue;
+    }
+    if (ch === '[') {
+      while (i + 1 < pattern.length && pattern[i] !== ']') i += 1;
+      continue;
+    }
+    if (ch === '(') {
+      if (pattern[i + 1] === '?' && pattern[i + 2] === ':') i += 2;
+      continue;
+    }
+    if (ch === ')' || ch === '^' || ch === '$' || ch === '|' || ch === '+' || ch === '*' || ch === '?' || ch === '.') {
+      continue;
+    }
+    if (ch === '{') {
+      const end = pattern.indexOf('}', i);
+      if (end !== -1) {
+        i = end;
+        continue;
+      }
+    }
+    score += 1;
+  }
+  return score;
 }
 
 function isWordChar(ch) {
@@ -362,10 +405,56 @@ function packResult(text, input, tier, open) {
   return result;
 }
 
-export function translateText(input, dictionary) {
+function translateCapture(value, dictionary, depth, seen) {
+  if (depth <= 0 || typeof value !== 'string' || value.length === 0) return value;
+  if (!/\s/.test(value)) return value;
+  if (seen.has(value)) return value;
+  seen.add(value);
+  const result = translateText(value, dictionary, depth - 1, seen);
+  seen.delete(value);
+  return result.changed ? result.text : value;
+}
+
+// A function replacement does not expand $n. Do that here, and translate
+// multi-word captures so a constant English prefix does not stay on screen.
+function expandReplacement(replacement, captures, dictionary, depth, seen) {
+  let out = '';
+  for (let i = 0; i < replacement.length; i += 1) {
+    if (replacement[i] !== '$') {
+      out += replacement[i];
+      continue;
+    }
+    const next = replacement[i + 1];
+    if (next === '$') {
+      out += '$';
+      i += 1;
+      continue;
+    }
+    if (next >= '1' && next <= '9') {
+      let num = next;
+      const third = replacement[i + 2];
+      if (third >= '0' && third <= '9') {
+        const two = Number(next + third);
+        if (two >= 1 && two <= captures.length) {
+          num = next + third;
+          i += 1;
+        }
+      }
+      const raw = captures[Number(num) - 1];
+      out += translateCapture(raw == null ? '' : String(raw), dictionary, depth, seen);
+      i += 1;
+      continue;
+    }
+    out += '$';
+  }
+  return out;
+}
+
+export function translateText(input, dictionary, depth = 2, seen = null) {
   if (typeof input !== 'string' || input.length === 0 || input.length > MAX_TEXT_LENGTH) {
     return { text: input, changed: false, tier: null };
   }
+  const loop = seen || new Set();
   // Zero-width characters sit on labels such as "High Fast". They are not part of the key.
   const source = input.replace(ZERO_WIDTH, '');
   const match = /^(\s*)([\s\S]*?)(\s*)$/.exec(source);
@@ -386,9 +475,10 @@ export function translateText(input, dictionary) {
   for (let i = 0; i < candidates.length; i += 1) {
     const entry = candidates[i];
     entry.re.lastIndex = 0;
-    if (!entry.re.test(normalizedCore)) continue;
-    entry.re.lastIndex = 0;
-    const text = lead + normalizedCore.replace(entry.re, entry.replacement) + tail;
+    const found = entry.re.exec(normalizedCore);
+    if (!found) continue;
+    const replaced = expandReplacement(entry.replacement, found.slice(1), dictionary, depth, loop);
+    const text = lead + replaced + tail;
     return packResult(text, input, 'regex', entry.open);
   }
 
@@ -513,12 +603,29 @@ function isMessageChrome(el) {
   return isModelPickerLabel(el);
 }
 
-function chromeInsideMessage(origin, boundary) {
+function isErrorBubble(el) {
+  if (!el || el.nodeType !== 1) return false;
+  if (hasClass(el, 'composer-error-message') || hasClass(el, 'cursor-settings-error-message')) return true;
+  const blob = typeof el.className === 'string' ? el.className : '';
+  if (blob.includes('composer-error-message') || blob.includes('composer-warning-message')
+    || blob.includes('cursor-settings-error-message')) return true;
+  const list = el.classList;
+  if (list && typeof list[Symbol.iterator] === 'function') {
+    for (const name of list) {
+      const token = String(name);
+      if (token.includes('composer-error-message') || token.includes('composer-warning-message')
+        || token.includes('cursor-settings-error-message')) return true;
+    }
+  }
+  return false;
+}
+
+function markedBetween(origin, boundary, predicate) {
   let cur = origin;
   const seen = new Set();
   while (cur && cur !== boundary && !seen.has(cur)) {
     seen.add(cur);
-    if (cur.nodeType !== 3 && isMessageChrome(cur)) return true;
+    if (cur.nodeType !== 3 && predicate(cur)) return true;
     if (cur.parentElement) {
       cur = cur.parentElement;
       continue;
@@ -529,18 +636,30 @@ function chromeInsideMessage(origin, boundary) {
   return false;
 }
 
+function chromeInsideMessage(origin, boundary) {
+  return markedBetween(origin, boundary, isMessageChrome);
+}
+
+function errorInsideMessage(origin, boundary) {
+  return markedBetween(origin, boundary, isErrorBubble);
+}
+
 function markdownInModelPicker(node) {
   return hasClass(node, 'markdown-root') && walkAncestors(node, (el) => isModelPickerLabel(el) || isModelTooltip(el));
 }
 
 export function shouldSkipElement(el) {
   return walkAncestors(el, (node) => {
-    if (isEditableControl(node)) return true;
+    if (isEditableControl(node)) {
+      return !(chromeInsideMessage(el, node) || errorInsideMessage(el, node));
+    }
     if (!isProtectedSurface(node)) return false;
     // Model names and the Auto row are markdown. That is a label, not a chat message.
     if (markdownInModelPicker(node)) return false;
+    if (hasClass(node, 'markdown-root') && errorInsideMessage(el, node)) return false;
     const kind = node.getAttribute?.('data-message-kind');
-    if (kind && PROTECTED_MESSAGE_KINDS.has(String(kind)) && chromeInsideMessage(el, node)) return false;
+    if (kind && PROTECTED_MESSAGE_KINDS.has(String(kind))
+      && (chromeInsideMessage(el, node) || errorInsideMessage(el, node))) return false;
     return true;
   });
 }
@@ -576,11 +695,12 @@ export function skipReason(el) {
     }
     const reason = surfaceReason(cur);
     if (reason) {
-      if (reason === 'class:markdown-root' && markdownInModelPicker(cur)) {
+      if (reason === 'class:markdown-root' && (markdownInModelPicker(cur) || errorInsideMessage(el, cur))) {
         cur = cur.parentElement || null;
         continue;
       }
-      if (reason.startsWith('message-kind:') && chromeInsideMessage(el, cur)) {
+      if ((reason.startsWith('message-kind:') || reason.startsWith('editable:'))
+        && (chromeInsideMessage(el, cur) || errorInsideMessage(el, cur))) {
         cur = cur.parentElement || null;
         continue;
       }
@@ -608,7 +728,11 @@ export function shouldSkipAttributeTarget(el) {
     const tag = tagNameOf(node);
     if ((tag === 'INPUT' || tag === 'TEXTAREA') && node === el) return false;
     const kind = node.getAttribute?.('data-message-kind');
-    if (kind && PROTECTED_MESSAGE_KINDS.has(String(kind)) && chromeInsideMessage(el, node)) return false;
+    if (kind && PROTECTED_MESSAGE_KINDS.has(String(kind))
+      && (chromeInsideMessage(el, node) || errorInsideMessage(el, node))) return false;
+    if (isEditableControl(node) && (chromeInsideMessage(el, node) || errorInsideMessage(el, node))) {
+      return false;
+    }
     return true;
   });
 }

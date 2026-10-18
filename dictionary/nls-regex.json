@@ -495,7 +495,7 @@
     "id": "nls-remoteExplorer-remote-tunnelsView-notificationLink2",
     "pattern": "^\\[See all forwarded ports\\]\\((.+)\\)$",
     "flags": "",
-    "replacement": "[查看所有转发端口]（$1）"
+    "replacement": "[查看所有转发端口]($1)"
   },
   {
     "id": "nls-remoteIndicator-unknownSetupError",
