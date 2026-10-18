@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import { backupRootFor, readManifest, readState } from './backup.js';
 import { sha256Base64 } from './checksum.js';
-import { readMacEntitlements } from './macos.js';
+import { formatSigningLines, missingWriteAccess, readMacEntitlements, readMacSigningHealth } from './macos.js';
 import { appFiles, detectAppPath, macBundlePath, userDataDir } from './paths.js';
 import { inspectCursorProcesses } from './process-check.js';
 import { readProductFile } from './product.js';
@@ -13,15 +13,6 @@ import {
   STATIC_MARKER,
   TOOL_VERSION,
 } from './version.js';
-
-function canWrite(appPath) {
-  try {
-    fs.accessSync(appPath, fs.constants.W_OK);
-    return true;
-  } catch {
-    return false;
-  }
-}
 
 function tailHas(file, marker) {
   if (!fs.existsSync(file)) return false;
@@ -87,11 +78,14 @@ export function inspectInstall(options = {}) {
     versionMismatch: Boolean(
       state && (state.cursorVersion !== product.version || state.cursorCommit !== product.commit),
     ),
-    writable: canWrite(detected.appPath),
+    writable: missingWriteAccess(detected.appPath, { platform: options.platform ?? process.platform }).length === 0,
     running,
     entitlements: (options.platform ?? process.platform) === 'darwin'
       ? readMacEntitlements(macBundlePath(detected.appPath), options.execFile)
       : { checked: false, missing: false, reason: 'not-darwin' },
+    signing: (options.platform ?? process.platform) === 'darwin'
+      ? readMacSigningHealth(macBundlePath(detected.appPath), options.execFile)
+      : null,
   };
 }
 
@@ -123,7 +117,9 @@ export function formatStatus(report) {
 
 export function formatDoctor(report) {
   const lines = [formatStatus(report), ''];
-  lines.push(`可写: ${report.writable ? '是' : '否（macOS 的 /Applications 可能需要 sudo）'}`);
+  lines.push(report.writable
+    ? '可写: 是。当前用户能写这个安装目录，不需要 sudo。'
+    : '可写: 否。apply / restore 只会在写不了 .app 时用 sudo 提权。也可以自己用 sudo 运行。');
   lines.push(`Glass 包: ${report.files.glass ? '存在' : '缺失'}`);
   lines.push(`经典窗口包: ${report.files.desktop ? '存在' : '缺失'}`);
   lines.push(`校验和条目 (${report.checksums.keys.length}):`);
@@ -151,14 +147,13 @@ export function formatDoctor(report) {
     lines.push(`macOS 应用包: ${report.bundlePath || '（未能推断）'}`);
     lines.push('修改 .app 后系统会认为签名失效。apply / restore 默认执行:');
     lines.push('  xattr -dr com.apple.quarantine <Cursor.app>');
-    lines.push('  codesign --force --deep --preserve-metadata=entitlements,requirements,flags --sign - <Cursor.app>');
+    lines.push('  codesign --force --sign - --preserve-metadata=entitlements <Cursor.app>');
     lines.push('这是 ad-hoc 重签名，不是 Apple 开发者签名。它会换掉原来的 Developer ID 签名；要恢复官方签名，请重新安装 Cursor。');
-    lines.push('签名时会尽量保留 entitlements、requirements 和 flags（包括 hardened runtime）。保留失败时才会退回不带这些元数据的签名。');
-    if (report.entitlements && report.entitlements.missing) {
-      lines.push('当前签名没有 entitlements。这是 codesign 修复之前的 v0.1 留下的：当时的 ad-hoc 重签名把原来的权限清掉了。');
-      lines.push('只有重新安装 Cursor 才能恢复 entitlements 和 Developer ID 签名。装好之后再执行 apply。');
-    } else if (report.entitlements && report.entitlements.reason === 'unavailable') {
-      lines.push('未能读取 entitlements。若这台 Mac 在 codesign 修复前打过补丁，请重新安装 Cursor 后再 apply。');
+    lines.push('只保留 entitlements。不要 --deep，不要保留 flags 或 requirements。hardened runtime 留在 ad-hoc 主程序上时，系统会拒绝 Electron Framework 并在启动时 SIGKILL。');
+    lines.push('签名之后会再读一次 entitlements。如果是空的，apply 会把界面文件还原，并要求先重装 Cursor。');
+    for (const line of formatSigningLines(report.signing)) lines.push(line);
+    if (report.entitlements && report.entitlements.reason === 'unavailable') {
+      lines.push('未能读取 entitlements。若这台 Mac 的签名已经坏了，请重新安装 Cursor 后再 apply。');
     }
     lines.push('可用 --no-codesign 与 --no-clear-quarantine 跳过。Apple Silicon 上，未重签的修改版可能被系统直接结束进程。');
     lines.push('屏幕顶部的 macOS 菜单栏是系统原生菜单，这份补丁改不到。请从扩展市场安装 MS-CEINTL.vscode-language-pack-zh-hans。');

@@ -9,7 +9,7 @@ import {
 } from './backup.js';
 import { sha256Hex } from './checksum.js';
 import { CliError } from './errors.js';
-import { runMacPostProcess } from './macos.js';
+import { EMPTY_ENTITLEMENTS_MESSAGE, runMacPostProcess } from './macos.js';
 import { appFiles, detectAppPath, userDataDir } from './paths.js';
 import { inspectCursorProcesses } from './process-check.js';
 import { readProductFile } from './product.js';
@@ -75,6 +75,9 @@ export function restore(options = {}) {
     execFile: options.execFile,
   });
   if (signing.warnings) warnings.push(...signing.warnings);
+  if (signing.entitlementsMissing || signing.codesignFailed) {
+    throw new CliError(EMPTY_ENTITLEMENTS_MESSAGE);
+  }
   if (signing.performed) {
     actions.push(`macOS: 已对 ${signing.bundle} 重新执行 ${signing.steps.map((step) => step.name).join('、')}`);
   }

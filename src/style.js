@@ -29,6 +29,8 @@ export function promptNoun(english) {
   if (/when prompted/i.test(en)) return false;
   // "will prompt" / "prompt before" is the verb, not the noun 提示词.
   if (/\b(will|would|won't|to|not|before|after)\s+prompt\b/i.test(en)) return false;
+  // "A prompt will show" is a confirmation dialog, not the AI prompt noun 提示词.
+  if (/a prompt will show/i.test(en)) return false;
   if (/\bprompt before\b/i.test(en)) return false;
   if (/authentication prompts?/i.test(en)) return false;
   if (/skip prompts?/i.test(en)) return false;

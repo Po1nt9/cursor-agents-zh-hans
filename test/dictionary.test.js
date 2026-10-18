@@ -178,7 +178,7 @@ test('the shipped dictionary compiles and static rules agree with it', () => {
   );
   assert.equal(
     translateText('”? They will be stopped and marked as failed.', compiled).text,
-    '”的所有进行中运行吗？这些运行会被停止并标记为失败。',
+    '”的所有进行中运行吗？这些运行会停掉，并标为失败。',
   );
 });
 

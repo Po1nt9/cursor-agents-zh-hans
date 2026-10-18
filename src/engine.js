@@ -453,10 +453,16 @@ export function localizeArrowKeys(text) {
     .replace(/DownArrow/g, '↓');
 }
 
+// en-US month-day-time keeps an ASCII comma: "Oct 17, 10:15 PM" → "10月17日, 22:15".
+function stripDateComma(text) {
+  if (typeof text !== 'string' || !text) return text;
+  return text.replace(/(\d日),\s*(?=\d{1,2}:\d{2})/g, '$1 ');
+}
+
 function polishTranslated(text) {
   const dated = localizeEmbeddedDates(localizeArrowKeys(text));
-  if (/[\u4e00-\u9fff]/.test(dated) || dateOnlyText(dated)) return localizeClocks(dated);
-  return dated;
+  const timed = (/[\u4e00-\u9fff]/.test(dated) || dateOnlyText(dated)) ? localizeClocks(dated) : dated;
+  return stripDateComma(timed);
 }
 
 function packResult(text, input, tier, open) {
@@ -581,7 +587,7 @@ export function translateText(input, dictionary, depth = 2, seen = null) {
   }
 
   if (dateOnlyText(normalizedCore)) {
-    const dated = localizeClocks(localizeEmbeddedDates(input));
+    const dated = stripDateComma(localizeClocks(localizeEmbeddedDates(input)));
     if (dated !== input) return { text: dated, changed: true, tier: 'regex' };
   }
   return { text: input, changed: false, tier: null };

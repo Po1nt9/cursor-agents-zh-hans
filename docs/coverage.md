@@ -1,5 +1,11 @@
 # Cursor 3.25.6 Agents Window coverage
 
+## 这一版实际量过的
+
+2026-10-18，对 Cursor 3.25.6 Linux 包里的 `workbench.glass.main.js` 跑了本仓库的 `scan --bundles glass`（界面属性抽取，不是下面的引号扫描，也不是 acorn 报错标题）。结果是 **4668 / 4928** 条候选有整句译文。剩下的 260 条主要是开发者对话框、Monaco / GPU 名字、模型名，以及按术语留在英文里的品牌（Canvas、Pro、Ultra、GitHub、Cursor、Enter）。这一版没有在登录过的 Cursor 里看过。
+
+独立复核 `125af33` 时，acorn 标题集是 3097 / 3107，另有 9 条部分覆盖。那个数字不是这一次重测的。下面的 100% 表和 3101 / 3107 是更早一次写进仓库的计数，这一次没有用同样的方法重跑，不要把它当成这一版的新结果。
+
 Counted on the 3.25.6 Linux package: Glass UI props in `workbench.glass.main.js`, quoted macOS and error literals in that bundle, and core `nls.messages.json` strings that notifications and dialogs can show. `\xNN` escapes are decoded, so a label stored as `\xB7` is counted as the middle dot the user sees.
 
 A string counts as translated when the whole label is an exact entry, a whole-string fragment, or a `^...$` regex. macOS ⌘ / ⌥ / ⇧ forms are generated from the Ctrl / Alt / Shift entry.

@@ -117,7 +117,7 @@
     "id": "glass-1409",
     "pattern": "^The\\ file\\ '([\\s\\S]+)'\\ contains\\ one\\ or\\ more\\ unusual\\ line\\ terminator\\ characters,\\ like\\ Line\\ Separator\\ \\(LS\\)\\ or\\ Paragraph\\ Separator\\ \\(PS\\)\\.\\\n\\\nIt\\ is\\ recommended\\ to\\ remove\\ them\\ from\\ the\\ file\\.\\ This\\ can\\ be\\ configured\\ via\\ `editor\\.unusualLineTerminators`\\.$",
     "flags": "",
-    "replacement": "文件“$1”包含一个或多个异常行终止符，例如行分隔符（LS）或段落分隔符（PS）。\n\n建议从文件中移除它们。可通过 `editor.unusualLineTerminators` 进行配置。"
+    "replacement": "文件“$1”包含一个或多个异常行终止符，例如行分隔符（LS）或段落分隔符（PS）。\n\n建议从文件中移除它们。可在 `editor.unusualLineTerminators` 里配置。"
   },
   {
     "id": "glass-81",
@@ -453,7 +453,7 @@
     "id": "glass-2021",
     "pattern": "^Files\\ you\\ store\\ within\\ the\\ installation\\ folder\\ \\('([\\s\\S]+)'\\)\\ may\\ be\\ OVERWRITTEN\\ or\\ DELETED\\ IRREVERSIBLY\\ without\\ warning\\ at\\ update\\ time\\.$",
     "flags": "",
-    "replacement": "安装文件夹（“$1”）中存放的文件可能会在更新时被覆盖或永久删除，且不会发出警告。"
+    "replacement": "更新可能会盖掉或删掉安装文件夹（“$1”）里的文件，而且不会警告。"
   },
   {
     "id": "glass-1876",
@@ -495,7 +495,7 @@
     "id": "glass-1961",
     "pattern": "^Saved\\ ([\\s\\S]+)\\.\\ Cursor's\\ servers\\ signed\\ you\\ out\\ of\\ it\\ because\\ its\\ URL\\ or\\ OAuth\\ client\\ changed,\\ so\\ sign\\ in\\ again\\ from\\ its\\ row\\.$",
     "flags": "",
-    "replacement": "已保存 $1。由于其 URL 或 OAuth 客户端已更改，Cursor 的服务器已将你登出。请在该行重新登录。"
+    "replacement": "已保存 $1。它的 URL 或 OAuth 客户端变了，Cursor 的服务器已将你登出。请在该行重新登录。"
   },
   {
     "id": "glass-1703",
@@ -543,7 +543,7 @@
     "id": "glass-763",
     "pattern": "^Access\\ was\\ denied\\ to\\ the\\ path\\ containing\\ your\\ executable\\ \"([\\s\\S]+)\"\\.\\ Manage\\ and\\ change\\ your\\ permissions\\ to\\ get\\ this\\ to\\ work$",
     "flags": "",
-    "replacement": "对包含可执行文件“$1”的路径的访问被拒绝。请管理并更改权限，以使其正常工作"
+    "replacement": "拒绝访问包含可执行文件“$1”的路径。请调整权限后再试"
   },
   {
     "id": "glass-2130",
@@ -705,7 +705,7 @@
     "id": "glass-1480",
     "pattern": "^Error\\ running\\ command\\ ([\\s\\S]+?):\\ ([\\s\\S]+?)\\.\\ This\\ is\\ likely\\ caused\\ by\\ the\\ extension\\ that\\ contributes\\ ([\\s\\S]+)\\.$",
     "flags": "",
-    "replacement": "运行命令 $1 时出错：$2。这很可能是贡献 $1 的扩展引起的。"
+    "replacement": "运行命令 $1 时出错：$2。多半是提供 $1 的扩展引起的。"
   },
   {
     "id": "glass-2007",
@@ -795,7 +795,7 @@
     "id": "glass-1935",
     "pattern": "^Updates\\ are\\ disabled\\ because\\ you\\ are\\ running\\ the\\ user\\-scope\\ installation\\ of\\ ([\\s\\S]+)\\ as\\ Administrator\\.$",
     "flags": "",
-    "replacement": "由于你正在以管理员身份运行 $1 的用户级安装，更新已禁用。"
+    "replacement": "你正在以管理员身份运行 $1 的用户级安装，所以更新已关闭。"
   },
   {
     "id": "glass-1829",
@@ -807,7 +807,7 @@
     "id": "glass-1847",
     "pattern": "^Disabled\\ the\\ pre\\-release\\ extension\\ '([\\s\\S]+?)'\\ because\\ the\\ unsupported\\ extension\\ '([\\s\\S]+)'\\ is\\ disabled$",
     "flags": "",
-    "replacement": "已禁用预发布扩展“$1”，因为不受支持的扩展“$2”已被禁用"
+    "replacement": "已禁用预发布扩展“$1”，因为不支持的扩展“$2”也已禁用"
   },
   {
     "id": "glass-2184",
@@ -933,7 +933,7 @@
     "id": "glass-1534",
     "pattern": "^Profile\\ '([\\s\\S]+)'\\ was\\ created,\\ but\\ some\\ extension\\ entries\\ in\\ the\\ imported\\ profile\\ were\\ skipped\\.$",
     "flags": "",
-    "replacement": "已创建配置文件“$1”，但跳过了导入的配置文件中的部分扩展项。"
+    "replacement": "已创建配置文件“$1”，但导入时跳过了部分扩展。"
   },
   {
     "id": "glass-1993",
@@ -1155,7 +1155,7 @@
     "id": "glass-1535",
     "pattern": "^Profile\\ '([\\s\\S]+)'\\ was\\ created,\\ but\\ no\\ extensions\\ from\\ the\\ imported\\ profile\\ were\\ applied\\.$",
     "flags": "",
-    "replacement": "已创建配置文件“$1”，但未应用导入的配置文件中的任何扩展。"
+    "replacement": "已创建配置文件“$1”，但导入的扩展都没有用上。"
   },
   {
     "id": "glass-435",
@@ -1173,7 +1173,7 @@
     "id": "glass-1907",
     "pattern": "^The\\ following\\ workspace\\ folders\\ are\\ ignored\\ since\\ they\\ use\\ task\\ version\\ 0\\.1\\.0:\\ ([\\s\\S]+)$",
     "flags": "",
-    "replacement": "以下工作区文件夹使用的任务版本为 0.1.0，因此被忽略：$1"
+    "replacement": "这些工作区文件夹的任务版本是 0.1.0，所以忽略了：$1"
   },
   {
     "id": "glass-1967",
@@ -1323,13 +1323,13 @@
     "id": "glass-1499",
     "pattern": "^Could\\ not\\ undo\\ '([\\s\\S]+?)'\\ across\\ all\\ files\\ because\\ changes\\ were\\ made\\ to\\ ([\\s\\S]+)$",
     "flags": "",
-    "replacement": "无法跨所有文件撤消“$1”，因为已对 $2 进行了更改"
+    "replacement": "无法跨所有文件撤消“$1”，因为 $2 已有更改"
   },
   {
     "id": "glass-1505",
     "pattern": "^Could\\ not\\ redo\\ '([\\s\\S]+?)'\\ across\\ all\\ files\\ because\\ changes\\ were\\ made\\ to\\ ([\\s\\S]+)$",
     "flags": "",
-    "replacement": "无法跨所有文件恢复“$1”，因为已对 $2 进行了更改"
+    "replacement": "无法跨所有文件恢复“$1”，因为 $2 已有更改"
   },
   {
     "id": "glass-2118",
@@ -1371,13 +1371,13 @@
     "id": "glass-1532",
     "pattern": "^Extension\\ entries\\ ([\\s\\S]+)\\ in\\ the\\ imported\\ profile\\ are\\ invalid\\ and\\ were\\ skipped\\.$",
     "flags": "",
-    "replacement": "导入的配置文件中的扩展项 $1 无效，已被跳过。"
+    "replacement": "导入配置里的扩展项 $1 无效，已跳过。"
   },
   {
     "id": "glass-2093",
     "pattern": "^The\\ following\\ extensions\\ contain\\ dependency\\ loops\\ and\\ have\\ been\\ disabled:\\ ([\\s\\S]+)$",
     "flags": "",
-    "replacement": "以下扩展包含依赖循环，已被禁用：$1"
+    "replacement": "这些扩展有依赖循环，已禁用：$1"
   },
   {
     "id": "glass-53",
@@ -1413,7 +1413,7 @@
     "id": "glass-1530",
     "pattern": "^Extension\\ entry\\ ([\\s\\S]+)\\ in\\ the\\ imported\\ profile\\ is\\ missing\\ a\\ valid\\ identifier\\.$",
     "flags": "",
-    "replacement": "导入的配置文件中的扩展项 $1 缺少有效标识符。"
+    "replacement": "导入配置里的扩展项 $1 没有有效标识符。"
   },
   {
     "id": "glass-2236",
@@ -1485,7 +1485,7 @@
     "id": "glass-1531",
     "pattern": "^Extension\\ entry\\ ([\\s\\S]+)\\ in\\ the\\ imported\\ profile\\ is\\ invalid\\ and\\ was\\ skipped\\.$",
     "flags": "",
-    "replacement": "导入的配置文件中的扩展项 $1 无效，已被跳过。"
+    "replacement": "导入配置里的扩展项 $1 无效，已跳过。"
   },
   {
     "id": "glass-1921",
@@ -1647,7 +1647,7 @@
     "id": "glass-1529",
     "pattern": "^Some\\ extensions\\ from\\ the\\ imported\\ profile\\ could\\ not\\ be\\ installed:\\ ([\\s\\S]+)$",
     "flags": "",
-    "replacement": "无法安装导入的配置文件中的部分扩展：$1"
+    "replacement": "导入的配置里有些扩展没装上：$1"
   },
   {
     "id": "glass-1709",
@@ -5031,7 +5031,7 @@
     "id": "glass-1807",
     "pattern": "^'([\\s\\S]+)'\\ is\\ in\\ progress\\.$",
     "flags": "",
-    "replacement": "“$1”正在进行。"
+    "replacement": "“$1”进行中。"
   },
   {
     "id": "glass-1987",
@@ -8979,19 +8979,19 @@
     "id": "usage-resets-on-days",
     "pattern": "^Your usage resets on ((?:(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:t(?:ember)?)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?) \\d{1,2}|\\d{1,2}月\\d{1,2}日)) \\((\\d+) days?\\)\\.$",
     "flags": "",
-    "replacement": "你的用量将于 $1重置（$2 天后）。"
+    "replacement": "你的用量将于$1重置（$2 天后）。"
   },
   {
     "id": "usage-resets-on-date",
     "pattern": "^Your usage resets on ((?:(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:t(?:ember)?)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?) \\d{1,2}|\\d{1,2}月\\d{1,2}日))\\.$",
     "flags": "",
-    "replacement": "你的用量将于 $1重置。"
+    "replacement": "你的用量将于$1重置。"
   },
   {
     "id": "usage-paused-on-date",
     "pattern": "^You're paused until your usage resets on ((?:(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:t(?:ember)?)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?) \\d{1,2}|\\d{1,2}月\\d{1,2}日))\\.$",
     "flags": "",
-    "replacement": "已暂停，直到用量于 $1重置。"
+    "replacement": "已暂停，直到用量于$1重置。"
   },
   {
     "id": "usage-paused-in-days",
@@ -9376,6 +9376,132 @@
     "pattern": "^Preview of Branch$",
     "flags": "",
     "replacement": "“分支”预览"
+  },
+  {
+    "id": "preview-of-file",
+    "pattern": "^Preview of File$",
+    "flags": "",
+    "replacement": "“文件”预览"
+  },
+  {
+    "id": "preview-of-files",
+    "pattern": "^Preview of Files$",
+    "flags": "",
+    "replacement": "“文件”预览"
+  },
+  {
+    "id": "preview-of-folder",
+    "pattern": "^Preview of Folder$",
+    "flags": "",
+    "replacement": "“文件夹”预览"
+  },
+  {
+    "id": "preview-of-folders",
+    "pattern": "^Preview of Folders$",
+    "flags": "",
+    "replacement": "“文件夹”预览"
+  },
+  {
+    "id": "preview-of-doc",
+    "pattern": "^Preview of Doc$",
+    "flags": "",
+    "replacement": "“文档”预览"
+  },
+  {
+    "id": "preview-of-docs",
+    "pattern": "^Preview of Docs$",
+    "flags": "",
+    "replacement": "“文档”预览"
+  },
+  {
+    "id": "preview-of-code",
+    "pattern": "^Preview of Code$",
+    "flags": "",
+    "replacement": "“代码”预览"
+  },
+  {
+    "id": "preview-of-image",
+    "pattern": "^Preview of Image$",
+    "flags": "",
+    "replacement": "“图片”预览"
+  },
+  {
+    "id": "preview-of-terminal",
+    "pattern": "^Preview of Terminal$",
+    "flags": "",
+    "replacement": "“终端”预览"
+  },
+  {
+    "id": "preview-of-skill",
+    "pattern": "^Preview of Skill$",
+    "flags": "",
+    "replacement": "“技能”预览"
+  },
+  {
+    "id": "preview-of-rule",
+    "pattern": "^Preview of Rule$",
+    "flags": "",
+    "replacement": "“规则”预览"
+  },
+  {
+    "id": "preview-of-rules",
+    "pattern": "^Preview of Rules$",
+    "flags": "",
+    "replacement": "“规则”预览"
+  },
+  {
+    "id": "preview-of-browser",
+    "pattern": "^Preview of Browser$",
+    "flags": "",
+    "replacement": "“浏览器”预览"
+  },
+  {
+    "id": "preview-of-link",
+    "pattern": "^Preview of Link$",
+    "flags": "",
+    "replacement": "“链接”预览"
+  },
+  {
+    "id": "preview-of-symbol",
+    "pattern": "^Preview of Symbol$",
+    "flags": "",
+    "replacement": "“符号”预览"
+  },
+  {
+    "id": "preview-of-past-chat",
+    "pattern": "^Preview of Past Chat$",
+    "flags": "",
+    "replacement": "“历史聊天”预览"
+  },
+  {
+    "id": "preview-of-past-chats",
+    "pattern": "^Preview of Past Chats$",
+    "flags": "",
+    "replacement": "“历史聊天”预览"
+  },
+  {
+    "id": "preview-of-cursor-rule",
+    "pattern": "^Preview of Cursor Rule$",
+    "flags": "",
+    "replacement": "“Cursor 规则”预览"
+  },
+  {
+    "id": "preview-of-cursor-rules",
+    "pattern": "^Preview of Cursor Rules$",
+    "flags": "",
+    "replacement": "“Cursor 规则”预览"
+  },
+  {
+    "id": "preview-of-git-diff",
+    "pattern": "^Preview of Git Diff$",
+    "flags": "",
+    "replacement": "“Git 差异”预览"
+  },
+  {
+    "id": "delete-worktree-at",
+    "pattern": "^Delete worktree at (.+)$",
+    "flags": "",
+    "replacement": "删除位于 $1 的工作树"
   },
   {
     "id": "select-project-aria",

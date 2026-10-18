@@ -90,7 +90,7 @@ node bin/cursor-zh.js restore --app-path /Applications/Agent/Cursor.app
 
 AppImage 没有固定解压目录，请先解压再把里面的 `resources/app` 传给 `--app-path`。
 
-`/Applications` 下的 Cursor 往往没有写权限。本工具不会自己调用 sudo。需要时请自行用 sudo 运行，并确认你信任当前这份代码。用 sudo 时，备份目录跟发起命令的用户走（看 `SUDO_USER`），不会写到 `/var/root`。也可以自己传 `--data-dir`。
+先看 `doctor` 里的「可写」。当前用户能写这个 `.app` 时，直接 `apply`，不要加 sudo。只有写不了安装目录时，`apply` / `restore` 才会自己用 sudo 提权。不想自动提权就加 `--no-sudo`。用 sudo 时，备份目录跟发起命令的用户走（看 `SUDO_USER`），不会写到 `/var/root`。也可以自己传 `--data-dir`。
 
 ## 还原
 
@@ -108,7 +108,7 @@ node bin/cursor-zh.js restore
 
 找不到当前版本的备份时，命令会停下来，不会拿旧版本的文件覆盖新安装。那种情况要回到干净的界面，请重新安装 Cursor。
 
-如果是在 codesign 修复之前用过 v0.1（2026-10-17 当天的第一版会把 entitlements 清掉），请先重新安装 Cursor，再 `apply`。`doctor` 在 macOS 上会检查当前签名有没有 entitlements，并直接说明只有重装才能恢复。
+如果启动时被系统杀掉（退出码 137 / SIGKILL），控制台里是 `Library not loaded: @rpath/Electron Framework.framework/Electron Framework` 或 `different Team IDs`，多半是旧版补丁用 `codesign --deep --preserve-metadata=entitlements,requirements,flags` 重签过。ad-hoc 主程序带着 hardened runtime，会拒绝仍由 Developer ID 签名的 Electron Framework。`doctor` 会指出这种签名。用这一版重新 `apply`；如果它提示没有 entitlements，先重新安装 Cursor，再 `apply`。
 
 ## 实机验证
 
@@ -144,12 +144,14 @@ copy(JSON.stringify(window.__cursorZhHans.report({ visibleOnly: true }), null, 2
 
 ```bash
 xattr -dr com.apple.quarantine /Applications/Cursor.app
-codesign --force --deep --preserve-metadata=entitlements,requirements,flags --sign - /Applications/Cursor.app
+codesign --force --sign - --preserve-metadata=entitlements /Applications/Cursor.app
 ```
 
-这是临时的 ad-hoc 签名，不是 Apple 开发者证书。原来的 Developer ID 签名会被换掉；要回到官方签名，重新安装 Cursor。`--preserve-metadata` 用来留下 entitlements、requirements 和 flags（含 hardened runtime，以及 allow-jit、摄像头、麦克风、Apple Events 这些权限）。这一步失败时，才会退回不保留这些元数据的签名，并在输出里说明。
+这是临时的 ad-hoc 签名，不是 Apple 开发者证书。原来的 Developer ID 签名会被换掉；要回到官方签名，重新安装 Cursor。命令只保留 entitlements（allow-jit、摄像头、麦克风、Apple Events）。不要加 `--deep`，也不要保留 `flags` 或 `requirements`。`flags` 里的 hardened runtime 留在 ad-hoc 主程序上时，库校验会拒绝 Electron Framework，Cursor 启动即被 SIGKILL。`--deep` 还会去重签里面的 framework，没有必要。
 
-codesign 修复之前的 v0.1 已经把 entitlements 清成空的。那种安装即使用现在的 `--preserve-metadata`，也没有东西可以保留。请先重新安装 Cursor，再打补丁。`doctor` 会写出这件事。
+签完会再读一次 entitlements。如果是空的，`apply` 会把界面文件按备份还原，并停下来。空权限无法靠再签一次找回来，只能重装 Cursor。不会退回到「什么元数据都不保留」的签名。
+
+2026-10-17 当天的第一版曾经把 entitlements 清成空的。那种安装即使用现在的命令，也没有东西可以保留。请先重新安装 Cursor，再打补丁。`doctor` 会写出这件事，也会检查 ad-hoc 签名是否仍带着 hardened runtime，以及主程序和 Electron Framework 的 Team ID 是否不一致。
 
 `--no-codesign` 跳过签名，`--no-clear-quarantine` 跳过隔离属性。两种都关掉时，程序只改文件，签名问题留给你自己处理。非 macOS 系统会跳过这两步，并在输出里说明。
 
@@ -201,4 +203,4 @@ node bin/cursor-zh.js apply --update-checksums
 node bin/cursor-zh.js restore
 ```
 
-`restore` writes back byte-for-byte backups for the current `product.json` version and commit. On macOS the default post-step is `xattr -dr com.apple.quarantine` and `codesign --force --deep --preserve-metadata=entitlements,requirements,flags --sign -` on `Cursor.app`. That ad-hoc signature replaces the original Developer ID signature; reinstall Cursor to get the official signature back. If preserving entitlements fails, the tool signs again without that metadata and says so. Opt out with `--no-clear-quarantine` and `--no-codesign`. Auto-detect also checks `/Applications/*/Cursor.app`, `~/Applications/*/Cursor.app`, and the running process command line when it contains a path. `--update-checksums` rewrites only checksum entries for files this tool actually changed. The native macOS menu bar is outside the DOM; install Microsoft's VS Code Chinese language pack (`MS-CEINTL.vscode-language-pack-zh-hans`) for it. See the Chinese sections above for paths, updates, and the glossary (`dictionary/GLOSSARY.md`).
+`restore` writes back byte-for-byte backups for the current `product.json` version and commit. On macOS the default post-step is `xattr -dr com.apple.quarantine` and `codesign --force --sign - --preserve-metadata=entitlements` on `Cursor.app` (no `--deep`, and no `flags` or `requirements`). Keeping hardened runtime on that ad-hoc main binary makes launch die with SIGKILL 137 (`Library not loaded: Electron Framework` / different Team IDs). The tool checks entitlements after signing and, if they are empty, restores the UI files and tells you to reinstall Cursor. It does not fall back to a signature that drops them. sudo runs only when the `.app` is not writable by the current user; a writable install, including `/Applications/Agent/Cursor.app` when you own it, stays unprivileged. `--no-sudo` turns that off. Opt out of signing with `--no-clear-quarantine` and `--no-codesign`. Auto-detect also checks `/Applications/*/Cursor.app`, `~/Applications/*/Cursor.app`, and the running process command line when it contains a path. `--update-checksums` rewrites only checksum entries for files this tool actually changed. The native macOS menu bar is outside the DOM; install Microsoft's VS Code Chinese language pack (`MS-CEINTL.vscode-language-pack-zh-hans`) for it. See the Chinese sections above for paths, updates, and the glossary (`dictionary/GLOSSARY.md`).

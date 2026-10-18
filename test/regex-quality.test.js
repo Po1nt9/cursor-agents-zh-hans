@@ -290,6 +290,7 @@ test('field types, themes, resume, and the remaining review strings', () => {
 test('dates stay inside English sentences and usage lines translate whole', () => {
   assert.equal(translateText('Nov 1', compiled).text, '11月1日');
   assert.equal(translateText('Oct 17, 2026, 10:15 PM', compiled).text, '2026年10月17日 22:15');
+  assert.equal(translateText('Oct 17, 10:15 PM', compiled).text, '10月17日 22:15');
   assert.equal(translateText('Created Oct 17, 2026, 10:15 PM', compiled).text, '创建于 2026年10月17日 22:15');
   assert.equal(translateText('Created tasks', compiled).text, 'Created tasks');
   assert.equal(translateText('See you on November 1 for the review.', compiled).text, 'See you on November 1 for the review.');
@@ -297,16 +298,16 @@ test('dates stay inside English sentences and usage lines translate whole', () =
   assert.equal(translateText('10:15 AM', compiled).text, '10:15');
   assert.equal(
     translateText('Your usage resets on November 1 (13 days).', compiled).text,
-    '你的用量将于 11月1日重置（13 天后）。',
+    '你的用量将于11月1日重置（13 天后）。',
   );
   assert.equal(
     translateText('Your usage resets on November 1 (1 day).', compiled).text,
-    '你的用量将于 11月1日重置（1 天后）。',
+    '你的用量将于11月1日重置（1 天后）。',
   );
-  assert.equal(translateText('Your usage resets on November 1.', compiled).text, '你的用量将于 11月1日重置。');
+  assert.equal(translateText('Your usage resets on November 1.', compiled).text, '你的用量将于11月1日重置。');
   assert.equal(
     translateText("You're paused until your usage resets on November 1.", compiled).text,
-    '已暂停，直到用量于 11月1日重置。',
+    '已暂停，直到用量于11月1日重置。',
   );
   assert.equal(
     translateText("You're paused until your usage resets in 3 days.", compiled).text,
@@ -451,15 +452,15 @@ test('date and time rules accept both en-US and zh-CN formats', () => {
   const resetDay = pair(morning, longDay);
   same(
     { en: `Your usage resets on ${resetDay.en} (13 days).`, zh: `Your usage resets on ${resetDay.zh} (13 days).` },
-    '你的用量将于 11月1日重置（13 天后）。',
+    '你的用量将于11月1日重置（13 天后）。',
   );
   same(
     { en: `Your usage resets on ${resetDay.en}.`, zh: `Your usage resets on ${resetDay.zh}.` },
-    '你的用量将于 11月1日重置。',
+    '你的用量将于11月1日重置。',
   );
   same(
     { en: `You're paused until your usage resets on ${resetDay.en}.`, zh: `You're paused until your usage resets on ${resetDay.zh}.` },
-    '已暂停，直到用量于 11月1日重置。',
+    '已暂停，直到用量于11月1日重置。',
   );
   same(
     { en: `Resets ${resetDay.en}`, zh: `Resets ${resetDay.zh}` },
@@ -538,6 +539,30 @@ test('date and time rules accept both en-US and zh-CN formats', () => {
     '上周',
   );
   same(
+    (locale) => new Intl.RelativeTimeFormat(locale, { numeric: 'auto' }).format(-1, 'month'),
+    '上个月',
+  );
+  same(
+    (locale) => new Intl.RelativeTimeFormat(locale, { numeric: 'auto' }).format(1, 'month'),
+    '下个月',
+  );
+  same(
+    (locale) => new Intl.RelativeTimeFormat(locale, { numeric: 'auto' }).format(0, 'month'),
+    '本月',
+  );
+  same(
+    (locale) => new Intl.RelativeTimeFormat(locale, { numeric: 'auto' }).format(-1, 'year'),
+    '去年',
+  );
+  same(
+    (locale) => new Intl.RelativeTimeFormat(locale, { numeric: 'auto' }).format(1, 'year'),
+    '明年',
+  );
+  same(
+    (locale) => new Intl.RelativeTimeFormat(locale, { numeric: 'auto' }).format(0, 'year'),
+    '今年',
+  );
+  same(
     (locale) => `Paired with this computer · Last used ${new Intl.RelativeTimeFormat(locale, { numeric: 'always' }).format(-5, 'minute')}`,
     '已与这台计算机配对 · 上次使用 5分钟前',
   );
@@ -550,6 +575,17 @@ test('date and time rules accept both en-US and zh-CN formats', () => {
   assert.equal(translateText('No Repo, select project', compiled).text, '无仓库，选择项目');
   assert.equal(translateText('Branch main, open branch menu', compiled).text, '分支 main，打开分支菜单');
   assert.equal(translateText('Preview of Branch', compiled).text, '“分支”预览');
+  assert.equal(translateText('Preview of File', compiled).text, '“文件”预览');
+  assert.equal(translateText('Preview of Folder', compiled).text, '“文件夹”预览');
+  assert.equal(translateText('Preview of Doc', compiled).text, '“文档”预览');
+  assert.equal(translateText('Preview of Docs', compiled).text, '“文档”预览');
+  assert.equal(translateText('Preview of add-plugin', compiled).text, '“add-plugin”预览');
+  assert.equal(translateText('Delete worktree at /Users/me/.cursor/worktrees/x', compiled).text, '删除位于 /Users/me/.cursor/worktrees/x 的工作树');
+  assert.equal(translateText('last month', compiled).text, '上个月');
+  assert.equal(translateText('last year', compiled).text, '去年');
+  assert.equal(translateText('this month', compiled).text, '本月');
+  assert.equal(translateText('next year', compiled).text, '明年');
+  assert.equal(translateText('Go Previous in Edit Locations', compiled).text, '在编辑位置中后退');
   assert.equal(translateText('Off under private inference', compiled).text, '私有推理模式下已关闭');
   assert.equal(translateText('Updated 5y ago', compiled).text, '5 年前更新');
   assert.equal(
@@ -562,7 +598,7 @@ test('date and time rules accept both en-US and zh-CN formats', () => {
   );
   assert.equal(
     translateText('Your usage resets on November １３ (１３ days).', compiled).text,
-    '你的用量将于 11月13日重置（13 天后）。',
+    '你的用量将于11月13日重置（13 天后）。',
   );
 });
 

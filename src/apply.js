@@ -14,7 +14,8 @@ import { replaceChecksum, sha256Base64, sha256Hex } from './checksum.js';
 import { loadDictionary, loadStaticRules } from './dictionary.js';
 import { CliError } from './errors.js';
 import { injectHtml } from './html-inject.js';
-import { runMacPostProcess } from './macos.js';
+import { EMPTY_ENTITLEMENTS_MESSAGE, missingWriteAccess, runMacPostProcess } from './macos.js';
+import { restore } from './restore.js';
 import { appFiles, detectAppPath, userDataDir } from './paths.js';
 import { inspectCursorProcesses } from './process-check.js';
 import { readProductFile } from './product.js';
@@ -47,12 +48,14 @@ function assertQuit(options) {
   return result;
 }
 
-function assertWritable(appPath) {
-  try {
-    fs.accessSync(appPath, fs.constants.W_OK);
-  } catch {
-    throw new CliError(`没有写入权限: ${appPath}\nmacOS 上如果 Cursor 装在 /Applications，请用 sudo 重新运行。本工具不会自行提权。`);
-  }
+function assertWritable(appPath, options = {}) {
+  const missing = missingWriteAccess(appPath, {
+    platform: options.platform,
+    accessSync: options.accessSync,
+    bundlePath: options.bundlePath,
+  });
+  if (missing.length === 0) return;
+  throw new CliError(`没有写入权限: ${missing.join(', ')}\n当前用户写不了这个安装位置。可写的 .app 不需要 sudo。只有 doctor 显示不可写时才用 sudo 重新运行。`);
 }
 
 function readOriginal(root, rel, livePath, marker) {
@@ -103,7 +106,7 @@ function formatMismatch(reports) {
 
 export function apply(options = {}) {
   const { appPath } = detectAppPath(options.appPath);
-  assertWritable(appPath);
+  assertWritable(appPath, options);
   const running = assertQuit(options);
   const files = appFiles(appPath);
   const { raw: productRaw, json: product } = readProductFile(files.product);
@@ -274,6 +277,19 @@ export function apply(options = {}) {
     execFile: options.execFile,
   });
   if (signing.warnings) warnings.push(...signing.warnings);
+  if (signing.entitlementsMissing || signing.codesignFailed) {
+    restore({
+      appPath,
+      dataDir: options.dataDir,
+      platform: options.platform,
+      codesign: false,
+      clearQuarantine: false,
+      force: true,
+      execFile: options.execFile,
+      bundlePath: options.bundlePath,
+    });
+    throw new CliError(EMPTY_ENTITLEMENTS_MESSAGE);
+  }
   if (signing.performed) {
     actions.push(`macOS: 已对 ${signing.bundle} 执行 ${signing.steps.map((step) => step.name).join('、')}`);
   } else if (signing.reason === 'not-darwin') {

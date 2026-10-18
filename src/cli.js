@@ -1,6 +1,9 @@
+import { execFileSync } from 'node:child_process';
 import fs from 'node:fs';
 import { apply } from './apply.js';
 import { CliError } from './errors.js';
+import { missingWriteAccess, relaunchWithSudo } from './macos.js';
+import { detectAppPath } from './paths.js';
 import { restore } from './restore.js';
 import { renderCoverageMarkdown } from './coverage.js';
 import { formatScanReport, scanInstall } from './scan.js';
@@ -25,6 +28,7 @@ const HELP = `cursor-zh ${TOOL_VERSION}
   --update-checksums       仅更新本次改动且已列入 product.json 的校验和
   --no-codesign            macOS 上跳过 ad-hoc 重签名
   --no-clear-quarantine    macOS 上跳过 xattr 清除隔离属性
+  --no-sudo                安装目录不可写时也不要自动 sudo
   --force                  Cursor 仍在运行时仍继续（不推荐）
   --bundles WHICH          scan 读取 glass、desktop 或 both（默认 both）
   --min-count N            scan 忽略出现次数低于 N 的字符串（默认 2）
@@ -47,6 +51,7 @@ export function parseArgs(argv) {
     updateChecksums: false,
     codesign: true,
     clearQuarantine: true,
+    sudo: true,
     out: null,
     coverage: null,
     limit: 200,
@@ -79,6 +84,7 @@ export function parseArgs(argv) {
       case '--update-checksums': opts.updateChecksums = true; break;
       case '--no-codesign': opts.codesign = false; break;
       case '--no-clear-quarantine': opts.clearQuarantine = false; break;
+      case '--no-sudo': opts.sudo = false; break;
       case '--json': opts.json = true; break;
       case '-h':
       case '--help': opts.help = true; break;
@@ -100,6 +106,47 @@ export function parseArgs(argv) {
   return opts;
 }
 
+function currentUid(getuid) {
+  const read = getuid ?? (() => (typeof process.getuid === 'function' ? process.getuid() : null));
+  try {
+    return read();
+  } catch {
+    return null;
+  }
+}
+
+// Writable .app stays on the current user. sudo only when the bundle is not writable.
+export function escalateIfNeeded(opts) {
+  if (opts.command !== 'apply' && opts.command !== 'restore') return false;
+  if (opts.sudo === false) return false;
+  const platform = opts.platform ?? process.platform;
+  if (platform !== 'darwin') return false;
+  if (currentUid(opts.getuid) === 0) return false;
+  let appPath;
+  try {
+    appPath = detectAppPath(opts.appPath).appPath;
+  } catch {
+    return false;
+  }
+  const missing = missingWriteAccess(appPath, {
+    platform,
+    accessSync: opts.accessSync,
+    bundlePath: opts.bundlePath,
+  });
+  if (missing.length === 0) return false;
+  const execFile = opts.execFile ?? execFileSync;
+  const argv = opts.argv ?? process.argv;
+  try {
+    (opts.relaunchWithSudo ?? relaunchWithSudo)(argv, execFile);
+  } catch (error) {
+    if (typeof error.status === 'number') {
+      throw new CliError(`sudo 退出码 ${error.status}`);
+    }
+    throw new CliError(`写不了 ${missing.join('、')}。已尝试 sudo，但失败：${error.message}`);
+  }
+  return true;
+}
+
 function printResult(result) {
   for (const line of result.actions || []) console.log(line);
   for (const line of result.warnings || []) console.warn(line);
@@ -115,6 +162,9 @@ export async function main(argv) {
     if (opts.command === 'version') {
       console.log(TOOL_VERSION);
       return 0;
+    }
+    if (opts.command === 'apply' || opts.command === 'restore') {
+      if (escalateIfNeeded(opts)) return 0;
     }
     if (opts.command === 'apply') {
       const result = apply(opts);
