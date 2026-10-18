@@ -33,6 +33,47 @@ function currentUid() {
   }
 }
 
+// Files written as root land in the invoking user's Library. Hand them back
+// so the next apply without sudo can read the backups.
+export function chownInvokingUser(targets, options = {}) {
+  const uid = options.getuid ? options.getuid() : currentUid();
+  if (uid !== 0) return false;
+  const env = options.env || process.env;
+  const ownerUid = Number(env.SUDO_UID);
+  const ownerGid = Number(env.SUDO_GID);
+  if (!Number.isInteger(ownerUid) || ownerUid <= 0) return false;
+  if (!Number.isInteger(ownerGid) || ownerGid < 0) return false;
+  const chown = options.chownSync || fs.chownSync;
+  const lstat = options.lstatSync || fs.lstatSync;
+  const readDir = options.readdirSync || fs.readdirSync;
+  const seen = new Set();
+  function walk(target) {
+    if (!target || seen.has(target)) return;
+    seen.add(target);
+    let stat;
+    try {
+      stat = lstat(target);
+    } catch {
+      return;
+    }
+    try {
+      chown(target, ownerUid, ownerGid);
+    } catch {
+      // A failed chown must not undo a patch that already landed.
+    }
+    if (!stat.isDirectory()) return;
+    let names = [];
+    try {
+      names = readDir(target);
+    } catch {
+      return;
+    }
+    for (let i = 0; i < names.length; i += 1) walk(path.join(target, names[i]));
+  }
+  for (let i = 0; i < targets.length; i += 1) walk(targets[i]);
+  return true;
+}
+
 export function userDataDir(env = process.env) {
   const home = invokingHome(env);
   if (process.platform === 'win32') {

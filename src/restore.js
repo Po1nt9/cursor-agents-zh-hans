@@ -10,7 +10,7 @@ import {
 import { sha256Hex } from './checksum.js';
 import { CliError } from './errors.js';
 import { EMPTY_ENTITLEMENTS_MESSAGE, runMacPostProcess } from './macos.js';
-import { appFiles, detectAppPath, userDataDir } from './paths.js';
+import { appFiles, chownInvokingUser, detectAppPath, userDataDir } from './paths.js';
 import { inspectCursorProcesses } from './process-check.js';
 import { readProductFile } from './product.js';
 
@@ -66,6 +66,11 @@ export function restore(options = {}) {
   }
   removeState(files.state);
   actions.push('已清除补丁状态');
+  chownInvokingUser([dataDir, path.dirname(files.state)], {
+    getuid: options.getuid,
+    env: options.env,
+    chownSync: options.chownSync,
+  });
 
   const warnings = [];
   const signing = runMacPostProcess(appPath, {

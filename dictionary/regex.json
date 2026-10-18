@@ -1089,7 +1089,7 @@
     "id": "glass-377",
     "pattern": "^The\\ connection\\ stalled\\ ([\\s\\S]+)\\ times\\.\\ Please\\ check\\ your\\ network\\ connection\\ and\\ try\\ again\\.$",
     "flags": "",
-    "replacement": "连接已卡住 $1 次。请检查网络连接，然后重试。"
+    "replacement": "连接已停滞 $1 次。请检查网络连接，然后重试。"
   },
   {
     "id": "glass-767",
@@ -3501,7 +3501,7 @@
     "id": "glass-617",
     "pattern": "^File\\ is\\ blocked\\ by\\ \\.cursorignore:\\ ([\\s\\S]+)$",
     "flags": "",
-    "replacement": ".cursorignore 已阻止这些文件：$1"
+    "replacement": ".cursorignore 已阻止此文件：$1"
   },
   {
     "id": "glass-654",
@@ -4503,7 +4503,7 @@
     "id": "glass-12",
     "pattern": "^([\\s\\S]+?)\\ rejected\\ with\\ ([\\s\\S]+)$",
     "flags": "",
-    "replacement": "已拒绝 $1：$2"
+    "replacement": "$1 已被拒绝：$2"
   },
   {
     "id": "glass-140",
@@ -5373,7 +5373,7 @@
     "id": "glass-170",
     "pattern": "^Blocked\\ by\\ ([\\s\\S]+)$",
     "flags": "",
-    "replacement": "已由 $1 阻止"
+    "replacement": "已被 $1 阻止"
   },
   {
     "id": "glass-1447",
@@ -5499,13 +5499,13 @@
     "id": "explored-searches",
     "pattern": "^Explored (\\d+) searches$",
     "flags": "",
-    "replacement": "探索了 $1 次搜索"
+    "replacement": "搜索了 $1 次"
   },
   {
     "id": "explored-search",
     "pattern": "^Explored (\\d+) search$",
     "flags": "",
-    "replacement": "探索了 $1 次搜索"
+    "replacement": "搜索了 $1 次"
   },
   {
     "id": "minutes-ago",

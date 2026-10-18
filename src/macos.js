@@ -64,7 +64,9 @@ export function runMacPostProcess(appPath, options = {}) {
       steps.push({ name: 'codesign', args, preservedMetadata: true });
       const entitlements = readMacEntitlements(bundle, execFile);
       entitlementsMissing = Boolean(entitlements.missing);
-      if (entitlementsMissing) {
+      if (entitlements.reason === 'unknown') {
+        warnings.push('未能读取 entitlements，没有把它当成空权限，也没有还原。');
+      } else if (entitlementsMissing) {
         warnings.push('重签名之后没有读到 entitlements。');
       }
     } catch (error) {
@@ -87,31 +89,42 @@ function commandOutput(error) {
   return `${error && error.stdout ? error.stdout : ''}\n${error && error.stderr ? error.stderr : ''}\n${error && error.message ? error.message : ''}`;
 }
 
-function execText(execFile, args) {
+function execResult(execFile, args) {
   if (execFile === execFileSync) {
     const result = spawnSync('codesign', args, { encoding: 'utf8' });
-    return `${result.stdout || ''}\n${result.stderr || ''}`;
+    return {
+      ok: result.status === 0,
+      text: `${result.stdout || ''}\n${result.stderr || ''}`,
+    };
   }
   try {
     const out = execFile('codesign', args, {
       encoding: 'utf8',
       stdio: ['ignore', 'pipe', 'pipe'],
     });
-    return String(out ?? '');
+    return { ok: true, text: String(out ?? '') };
   } catch (error) {
-    return commandOutput(error);
+    return { ok: false, text: commandOutput(error) };
   }
+}
+
+function execText(execFile, args) {
+  return execResult(execFile, args).text;
 }
 
 export function readMacEntitlements(bundle, execFile = execFileSync) {
   if (!bundle) return { checked: false, missing: false, reason: 'no-bundle' };
-  const text = execText(execFile, ['-d', '--entitlements', ':-', bundle]);
-  if (/not signed|code object is not signed/i.test(text) && !/<key>/.test(text)) {
-    return { checked: true, missing: true, reason: 'empty' };
+  const read = execResult(execFile, ['-d', '--entitlements', '-', '--xml', bundle]);
+  const text = read.text;
+  if (!read.ok) {
+    if (/not signed|code object is not signed/i.test(text) && !/<key>/.test(text)) {
+      return { checked: true, missing: true, reason: 'empty' };
+    }
+    return { checked: false, missing: false, reason: 'unknown' };
   }
   if (!text.trim()) return { checked: true, missing: true, reason: 'empty' };
-  const missing = !/<key>/.test(text) && !/\[Key\]/.test(text) && !/\[Dict\]/.test(text);
   if (/no entitlements/i.test(text)) return { checked: true, missing: true, reason: 'empty' };
+  const missing = !/<key>/.test(text) && !/\[Key\]/.test(text) && !/\[Dict\]/.test(text);
   return { checked: true, missing, reason: missing ? 'empty' : 'present' };
 }
 

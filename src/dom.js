@@ -747,6 +747,23 @@ export function startDomTranslator(api, env) {
     return null;
   }
 
+  // The usage link is "网页仪表盘" plus a separate "." text node.
+  function periodAfterLink(node) {
+    if (String(node.nodeValue || '') !== '.') return false;
+    const parent = node.parentElement;
+    if (!parent) return false;
+    const kids = parent.childNodes || [];
+    let prev = null;
+    for (let i = 0; i < kids.length; i += 1) {
+      if (kids[i] === node) break;
+      const child = kids[i];
+      if (child.nodeType === 3 && !normalized(child.nodeValue)) continue;
+      prev = child;
+    }
+    if (!prev || prev.nodeType !== 1) return false;
+    return String(prev.tagName || '').toUpperCase() === 'A';
+  }
+
   function translateTextNode(node) {
     if (!node || node.nodeType !== 3) return;
     if (cooled(node)) {
@@ -756,6 +773,10 @@ export function startDomTranslator(api, env) {
     const parent = node.parentElement;
     if (!parent || shouldSkipElement(parent)) return;
     if (textMemo.get(node) === node.nodeValue) return;
+    if (periodAfterLink(node)) {
+      writeText(node, '。');
+      return;
+    }
 
     const sentenceHost = wordSpanHost(parent);
     if (sentenceHost) {

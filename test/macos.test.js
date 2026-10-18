@@ -35,6 +35,8 @@ test('codesign argv keeps entitlements only', () => {
   assert.equal(sign.length, 1);
   assert.deepEqual(sign[0][1], codesignArgs(BUNDLE));
   assert.deepEqual(sign[0][1], ['--force', '--sign', '-', '--preserve-metadata=entitlements', BUNDLE]);
+  const read = calls.filter((call) => call[0] === 'codesign' && call[1].includes('--entitlements'));
+  assert.deepEqual(read[0][1], ['-d', '--entitlements', '-', '--xml', BUNDLE]);
   assert.equal(sign[0][1].includes('--deep'), false);
   assert.equal(sign[0][1].some((arg) => arg.includes('flags')), false);
   assert.equal(sign[0][1].some((arg) => arg.includes('requirements')), false);
@@ -56,6 +58,60 @@ test('codesign failure does not fall back to a signature that drops entitlements
   assert.equal(result.codesignFailed, true);
   assert.equal(calls.filter((args) => args.includes('--sign')).length, 1);
   assert.equal(calls.some((args) => args.includes('--deep')), false);
+});
+
+test('an unreadable entitlement check is unknown and does not roll back', () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'cursor-zh-sign-'));
+  const { app, htmlPath } = fixture(dir);
+  const html = fs.readFileSync(htmlPath, 'utf8');
+  const result = apply({
+    appPath: app,
+    dataDir: path.join(dir, 'data'),
+    dictionaryDir: path.join(dir, 'dictionary'),
+    platform: 'darwin',
+    clearQuarantine: false,
+    processCheck: () => ({ checked: true, running: false, pids: [] }),
+    execFile(_cmd, args) {
+      if (args.includes('--entitlements')) {
+        const error = new Error('could not read entitlements');
+        error.stderr = 'could not read entitlements';
+        throw error;
+      }
+      return '';
+    },
+  });
+  assert.equal(result.signing.entitlementsMissing, false);
+  assert.equal(result.signing.codesignFailed, false);
+  assert.notEqual(fs.readFileSync(htmlPath, 'utf8'), html);
+  const unread = readMacEntitlements(BUNDLE, () => {
+    throw new Error('could not read entitlements');
+  });
+  assert.equal(unread.missing, false);
+  assert.equal(unread.reason, 'unknown');
+});
+
+test('a failed rollback still reports the entitlement error', () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'cursor-zh-sign-'));
+  const { app } = fixture(dir);
+  assert.throws(() => apply({
+    appPath: app,
+    dataDir: path.join(dir, 'data'),
+    dictionaryDir: path.join(dir, 'dictionary'),
+    platform: 'darwin',
+    clearQuarantine: false,
+    processCheck: () => ({ checked: true, running: false, pids: [] }),
+    execFile(_cmd, args) {
+      if (args.includes('--entitlements')) return '';
+      return '';
+    },
+    restoreImpl() {
+      throw new Error('backup missing');
+    },
+  }), (error) => {
+    assert.match(error.message, /重新安装 Cursor/);
+    assert.match(error.message, /backup missing/);
+    return true;
+  });
 });
 
 test('empty entitlements are reported after signing', () => {

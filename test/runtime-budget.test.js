@@ -1662,3 +1662,17 @@ test('a fragment does not glue an English word to Chinese inside one label', () 
   translateTree([phraseHost], fragmentOnly);
   assert.equal(renderedText(phrase).replace(/\s+/g, ''), 'QqkeepAgentsWindowqqrest');
 });
+
+test('a period after a dashboard link is full-width', () => {
+  const { compiled } = loadDictionary();
+  const h = harness();
+  const row = h.makeElement('DIV');
+  row.appendChild(h.makeText('View more advanced analytics in the'));
+  row.appendChild(h.makeText(' '));
+  const link = h.makeElement('A');
+  link.appendChild(h.makeText('web dashboard'));
+  row.appendChild(link);
+  row.appendChild(h.makeText('.'));
+  translateTree([row], compiled);
+  assert.equal(renderedText(row), '如需更多高级分析，请前往 网页仪表盘。');
+});

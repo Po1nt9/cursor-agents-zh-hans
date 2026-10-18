@@ -100,7 +100,8 @@ export function lintChinese(english, chinese) {
   if (/「|」/.test(zh)) issues.push('corner-quotes');
   if (/[\u4e00-\u9fff]/.test(zh)) {
     const stripped = stripQuotedCommands(zh).replace(/[A-Za-z]'[A-Za-z]/g, '');
-    if (stripped.includes('"') || stripped.includes("'")) issues.push('ascii-quotes');
+    const quotes = stripped.replace(/单引号\s*'/, '').replace(/双引号\s*"/, '');
+    if (quotes.includes('"') || quotes.includes("'")) issues.push('ascii-quotes');
   }
   if (FULLWIDTH_CODE.test(zh)) issues.push('fullwidth-code-paren');
   const prose = zh.replace(CODE_CALL, ' ');

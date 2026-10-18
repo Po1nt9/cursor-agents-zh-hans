@@ -133,7 +133,7 @@ test('the shipped dictionary compiles and static rules agree with it', () => {
     '有新版本的 Cursor 可用。建议更新以获得最佳体验。',
   );
   assert.equal(compiled.placeholders.length > 10, true);
-  assert.equal(translateText('Explored 2 searches', compiled).text, '探索了 2 次搜索');
+  assert.equal(translateText('Explored 2 searches', compiled).text, '搜索了 2 次');
   assert.equal(translateText('Loading chat', compiled).text, '正在加载聊天');
   assert.equal(translateText('New Automation', compiled).text, '新建自动化');
   assert.equal(translateText('Find critical bugs', compiled).text, '查找严重缺陷');

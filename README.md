@@ -34,7 +34,7 @@ Cursor 3 的智能体窗口和经典窗口加载**同一份** `workbench.html`�
 ## 安装
 
 ```bash
-git clone <this-repo>
+git clone https://github.com/Po1nt9/cursor-agents-zh-hans
 cd cursor-agents-zh-hans
 node --test
 ```
@@ -112,15 +112,15 @@ node bin/cursor-zh.js restore
 
 ## 实机验证
 
-这一版是发布构建。下方有新消息、PR 时间线动词，以及把过口语的句子改回产品用语，都由 `node --test` 覆盖，没有在登录过的 Cursor 里看过。`scan --bundles glass` 仍是改这些译文之前的 4668 / 4928，没有重跑。
+已在 Linux 上用登录后的 Cursor 3.25.6 看过智能体窗口。macOS 签名由单元测试覆盖。
 
-安装时先 `restore`，再 `apply --update-checksums`，不要加 `--static`。不在默认位置时带上路径，例如：
+第一次安装直接 `apply --update-checksums`，不要加 `--static`。如果以前装过旧版补丁，先 `restore`，再 `apply`。不在默认位置时带上路径：
 
 ```bash
 node bin/cursor-zh.js apply --app-path /Applications/Agent/Cursor.app --update-checksums
 ```
 
-如果 `doctor` 说 entitlements 是空的，先重装 Cursor，再打补丁。本仓库的自动化测试不打开真正的 Cursor。
+如果 `doctor` 说 entitlements 是空的，先重装 Cursor，再打补丁。
 
 ## 译文从哪来
 
@@ -162,6 +162,14 @@ codesign --force --sign - --preserve-metadata=entitlements /Applications/Cursor.
 2026-10-17 当天的第一版曾经把 entitlements 清成空的。那种安装即使用现在的命令，也没有东西可以保留。请先重新安装 Cursor，再打补丁。`doctor` 会写出这件事，也会检查 ad-hoc 签名是否仍带着 hardened runtime，以及主程序和 Electron Framework 的 Team ID 是否不一致。
 
 `--no-codesign` 跳过签名，`--no-clear-quarantine` 跳过隔离属性。两种都关掉时，程序只改文件，签名问题留给你自己处理。非 macOS 系统会跳过这两步，并在输出里说明。
+
+## macOS 注意事项
+
+重签名之后，钥匙串可能会询问是否允许访问「Cursor Safe Storage」。请允许。拒绝的话，Cursor 会看起来像退出了登录。
+
+麦克风、摄像头和自动化权限可能会再问一次。
+
+Cursor 自动更新可能失败，也可能盖掉这个补丁。更新 Cursor 之后再执行一次 `apply`。如果更新失败，先重新安装 Cursor，再 `apply`。
 
 屏幕顶部的 macOS 菜单栏是系统原生菜单，不在网页 DOM 里，这个补丁改不到。请从扩展市场安装 `MS-CEINTL.vscode-language-pack-zh-hans`。设置页、侧边栏、主页建议和占位符走的是 DOM，由本词典翻译。
 

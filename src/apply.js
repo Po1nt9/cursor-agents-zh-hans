@@ -16,7 +16,7 @@ import { CliError } from './errors.js';
 import { injectHtml } from './html-inject.js';
 import { EMPTY_ENTITLEMENTS_MESSAGE, missingWriteAccess, runMacPostProcess } from './macos.js';
 import { restore } from './restore.js';
-import { appFiles, detectAppPath, userDataDir } from './paths.js';
+import { appFiles, chownInvokingUser, detectAppPath, userDataDir } from './paths.js';
 import { inspectCursorProcesses } from './process-check.js';
 import { readProductFile } from './product.js';
 import { buildRuntimeScript } from './runtime.js';
@@ -278,18 +278,32 @@ export function apply(options = {}) {
   });
   if (signing.warnings) warnings.push(...signing.warnings);
   if (signing.entitlementsMissing || signing.codesignFailed) {
-    restore({
-      appPath,
-      dataDir: options.dataDir,
-      platform: options.platform,
-      codesign: false,
-      clearQuarantine: false,
-      force: true,
-      execFile: options.execFile,
-      bundlePath: options.bundlePath,
-    });
+    const restorePatch = options.restoreImpl || restore;
+    try {
+      restorePatch({
+        appPath,
+        dataDir: options.dataDir,
+        platform: options.platform,
+        codesign: false,
+        clearQuarantine: false,
+        force: true,
+        execFile: options.execFile,
+        bundlePath: options.bundlePath,
+        getuid: options.getuid,
+        env: options.env,
+        chownSync: options.chownSync,
+      });
+    } catch (error) {
+      const detail = error && error.message ? error.message : String(error);
+      throw new CliError(`${EMPTY_ENTITLEMENTS_MESSAGE}\n还原备份时也失败了：${detail}`);
+    }
     throw new CliError(EMPTY_ENTITLEMENTS_MESSAGE);
   }
+  chownInvokingUser([dataDir, path.dirname(files.state)], {
+    getuid: options.getuid,
+    env: options.env,
+    chownSync: options.chownSync,
+  });
   if (signing.performed) {
     actions.push(`macOS: 已对 ${signing.bundle} 执行 ${signing.steps.map((step) => step.name).join('、')}`);
   } else if (signing.reason === 'not-darwin') {

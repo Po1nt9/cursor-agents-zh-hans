@@ -152,8 +152,8 @@ export function formatDoctor(report) {
     lines.push('只保留 entitlements。不要 --deep，不要保留 flags 或 requirements。hardened runtime 留在 ad-hoc 主程序上时，系统会拒绝 Electron Framework 并在启动时 SIGKILL。');
     lines.push('签名之后会再读一次 entitlements。如果是空的，apply 会把界面文件还原，并要求先重装 Cursor。');
     for (const line of formatSigningLines(report.signing)) lines.push(line);
-    if (report.entitlements && report.entitlements.reason === 'unavailable') {
-      lines.push('未能读取 entitlements。若这台 Mac 的签名已经坏了，请重新安装 Cursor 后再 apply。');
+    if (report.entitlements && report.entitlements.reason === 'unknown') {
+      lines.push('这次没有读到 entitlements（codesign 读取失败），没有把它当成空权限。');
     }
     lines.push('可用 --no-codesign 与 --no-clear-quarantine 跳过。Apple Silicon 上，未重签的修改版可能被系统直接结束进程。');
     lines.push('屏幕顶部的 macOS 菜单栏是系统原生菜单，这份补丁改不到。请从扩展市场安装 MS-CEINTL.vscode-language-pack-zh-hans。');
