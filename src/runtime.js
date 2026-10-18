@@ -60,6 +60,7 @@ startDomTranslator({
   now: function () { return Date.now(); },
   budgetMs: 2000,
   scheduleSoon: function (fn) { setTimeout(fn, 0); },
+  queueMicrotask: function (fn) { queueMicrotask(fn); },
   scheduleIdle: function (fn) {
     if (typeof requestIdleCallback === 'function') return requestIdleCallback(fn, { timeout: 50 });
     return setTimeout(fn, 1);

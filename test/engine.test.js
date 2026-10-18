@@ -123,6 +123,13 @@ test('skips editor, terminal, diff, chat, and inputs, and translates other label
   assert.equal(shouldSkipElement(element({ classes: ['terminal-wrapper'] })), true);
   assert.equal(shouldSkipElement(element({ classes: ['diff-line-content'] })), true);
   assert.equal(shouldSkipElement(element({ classes: ['markdown-root'] })), true);
+  const tooltip = element({ attrs: { role: 'tooltip' } });
+  const tooltipMarkdown = element({ classes: ['markdown-root'], parent: tooltip });
+  assert.equal(shouldSkipElement(tooltipMarkdown), false);
+  const popup = element({ attrs: { 'data-component': 'tooltip-popup' } });
+  const popupMarkdown = element({ classes: ['markdown-root'], parent: popup });
+  assert.equal(shouldSkipElement(popupMarkdown), false);
+  assert.equal(skipReason(popupMarkdown), null);
   const pickerName = element({ classes: ['ui-model-picker__item-content-name'] });
   const pickerMarkdown = element({ classes: ['markdown-root'], parent: pickerName });
   assert.equal(shouldSkipElement(pickerMarkdown), false);

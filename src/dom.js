@@ -60,8 +60,8 @@ export function startDomTranslator(api, env) {
   const queue = [];
   const budgetMs = Number.isFinite(env.budgetMs) ? env.budgetMs : 2000;
   const clock = typeof env.now === 'function' ? env.now : () => Date.now();
+  const attrLoops = new WeakMap();
   const attrWrites = new Map();
-  const suppressedAttrs = new Set();
   const charges = [];
 
   let observer = null;
@@ -640,33 +640,52 @@ export function startDomTranslator(api, env) {
     return false;
   }
 
-  // Compact ages are one token. Only the sidebar timestamp and a palette row that
-  // also has a title, so a file named "1m" is left alone.
-  function relativeTimeTranslation(el, raw) {
-    const core = normalized(stripMarks(raw));
-    const match = /^(\d{1,4})([mhd])$/.exec(core);
-    if (!match) return '';
+  const AGE_UNIT = { s: '秒', m: '分钟', h: '小时', d: '天', mo: '个月', y: '年' };
+
+  function formatAge(spec) {
+    return spec.map(([n, unit]) => `${n}${AGE_UNIT[unit]}`).join('');
+  }
+
+  function parseAge(core) {
+    const one = /^(\d{1,4})(mo|s|m|h|d|y)$/.exec(core);
+    if (one) return [[one[1], one[2]]];
+    const two = /^(\d{1,4})(s|m|h|d) (\d{1,4})(s|m|h|d)$/.exec(core);
+    if (two) return [[two[1], two[2]], [two[3], two[4]]];
+    return null;
+  }
+
+  // Compact ages (2m, 9h, 13s) in timestamps, sidebar rows, automations, and chat.
+  // A lone token such as a file named "1m" is left alone.
+  function timeHost(el, token) {
     let cur = el;
-    let slot = false;
     for (let depth = 0; depth < 8 && cur; depth += 1) {
-      if (
-        classHas(cur, 'agent-tab-timestamp')
-        || classHas(cur, 'bc-instance-header-timestamp')
-      ) {
-        slot = true;
-        break;
+      const tag = String(cur.tagName || '').toUpperCase();
+      if (tag === 'CODE' || tag === 'PRE' || tag === 'KBD') return false;
+      if (classHas(cur, 'timestamp') || classHas(cur, 'time-ago') || classHas(cur, 'relative-time')) {
+        return true;
       }
-      if (cur.getAttribute?.('data-component') === 'palette-item' && otherLabelIn(cur, core)) {
-        slot = true;
-        break;
-      }
+      const component = String(cur.getAttribute?.('data-component') || '');
+      if (/timestamp|time-ago|relative-time/i.test(component)) return true;
+      const rowish = tag === 'LI' || tag === 'TR'
+        || classHas(cur, 'agent-tab')
+        || classHas(cur, 'automation')
+        || classHas(cur, 'sidebar')
+        || classHas(cur, 'chat-header')
+        || classHas(cur, 'instance-header')
+        || classHas(cur, 'row-secondary')
+        || component === 'palette-item'
+        || /(^|\s)(row|item|card|entry)(\s|$)/i.test(classBlob(cur));
+      if (rowish && otherLabelIn(cur, token)) return true;
       cur = cur.parentElement || null;
     }
-    if (!slot) return '';
-    const n = match[1];
-    if (match[2] === 'm') return `${n}分钟`;
-    if (match[2] === 'h') return `${n}小时`;
-    return `${n}天`;
+    return false;
+  }
+
+  function relativeTimeTranslation(el, raw) {
+    const core = normalized(stripMarks(raw));
+    const spec = parseAge(core);
+    if (!spec || !timeHost(el, core)) return '';
+    return formatAge(spec);
   }
 
   function wordSpanHost(start) {
@@ -823,32 +842,50 @@ export function startDomTranslator(api, env) {
         continue;
       }
       if (cooled(el)) return;
-      if (attributeLooping(attr, raw)) return;
+      if (attributeLooping(el, attr, raw)) return;
       memo[attr] = result.text;
       noteWrite(el);
       el.setAttribute(attr, result.text);
     }
   }
 
-  function attributeLooping(name, source) {
-    const key = `${name}\n${source}`;
-    if (suppressedAttrs.has(key)) return true;
+  // Each element gets its own budget, and the same English source also has a
+  // short global window so a placeholder rebuild cannot spin. The source is
+  // not banned forever: after the window, another tab can still translate.
+  function attributeLooping(el, name, source) {
     const t = now();
-    const prev = attrWrites.get(key);
-    const fresh = [];
-    if (prev) {
-      for (let i = 0; i < prev.length; i += 1) {
-        if (t - prev[i] < LOOP_WINDOW_MS) fresh.push(prev[i]);
-      }
+    const key = `${name}\n${source}`;
+    let global = attrWrites.get(key);
+    if (!global || t - global.windowStart >= LOOP_WINDOW_MS) {
+      global = { windowStart: t, count: 0 };
     }
-    if (fresh.length >= LOOP_LIMIT) {
-      suppressedAttrs.add(key);
-      attrWrites.set(key, fresh);
+    let state = attrLoops.get(el);
+    if (!state || state.name !== name || state.source !== source) {
+      state = { name, source, count: 0, coolUntil: 0 };
+    } else if (state.coolUntil && t < state.coolUntil) {
       return true;
     }
-    fresh.push(t);
-    attrWrites.set(key, fresh);
+    if (global.count >= LOOP_LIMIT) {
+      attrWrites.set(key, global);
+      state.coolUntil = t + COOLDOWN_MS;
+      attrLoops.set(el, state);
+      return true;
+    }
+    global.count += 1;
+    attrWrites.set(key, global);
+    state.count += 1;
+    if (state.count > LOOP_LIMIT) {
+      state.coolUntil = t + COOLDOWN_MS;
+      attrLoops.set(el, state);
+      return true;
+    }
+    attrLoops.set(el, state);
     return false;
+  }
+
+  function attributeCooling(el) {
+    const state = attrLoops.get(el);
+    return Boolean(state && state.coolUntil && now() < state.coolUntil);
   }
 
   function enqueue(item) {
@@ -1067,7 +1104,32 @@ export function startDomTranslator(api, env) {
     } finally {
       draining = false;
     }
-    if (!done && !killed) schedulePump('soon');
+    if (!done && !killed) followUpDrain();
+  }
+
+  // A dropdown paints before setTimeout(0). A few microtasks finish the label first.
+  function followUpDrain() {
+    const micro = typeof env.queueMicrotask === 'function' ? env.queueMicrotask : null;
+    if (!micro) {
+      schedulePump('soon');
+      return;
+    }
+    let slices = 0;
+    const step = () => {
+      if (killed || pumping || draining || !queue.length) return;
+      draining = true;
+      let finished = false;
+      try {
+        finished = drainNewWork(0);
+      } finally {
+        draining = false;
+      }
+      if (finished || killed || !queue.length) return;
+      slices += 1;
+      if (slices < 3) micro(step);
+      else schedulePump('soon');
+    };
+    micro(step);
   }
 
   observer = new MutationObserver((records) => {
@@ -1286,7 +1348,7 @@ export function startDomTranslator(api, env) {
           if (!value || !mostlyEnglish(value)) continue;
           if (placeholderAttr(name) && coveredByPlaceholderCss(value)) continue;
           const skipped = shouldSkipAttributeTarget(node) ? (skipReason(node) || 'attribute target') : null;
-          const why = explainEnglish(value, skipped, suppressedAttrs.has(node), suppressedAttrs.has(node) || false);
+          const why = explainEnglish(value, skipped, attributeCooling(node), attrLoops.has(node));
           pushReport(entries, {
             kind: name,
             text: normalized(value).slice(0, 240),

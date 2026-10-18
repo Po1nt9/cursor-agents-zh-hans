@@ -1,6 +1,65 @@
 # 译文质量改动
 
-对照 [dictionary/STYLE.md](../dictionary/STYLE.md)。下面先写这一轮的用词，再保留上一轮的改动记录。新加的界面句在 `dictionary/ui.json`，和 VS Code 语言包对齐的核心句仍在 `dictionary/nls.json`。
+对照 [dictionary/STYLE.md](../dictionary/STYLE.md)。这一轮改用词和错误句，不改覆盖率分母。下面先写本轮，再保留上一轮的记录。
+
+## 本轮：用词、日期、错误句
+
+`0fc2ffb` 的覆盖已经齐，这一轮只改读起来不对的译文。改过的值一共 742 条（`exact.json` 149、`ui.json` 177、`nls.json` 76、`regex.json` 286、`nls-regex.json` 51、静态规则 3）。一条句子可以同时命中下面几类。
+
+| 模式 | 改动条数 | 决定 |
+| --- | ---: | --- |
+| composer → 编写器 | 73 | 会话用「聊天」。后台 composer、Background Agent 用「云端智能体」。模型名 Composer 2.5 仍是英文。 |
+| prompt → 提示 | 27 | 提示词。单独的 Prompt 输入框是「提示词输入框」。Tips、when prompted、认证提示仍是「提示」。 |
+| triage 分拣/分流 | 9 | 分类处理。查缺陷用排查。 |
+| open a PR → 打开 PR | 11 | 创建或提交。查看已有 PR 的 Open PR 仍是「打开」。 |
+| on a schedule → 按计划 | 4 | 定时或定期。 |
+| Background Agent → 后台智能体 | 7 | 云端智能体。 |
+| 磁贴 | 4 | 窗格 / 平铺视图。 |
+| 日期空格 `10 月 24 日` | 266 | `10月24日`。月日前的空格也去掉，例如「将于10月24日」。`还剩 7 天` 仍留空格。 |
+| `N 分钟前` 这类紧凑时间 | 7 | `26分钟前`。侧栏、自动化和聊天里的 `2m` / `9h` / `13s` 走同一套，显示为 2分钟 / 9小时 / 13秒。 |
+| 侧栏 → 侧边栏 | 18 | 侧边栏。 |
+| 认证 → 身份验证 | 7 | 身份验证。未认证是「未验证」。 |
+| 仪表板 → 仪表盘 | 5 | 仪表盘。 |
+| 此计算机 / 这台电脑 | 7 | 这台计算机。 |
+| 键绑定 / 按键绑定 | 11 | 快捷键。菜单名「键盘快捷方式」不动。 |
+| 提供方 → 提供程序 | 11 | 提供程序。 |
+| 存储库 → 仓库 | 2 | 仓库。 |
+| 置顶 → 固定 | 1 | 固定。 |
+| tab 的「标签」 | 4 | 标签页。tag / label 仍是标签。 |
+| 未能 → 无法 | 8 | Failed to / Unable to 用「无法」。保存用「无法保存」开头。 |
+| 引号 | 61 | “”。不再用 「」 或贴着汉字的英文引号。 |
+| 半角括号 | 34 | 贴着汉字时用 （）。 |
+| 由于…因此 | 9 | 先说原因，再写无法。 |
+| 进行比较 / 进行查找 / 进行导航 | 6 | 去掉这层「进行」。 |
+| Ctrl+RightArrow 留在中文里 | 2 | Ctrl+→。 |
+| 意思译错（原子、埋点、错过安装等） | 9 | 按审查表改回原意。 |
+
+另外补了 7 条原先没有的规则：`Setting up environment`、`Maximum context window size`、`256k context window`、`Version: high/medium/low effort`，以及长规则名的 `… options` → “{规则}”选项。短标签（更多选项、新建标签页选项）仍走精确匹配。
+
+错误、提示和对话框里审查标成 bad 或 minor 的句子已重写，并顺着同类句改了一遍。atomically 是「以原子方式」，不是自动删除。Retry as Admin 是「以管理员身份重试」。Overwrite as Admin 才是「以管理员身份覆盖」。`没有跑完` 改成「执行失败」。自动化模板 20–24 改成中文句子，不再按英文词序堆名词。
+
+运行时：
+
+- 同一个 `Close bash` 不再因为属性回写被全局永久停掉。每个元素自己计数，同文案还有一秒的窗口，防止占位符空转。三个标签都会译成「关闭 bash」。
+- 下拉框超出同步预算时，先用最多 3 个微任务补完，再交给 `setTimeout`。打开字体列表时「System font」应在绘制前变成「系统字体」。
+- 模型选择器的悬停卡片是门户里的 `tooltip-popup` / `role=tooltip`。那里的 markdown 可以翻译。聊天正文里的 markdown 仍然跳过。
+- `Oct 17, 2026, 10:15 PM` 在译完的句子里变成 `2026年10月17日 22:15`。
+
+这些规则写进了 `src/style.js` 的词典检查。`node --test` 74 项通过。
+
+### 抽查 400 条
+
+种子 `20261019`，分层和上次一样：exact 125、ui 150、nls 45、regex 45、nls-regex 20、static 10、fragments 5。按界面中文从严打分：能直接上界面是 fine，读得懂但别扭是 minor，意思错或不成句是 bad。
+
+| 结果 | 条数 | 比例 |
+| --- | ---: | ---: |
+| fine | 391 | 97.8% |
+| minor | 9 | 2.2% |
+| bad | 0 | 0% |
+
+剩下的 9 条 minor：递归折叠、粘贴选择剪贴板、合并已阻止、截断的 `No renderer for`、文件名着色那句开发说明、ground a side chat、Text on Fill、一条月份捕获还没本地化的用量回退正则，以及一条仍带着设置模式字面量的注册错误。没有再出现编写器、提示词和提示撞车、或日期中间的空格。
+
+这一轮没有在登录过的 Cursor 里看过。
 
 ## 插话 / 排队 / 打断
 
@@ -14,8 +73,8 @@
 | Steer without interrupting | 转向，不打断 | 不打断智能体，直接补充说明 | 输入框占位和菜单说明用同一句。 |
 | Send after Agent finishes | 等智能体完成后再发送 | 等智能体做完再发送 | 排队的说明。 |
 | Stop the agent and send the message | 停止智能体并发送消息 | 停下智能体并发送这条消息 | 打断的说明。 |
-| Messages sent while Cursor is working can steer it mid-run without interrupting - turn it on under New Messages in Agent settings | Cursor 工作时发来的消息可以中途转向，不必打断。在智能体设置的「新消息」里打开。 | Cursor 工作时发来的消息可以插话，不必打断。在智能体设置的「新消息」里打开。 | 首页提示改用插话。 |
-| Steer a running agent without stopping it - set New Messages to Send Immediately in your Agents settings | 转向正在运行的智能体，无需停止。在智能体设置里把「新消息」设为「立即发送」。 | 不打断智能体，直接补充说明。在智能体设置里把「新消息」设为「立即发送」。 | 同一套说明，并带上设置路径。 |
+| Messages sent while Cursor is working can steer it mid-run without interrupting - turn it on under New Messages in Agent settings | Cursor 工作时发来的消息可以中途转向，不必打断。在智能体设置的「新消息」里打开。 | Cursor 工作时发来的消息可以插话，不必打断。在智能体设置的“新消息”里打开。 | 首页提示改用插话。引号后来统一成 “”。 |
+| Steer a running agent without stopping it - set New Messages to Send Immediately in your Agents settings | 转向正在运行的智能体，无需停止。在智能体设置里把「新消息」设为「立即发送」。 | 不打断智能体，直接补充说明。在智能体设置里把“新消息”设为“立即发送”。 | 同一套说明，并带上设置路径。 |
 
 ## 第二遍：只改读起来别扭的地方
 

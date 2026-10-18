@@ -13,7 +13,7 @@
     {
       "id": "give-cloud-machine",
       "literal": "Give cloud agents a machine to install, run, test, and demo your code.",
-      "translation": "给云端智能体一台机器，用来安装、运行、测试和演示代码。",
+      "translation": "给云端智能体一台计算机，用来安装、运行、测试和演示代码。",
       "expectedHits": {
         "3.25.6": 2
       }
@@ -261,7 +261,7 @@
     {
       "id": "fork-failed",
       "literal": "Failed to fork agent. Please try again.",
-      "translation": "分叉智能体失败。请重试。",
+      "translation": "无法派生智能体。请重试。",
       "expectedHits": {
         "3.25.6": 4
       }
@@ -405,7 +405,7 @@
     {
       "id": "the-issue-has-been-fixed-please-clean-up-the-ins",
       "literal": "The issue has been fixed. Please clean up the instrumentation.",
-      "translation": "问题已修复。请清理埋点。",
+      "translation": "问题已修复。请清理调试插桩代码。",
       "expectedHits": {
         "3.25.6": 4
       }

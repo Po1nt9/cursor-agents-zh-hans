@@ -34,10 +34,10 @@
 | Agents Window | 智能体窗口 | 官方文档里的 Open Agents Window，在 3.25.6 的包里实际写成 New Agents Window、Open or Focus Agents Window (Glass)。 |
 | Glass | Glass | 内部代号，不翻译。命令标题里的 `(Glass)` 保留。 |
 | Subagent | 子智能体 | |
-| Cloud / Cloud Agent | 云端 / 云端智能体 | 指 Cursor 的云端运行，不是泛指的 cloud。 |
+| Cloud / Cloud Agent / Background Agent | 云端 / 云端智能体 | 指 Cursor 的云端运行。Background Agent 也用「云端智能体」，不用「后台智能体」。 |
 | Worktree | 工作树 | |
 | Plan | 计划 | 定价里的 Free Plan 译为「免费版」，避免和计划模式混在一起。 |
-| Composer | 编写器 | Cursor 自己的功能名。 |
+| Composer | 聊天 | 源码里的 composer 是聊天或智能体会话，不是“编写器”。后台 composer 用「云端智能体」。模型名 Composer 2.5 保持英文。 |
 | Review | 审查 | |
 | Pull Request | 拉取请求 | 短按钮保留 PR，例如「创建 PR」。`PR #12` 这种整句译为「拉取请求 #12」。 |
 | IDE / Canvas / Markdown | 不译 | 产品或格式名。 |

@@ -314,6 +314,54 @@ export function applyFragments(text, fragments) {
   return out;
 }
 
+const MONTH_INDEX = {
+  jan: 1, january: 1, feb: 2, february: 2, mar: 3, march: 3, apr: 4, april: 4,
+  may: 5, jun: 6, june: 6, jul: 7, july: 7, aug: 8, august: 8,
+  sep: 9, sept: 9, september: 9, oct: 10, october: 10, nov: 11, november: 11,
+  dec: 12, december: 12,
+};
+
+const FULL_DATE = /\b(Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:t(?:ember)?)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)\s+(\d{1,2}),\s+(\d{4})(?:,\s+(\d{1,2}):(\d{2})(?::(\d{2}))?\s*(AM|PM))?\b/gi;
+
+// "Oct 17, 2026, 10:15 PM" → "2026年10月17日 22:15". Month and day stay unpadded.
+export function localizeEmbeddedDates(text) {
+  if (typeof text !== 'string' || !text) return text;
+  return text.replace(FULL_DATE, (all, month, day, year, hour, minute, second, ampm) => {
+    const m = MONTH_INDEX[String(month).toLowerCase()];
+    if (!m) return all;
+    let out = `${year}年${m}月${Number(day)}日`;
+    if (hour != null && minute != null) {
+      let h = Number(hour);
+      const ap = ampm ? String(ampm).toUpperCase() : '';
+      if (ap === 'PM' && h < 12) h += 12;
+      if (ap === 'AM' && h === 12) h = 0;
+      out += ` ${String(h).padStart(2, '0')}:${String(minute).padStart(2, '0')}`;
+      if (second != null) out += `:${String(second).padStart(2, '0')}`;
+    }
+    return out;
+  });
+}
+
+export function localizeArrowKeys(text) {
+  if (typeof text !== 'string' || !/[\u4e00-\u9fff]/.test(text)) return text;
+  return text
+    .replace(/RightArrow/g, '→')
+    .replace(/LeftArrow/g, '←')
+    .replace(/UpArrow/g, '↑')
+    .replace(/DownArrow/g, '↓');
+}
+
+function polishTranslated(text) {
+  return localizeEmbeddedDates(localizeArrowKeys(text));
+}
+
+function packResult(text, input, tier, open) {
+  const polished = polishTranslated(text);
+  const result = { text: polished, changed: polished !== input, tier };
+  if (open) result.open = true;
+  return result;
+}
+
 export function translateText(input, dictionary) {
   if (typeof input !== 'string' || input.length === 0 || input.length > MAX_TEXT_LENGTH) {
     return { text: input, changed: false, tier: null };
@@ -331,8 +379,7 @@ export function translateText(input, dictionary) {
 
   const exactHit = lookupExact(dictionary, normalizedCore);
   if (exactHit) {
-    const text = lead + exactHit + tail;
-    return { text, changed: text !== input, tier: 'exact' };
+    return packResult(lead + exactHit + tail, input, 'exact');
   }
 
   const candidates = regexCandidates(normalizedCore, dictionary);
@@ -342,17 +389,16 @@ export function translateText(input, dictionary) {
     if (!entry.re.test(normalizedCore)) continue;
     entry.re.lastIndex = 0;
     const text = lead + normalizedCore.replace(entry.re, entry.replacement) + tail;
-    const result = { text, changed: text !== input, tier: 'regex' };
-    if (entry.open) result.open = true;
-    return result;
+    return packResult(text, input, 'regex', entry.open);
   }
 
   for (const frag of dictionary.fragments) {
     if (frag.from !== normalizedCore) continue;
-    const text = lead + frag.to + tail;
-    return { text, changed: text !== input, tier: 'fragment' };
+    return packResult(lead + frag.to + tail, input, 'fragment');
   }
 
+  const dated = localizeEmbeddedDates(input);
+  if (dated !== input) return { text: dated, changed: true, tier: 'regex' };
   return { text: input, changed: false, tier: null };
 }
 
@@ -441,8 +487,15 @@ function isModelPickerLabel(el) {
   return /(?:^|\s)[\w-]*model-picker[\w-]*(?:\s|$)/i.test(raw);
 }
 
+// Hover cards are portaled out of the picker, so the markdown is not a label child.
+function isModelTooltip(el) {
+  if (!el || el.nodeType === 3) return false;
+  if (el.getAttribute?.('role') === 'tooltip') return true;
+  return el.getAttribute?.('data-component') === 'tooltip-popup';
+}
+
 function markdownInModelPicker(node) {
-  return hasClass(node, 'markdown-root') && walkAncestors(node, isModelPickerLabel);
+  return hasClass(node, 'markdown-root') && walkAncestors(node, (el) => isModelPickerLabel(el) || isModelTooltip(el));
 }
 
 export function shouldSkipElement(el) {

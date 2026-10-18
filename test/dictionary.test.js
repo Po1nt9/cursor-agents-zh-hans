@@ -15,7 +15,7 @@ test('the shipped dictionary compiles and static rules agree with it', () => {
   assert.equal(raw.exact['Cloud Agent Approval Banners While Focused'], '聚焦时显示云端智能体批准横幅');
   assert.equal(
     raw.exact['Voice mode lets you dictate better prompts for your agents'],
-    '语音模式方便口述出更好的智能体提示',
+    '语音模式方便听写出更好的智能体提示词',
   );
   assert.ok(compiled.regex.length > 5);
   const rules = loadStaticRules();
@@ -32,12 +32,12 @@ test('the shipped dictionary compiles and static rules agree with it', () => {
   assert.equal(raw.exact.Terminal, '终端');
   assert.equal(translateText('Worked for 2m 15s', compiled).text, '工作了 2 分 15 秒');
   assert.equal(translateText('Worked for 6s', compiled).text, '工作了 6 秒');
-  assert.equal(translateText('26m ago', compiled).text, '26 分钟前');
-  assert.equal(translateText('4h ago', compiled).text, '4 小时前');
-  assert.equal(translateText('4h\u202fago', compiled).text, '4 小时前');
-  assert.equal(translateText('2m ago', compiled).text, '2 分钟前');
-  assert.equal(translateText('2mo ago', compiled).text, '2 个月前');
-  assert.equal(translateText('12s ago', compiled).text, '12 秒前');
+  assert.equal(translateText('26m ago', compiled).text, '26分钟前');
+  assert.equal(translateText('4h ago', compiled).text, '4小时前');
+  assert.equal(translateText('4h\u202fago', compiled).text, '4小时前');
+  assert.equal(translateText('2m ago', compiled).text, '2分钟前');
+  assert.equal(translateText('2mo ago', compiled).text, '2个月前');
+  assert.equal(translateText('12s ago', compiled).text, '12秒前');
   assert.equal(translateText('3% used', compiled).text, '已用 3%');
   assert.equal(translateText('$0.00 remaining', compiled).text, '剩余 $0.00');
   assert.equal(translateText('Included in Ultra', compiled).text, '已包含在 Ultra 中');
@@ -46,7 +46,7 @@ test('the shipped dictionary compiles and static rules agree with it', () => {
   assert.equal(translateText('Connected 1', compiled).text, '已连接 1');
   assert.equal(translateText('31 tools enabled', compiled).text, '31 个工具已启用');
   assert.equal(translateText('1 tool enabled', compiled).text, '1 个工具已启用');
-  assert.equal(translateText('2 tools, 1 resource enabled', compiled).text, '2 个工具、1 个资源已启用');
+  assert.equal(translateText('2 tools, 1 resource enabled', compiled).text, '已启用 2 个工具、1 个资源');
   assert.equal(translateText('Show 4 more', compiled).text, '再显示 4 项');
   assert.equal(raw.exact['Open Browser Tab'], '打开浏览器标签页');
   assert.equal(raw.exact['New Output View'], '新建输出视图');
@@ -65,7 +65,7 @@ test('the shipped dictionary compiles and static rules agree with it', () => {
   );
   assert.equal(
     raw.exact['Use /cloud to run agents remotely for better parallelization and durable execution'],
-    '使用 /cloud 在远程运行智能体，并行更好，执行也更持久',
+    '使用 /cloud 把智能体放到云端运行，更适合并行和长时间任务',
   );
   assert.equal(
     raw.exact['Use /in-cloud to start a subagent in its own cloud VM, keeping your local workspace free'],
@@ -81,7 +81,7 @@ test('the shipped dictionary compiles and static rules agree with it', () => {
   );
   assert.equal(
     raw.exact['Messages sent while Cursor is working can steer it mid-run without interrupting - turn it on under New Messages in Agent settings'],
-    'Cursor 工作时发来的消息可以插话，不必打断。在智能体设置的「新消息」里打开。',
+    'Cursor 工作时发来的消息可以插话，不必打断。在智能体设置的“新消息”里打开。',
   );
   assert.equal(raw.exact.Today, '今天');
   assert.equal(raw.exact.Yesterday, '昨天');
@@ -93,7 +93,7 @@ test('the shipped dictionary compiles and static rules agree with it', () => {
   assert.equal(translateText('% used', compiled).text, '% 已用');
   assert.equal(translateText('5% used', compiled).text, '已用 5%');
   assert.equal(translateText('$0.00 remaining', compiled).text, '剩余 $0.00');
-  assert.equal(translateText('Weekly usage resets on Oct 24 (7 days left)', compiled).text, '每周用量将于 10 月 24 日重置（还剩 7 天）');
+  assert.equal(translateText('Weekly usage resets on Oct 24 (7 days left)', compiled).text, '每周用量将于10月24日重置（还剩 7 天）');
   assert.equal(
     translateText('Included usage with your subscription. Resets Oct 24. Used before your credits.', compiled).text,
     '订阅内含用量，10月24日重置，优先于额度扣除。',
@@ -140,10 +140,10 @@ test('the shipped dictionary compiles and static rules agree with it', () => {
   assert.equal(translateText('6% used', compiled).text, '已用 6%');
   assert.equal(translateText('Worked for 6s', compiled).text, '工作了 6 秒');
   assert.equal(translateText('for 6s', compiled).text, '6 秒');
-  assert.equal(translateText('Prompt', compiled).text, '提示');
+  assert.equal(translateText('Prompt', compiled).text, '提示词输入框');
   assert.equal(translateText('Skip step 3 of 3', compiled).text, '跳过第 3 步，共 3 步');
-  assert.equal(translateText('Context 11%', compiled).text, '上下文 11%');
-  assert.equal(translateText('Start with Find critical bugs', compiled).text, '从「查找严重缺陷」开始');
+  assert.equal(translateText('Context 11%', compiled).text, '上下文已用 11%');
+  assert.equal(translateText('Start with Find critical bugs', compiled).text, '从“查找严重缺陷”开始');
   assert.equal(translateText('Grok 4.7 enabled', compiled).text, 'Grok 4.7 已启用');
   assert.equal(translateText('Configure gmail', compiled).text, '配置 gmail');
   assert.equal(translateText('Close bash', compiled).text, '关闭 bash');
@@ -156,6 +156,17 @@ test('the shipped dictionary compiles and static rules agree with it', () => {
     '拖放智能体聊天，把视图拆成平铺窗格',
   );
   assert.equal(translateText('Use Cloud Agents inside a longer sentence', compiled).changed, false);
+  assert.equal(translateText('Setting up environment', compiled).text, '正在设置环境');
+  assert.equal(translateText('256k context window', compiled).text, '256k 上下文窗口');
+  assert.equal(translateText('Version: high effort', compiled).text, '版本：高');
+  assert.equal(translateText('Partial Accepts keybinding: Ctrl+RightArrow', compiled).text, '部分接受快捷键：Ctrl+→');
+  assert.equal(
+    translateText('Message sent at Oct 17, 2026, 10:15 PM. Worked for 6s', compiled).text,
+    '消息发送于 2026年10月17日 22:15，工作了 6 秒',
+  );
+  assert.equal(translateText('Oct 17, 2026, 10:15 PM', compiled).text, '2026年10月17日 22:15');
+  assert.equal(raw.exact.Composer, '聊天');
+  assert.equal(raw.exact['Open PR'], '打开 PR');
 });
 
 test('generated runtime is plain script and passes node --check', () => {

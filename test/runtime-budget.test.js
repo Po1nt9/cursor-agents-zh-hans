@@ -1280,7 +1280,7 @@ test('report skips css-covered composer placeholders and hidden nodes', () => {
     now: () => 0,
     budgetMs: 2000,
   });
-  assert.equal(editor.attrs['aria-label'], '提示');
+  assert.equal(editor.attrs['aria-label'], '提示词输入框');
   assert.equal(editor.attrs['aria-placeholder'], 'Plan, Build, / for skills, @ for context');
   const all = windowHost.__cursorZhHans.report();
   assert.equal(all.entries.some((entry) => entry.text.startsWith('Plan, Build')), false);
@@ -1289,6 +1289,108 @@ test('report skips css-covered composer placeholders and hidden nodes', () => {
   assert.equal(visible.entries.some((entry) => entry.text === 'Zzzz hidden english'), false);
   assert.equal(visible.entries.some((entry) => entry.text === 'Zzzz zero english'), false);
   assert.equal(visible.entries.some((entry) => entry.text === 'Zzzz still english'), true);
+});
+
+test('three tabs with the same close label all translate', () => {
+  const { compiled } = loadDictionary();
+  const h = harness();
+  const tabs = [0, 1, 2].map(() => h.makeElement('BUTTON', { attrs: { 'aria-label': 'Close bash' } }));
+  const { root, body } = mount(tabs, h);
+  startDomTranslator({
+    translateText,
+    shouldSkipElement,
+    shouldSkipAttributeTarget,
+    dictionary: compiled,
+    version: 'bash',
+  }, {
+    document: { body, documentElement: root },
+    MutationObserver: h.MockObserver,
+    Element: class {},
+    window: {},
+    now: () => 0,
+    budgetMs: 2000,
+  });
+  for (const tab of tabs) assert.equal(tab.attrs['aria-label'], '关闭 bash');
+});
+
+test('a chat timestamp and an automation row localize compact ages', () => {
+  const { compiled } = loadDictionary();
+  const h = harness();
+  const header = h.makeElement('DIV', { classes: ['chat-header'] });
+  const title = h.makeElement('SPAN');
+  title.appendChild(h.makeText('Fix the build'));
+  const age = h.makeElement('SPAN');
+  age.appendChild(h.makeText('13s'));
+  header.appendChild(title);
+  header.appendChild(age);
+  const row = h.makeElement('LI', { classes: ['automation-row'] });
+  row.appendChild(h.makeText('Nightly'));
+  const hours = h.makeElement('SPAN');
+  hours.appendChild(h.makeText('9h'));
+  row.appendChild(hours);
+  translateTree([header, row], compiled);
+  assert.equal(age.childNodes[0].nodeValue, '13秒');
+  assert.equal(hours.childNodes[0].nodeValue, '9小时');
+});
+
+test('queued microtasks finish a dropdown before the soon timer', () => {
+  const dictionary = {
+    exact: new Map([['System font', '系统字体']]),
+    fragments: [],
+    regex: [],
+  };
+  const h = harness();
+  const { root, body } = mount([], h);
+  const soon = [];
+  const micros = [];
+  let armed = false;
+  let calls = 0;
+  startDomTranslator({
+    translateText,
+    shouldSkipElement,
+    shouldSkipAttributeTarget,
+    dictionary,
+    version: 'font',
+  }, {
+    document: { body, documentElement: root },
+    MutationObserver: h.MockObserver,
+    Element: class {},
+    window: {},
+    now() {
+      if (!armed) return 0;
+      calls += 1;
+      return calls < 3 ? 0 : 10;
+    },
+    budgetMs: 2000,
+    scheduleSoon(fn) {
+      soon.push(fn);
+    },
+    queueMicrotask(fn) {
+      micros.push(fn);
+    },
+  });
+  const menu = h.makeElement('DIV');
+  const labels = [];
+  for (let i = 0; i < 20; i += 1) {
+    const node = h.makeText('System font');
+    labels.push(node);
+    menu.appendChild(node);
+  }
+  body.appendChild(menu);
+  armed = true;
+  h.observerRef.current.emit([{ type: 'childList', addedNodes: [menu] }]);
+  assert.equal(labels.some((node) => node.nodeValue === 'System font'), true);
+  assert.equal(soon.length, 0);
+  assert.ok(micros.length >= 1);
+  let guard = 0;
+  while (micros.length) {
+    const batch = micros.splice(0, micros.length);
+    for (const fn of batch) fn();
+    guard += 1;
+    if (guard > 6) break;
+  }
+  for (const node of labels) assert.equal(node.nodeValue, '系统字体');
+  assert.equal(soon.length, 0);
 });
 
 test('effort, usage, and timestamp labels stay in their own slots', () => {
@@ -1376,7 +1478,7 @@ test('shadow menus and zero-size portals are translated and reported', () => {
   });
   assert.equal(author.childNodes[0].nodeValue, '作者');
   assert.equal(menu.childNodes[0].nodeValue, '筛选');
-  assert.equal(outside.childNodes[0].nodeValue, '最常使用');
+  assert.equal(outside.childNodes[0].nodeValue, '最常用');
   const visible = windowHost.__cursorZhHans.report({ visibleOnly: true });
   assert.equal(visible.entries.some((entry) => entry.text === 'Zzzz portal english'), true);
   assert.equal(visible.entries.some((entry) => entry.text === 'Zzzz shadow english'), true);
