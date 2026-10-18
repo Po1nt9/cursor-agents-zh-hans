@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
+import crypto from 'node:crypto';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
@@ -451,6 +452,10 @@ run_elevated /bin/echo hello-from-root
   assert.match(script, /SUDO_UID=/);
   assert.match(script, /SUDO_GID=/);
   assert.doesNotMatch(script, /\bsudo\b/);
+  assert.match(script, /trap reclaim_owned_files EXIT/);
+  assert.match(script, /chown -R/);
+  assert.match(script, /Application\\ Support\/cursor-zh-hans/);
+  assert.doesNotMatch(script, /\bexec\b/);
 });
 
 test('Cursor must quit before install, and a refusal stops there', () => {
@@ -856,11 +861,13 @@ if installer_must_move ${JSON.stringify(appRoot)}; then printf '%s\\n' 0; else p
   const probed = spawnSync('bash', ['--noprofile', '--norc', '-c', `
 source ${JSON.stringify(path.join(root, 'packaging/lib/common.sh'))}
 touch() {
+  printf '%s\\n' "$1" >> ${JSON.stringify(path.join(dir, 'probes.txt'))}
   printf '%s\\n' "touch: $1: Read-only file system" >&2
   return 1
 }
 if installer_must_move ${JSON.stringify(readonlyDir)}; then ro=0; else ro=1; fi
 touch() {
+  printf '%s\\n' "$1" >> ${JSON.stringify(path.join(dir, 'probes.txt'))}
   printf '%s\\n' "touch: $1: Permission denied" >&2
   return 1
 }
@@ -872,6 +879,11 @@ printf '%s %s\\n' "$ro" "$deny"
   });
   assert.equal(probed.status, 0, probed.stderr);
   assert.equal(probed.stdout.trim(), '0 1');
+  const probes = fs.readFileSync(path.join(dir, 'probes.txt'), 'utf8').trim().split('\n');
+  assert.equal(probes[0], path.join(dir, '.cursor-zh-write-probe'));
+  assert.equal(probes[1], path.join(dir, '.cursor-zh-write-probe'));
+  assert.equal(probes[0].startsWith(`${readonlyDir}${path.sep}`), false);
+  assert.equal(probes[1].startsWith(`${deniedDir}${path.sep}`), false);
 
   const app = makeCursor(path.join(dir, 'apps'));
   const { result, env } = sourceGui(dir, 'gui_main', {
@@ -1020,6 +1032,14 @@ test('restore removes the support folder, agent, and lock, and can keep the log'
   const support = path.join(installed.env.HOME, 'Library', 'Application Support', 'cursor-zh-hans');
   const plist = path.join(installed.env.HOME, 'Library', 'LaunchAgents', 'com.po1nt9.cursor-zh-hans.watch.plist');
   fs.mkdirSync(path.join(support, 'watch.lock'));
+  const resources = path.resolve(app, 'Contents', 'Resources', 'app');
+  const key = crypto.createHash('sha256').update(resources).digest('hex').slice(0, 16);
+  const mine = path.join(support, 'backups', key, '9.9.9+abc123');
+  const other = path.join(support, 'backups', 'aaaaaaaaaaaaaaaa');
+  fs.mkdirSync(mine, { recursive: true });
+  fs.writeFileSync(path.join(mine, 'manifest.json'), '{}\n');
+  fs.mkdirSync(other, { recursive: true });
+  fs.writeFileSync(path.join(other, 'keep.txt'), 'other\n');
   assert.equal(fs.existsSync(plist), true);
   assert.equal(fs.existsSync(support), true);
 
@@ -1039,8 +1059,11 @@ cmd_restore ${JSON.stringify(app)}
   });
   assert.equal(kept.result.status, 0, kept.result.stderr);
   assert.equal(fs.existsSync(plist), false);
-  assert.equal(fs.existsSync(support), false);
+  assert.equal(fs.existsSync(support), true);
+  assert.equal(fs.existsSync(path.join(support, 'runtime')), false);
   assert.equal(fs.existsSync(path.join(support, 'watch.lock')), false);
+  assert.equal(fs.existsSync(mine), false);
+  assert.equal(fs.readFileSync(path.join(other, 'keep.txt'), 'utf8'), 'other\n');
   assert.match(readUi(kept.env), /删掉日志/);
   assert.match(readUi(kept.env), /留着/);
   assert.equal(fs.existsSync(installed.env.CURSOR_ZH_LOG_FILE), true);
@@ -1050,7 +1073,9 @@ cmd_restore ${JSON.stringify(app)}
     CURSOR_ZH_LOG_FILE: installed.env.CURSOR_ZH_LOG_FILE,
   });
   assert.equal(again.result.status, 0, again.result.stderr);
-  assert.equal(fs.existsSync(support), true);
+  assert.equal(fs.existsSync(path.join(support, 'runtime')), true);
+  fs.mkdirSync(mine, { recursive: true });
+  fs.writeFileSync(path.join(mine, 'manifest.json'), '{}\n');
   const failed = sourceGui(path.join(dir, 'fail'), `cmd_restore ${JSON.stringify(app)}`, {
     HOME: installed.env.HOME,
     CURSOR_ZH_LOG_FILE: installed.env.CURSOR_ZH_LOG_FILE,
@@ -1060,6 +1085,9 @@ cmd_restore ${JSON.stringify(app)}
   assert.notEqual(failed.result.status, 0);
   assert.equal(fs.existsSync(path.join(installed.env.HOME, 'Library', 'LaunchAgents', 'com.po1nt9.cursor-zh-hans.watch.plist')), false);
   assert.equal(fs.existsSync(support), true);
+  assert.equal(fs.existsSync(path.join(support, 'runtime')), false);
+  assert.equal(fs.existsSync(path.join(mine, 'manifest.json')), true);
+  assert.equal(fs.existsSync(path.join(other, 'keep.txt')), true);
   assert.match(readUi(failed.env), /自动重新安装已经关掉/);
   assert.match(readUi(failed.env), /没有恢复成英文/);
   assert.equal(readUi(failed.env).includes('删掉日志'), false);
@@ -1143,4 +1171,80 @@ install_main
   assert.notEqual(viaMain.status, 0);
   assert.match(viaMain.stdout, /还没有发布安装包/);
   assert.equal(viaMain.stdout.includes('请到 GitHub 的发布页'), false);
+});
+
+test('a patched unwritable install asks for the administrator password once', () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'cursor-zh-once-'));
+  const app = makeCursor(path.join(dir, 'apps'));
+  const elevated = path.join(dir, 'elevated.args');
+  const { result } = sourceGui(dir, `
+is_app_writable() { return 1; }
+run_elevated() {
+  printf '%s\\n' "$*" >> ${JSON.stringify(elevated)}
+  printf '%s\\n' "已处理"
+  return 0
+}
+cmd_install ${JSON.stringify(app)}
+printf '%s\\n' "flag:\${CLI_ELEVATED}"
+`, {
+    MOCK_STATUS_JSON: statusJson({
+      files: { injected: true, staticMarker: false },
+      state: { cursorVersion: '9.9.9', cursorCommit: 'abc123' },
+      writable: false,
+      bundlePath: app,
+    }),
+  });
+  assert.equal(result.status, 0, `${result.stdout}\n${result.stderr}`);
+  const lines = fs.readFileSync(elevated, 'utf8').trim().split('\n').filter(Boolean);
+  assert.equal(lines.length, 1);
+  assert.match(lines[0], /restore/);
+  assert.match(lines[0], /apply/);
+  assert.match(lines[0], /--update-checksums/);
+  assert.match(lines[0], /--no-sudo/);
+  assert.equal(lines[0].includes(' sudo '), false);
+  assert.match(result.stdout, /flag:0/);
+});
+
+test('repeat install keeps the staged node and strips quarantine', () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'cursor-zh-reuse-'));
+  const home = path.join(dir, 'home');
+  const nodeSrc = path.join(dir, 'node-src');
+  const resources = path.join(dir, 'Resources');
+  const xattrLog = path.join(dir, 'xattr.log');
+  const mockBin = path.join(dir, 'bin');
+  fs.mkdirSync(home, { recursive: true });
+  fs.mkdirSync(resources, { recursive: true });
+  fs.writeFileSync(path.join(resources, 'version'), '0.1.0\n');
+  writeExec(nodeSrc, '#!/bin/sh\nprintf first\\n\n');
+  writeExec(path.join(mockBin, 'xattr'), `#!/bin/bash
+printf '%s\\n' "$*" >> ${JSON.stringify(xattrLog)}
+`);
+  const pack = fakePack(path.join(dir, 'pack'));
+  const watch = path.join(root, 'packaging/lib/watch.sh');
+  const staged = path.join(home, 'Library', 'Application Support', 'cursor-zh-hans', 'runtime', 'node', 'node');
+  function stage() {
+    return runBash(`
+source ${JSON.stringify(path.join(root, 'packaging/lib/launchagent.sh'))}
+stage_support_runtime ${JSON.stringify(nodeSrc)} ${JSON.stringify(watch)} ${JSON.stringify(pack)}
+`, {
+      HOME: home,
+      PATH: `${mockBin}:/usr/bin:/bin`,
+      CURSOR_ZH_RESOURCES: resources,
+      CURSOR_ZH_LOG_FILE: path.join(dir, 'cursor-zh-hans.log'),
+    });
+  }
+  const first = stage();
+  assert.equal(first.status, 0, first.stderr);
+  assert.match(fs.readFileSync(staged, 'utf8'), /first/);
+  writeExec(nodeSrc, '#!/bin/sh\nprintf second\\n\n');
+  const again = stage();
+  assert.equal(again.status, 0, again.stderr);
+  assert.match(fs.readFileSync(staged, 'utf8'), /first/);
+  const xattrText = fs.readFileSync(xattrLog, 'utf8');
+  assert.match(xattrText, /com\.apple\.quarantine/);
+  assert.match(xattrText, /cursor-zh-hans\/runtime/);
+  fs.writeFileSync(path.join(resources, 'version'), '0.2.0\n');
+  const updated = stage();
+  assert.equal(updated.status, 0, updated.stderr);
+  assert.match(fs.readFileSync(staged, 'utf8'), /second/);
 });

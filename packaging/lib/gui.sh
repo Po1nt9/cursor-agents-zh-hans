@@ -60,6 +60,9 @@ open_applications_folder() {
 
 # do shell script runs as root and can leave root-owned files behind.
 # chown only our support dir, our LaunchAgent plist, and our log.
+# Install does not call this: the elevated script chowns on EXIT so the
+# password dialog is not shown a second time. CLI_ELEVATED is cleared after
+# that script returns.
 reclaim_user_files() {
   if [[ "${CLI_ELEVATED:-}" != 1 ]]; then
     return 0
@@ -81,6 +84,38 @@ reclaim_user_files() {
   run_elevated /usr/sbin/chown -R "${uid}:${gid}" "${targets[@]}"
 }
 
+# One osascript password covers every command. "::" starts the next command.
+# Do not exec: an EXIT trap would never run, and the chown would be skipped.
+append_elevated_command() {
+  local last="$1"
+  shift
+  local step=""
+  local prev=""
+  local arg=""
+  for arg in "$@"; do
+    if [[ "$prev" == *cursor-zh.js && ( "$arg" == "restore" || "$arg" == "apply" ) ]]; then
+      step="$arg"
+    fi
+    prev="$arg"
+  done
+  if [[ -n "$step" && -n "${CURSOR_ZH_STEP_FILE:-}" ]]; then
+    printf 'printf %%s\\n %q > %q\n' "$step" "$CURSOR_ZH_STEP_FILE"
+  fi
+  printf '%s\n' "set +e"
+  printf '%s' ""
+  for arg in "$@"; do
+    printf ' %q' "$arg"
+  done
+  printf '\nstatus=$?\n'
+  if [[ "$last" == 1 ]]; then
+    # shellcheck disable=SC2016
+    printf '%s\n' 'exit "$status"'
+  else
+    # shellcheck disable=SC2016
+    printf '%s\n' 'if [[ "$status" -ne 0 ]]; then exit "$status"; fi'
+  fi
+}
+
 run_elevated() {
   local script=""
   local user_name=""
@@ -90,6 +125,7 @@ run_elevated() {
   local arg=""
   local cmd=""
   local status=0
+  local -a buf=()
   script="$(mktemp "${TMPDIR:-/tmp}/cursor-zh-hans.XXXXXX")"
   user_name="$(id -un)"
   user_id="$(id -u)"
@@ -103,18 +139,104 @@ run_elevated() {
     printf 'export HOME=%q\n' "$home_dir"
     printf 'export PATH=%q\n' "/usr/bin:/bin:/usr/sbin:/sbin"
     printf 'cd %q\n' "$home_dir"
-    printf 'exec'
-    for arg in "$@"; do
-      printf ' %q' "$arg"
-    done
-    printf '\n'
+    printf '%s\n' "reclaim_owned_files() {"
+    printf '  local target\n'
+    printf '  local owner=%q\n' "${user_id}:${user_gid}"
+    printf '  for target in %q %q %q; do\n' "$(support_dir)" "$(launch_agent_plist_path)" "$(cursor_zh_log_file)"
+    # shellcheck disable=SC2016
+    printf '%s\n' '    if [[ -e "$target" ]]; then'
+    # shellcheck disable=SC2016
+    printf '%s\n' '      /usr/sbin/chown -R "$owner" "$target" || true'
+    printf '%s\n' "    fi"
+    printf '%s\n' "  done"
+    printf '%s\n' "}"
+    printf '%s\n' "trap reclaim_owned_files EXIT"
   } > "$script"
+  buf=()
+  for arg in "$@"; do
+    if [[ "$arg" == "::" ]]; then
+      append_elevated_command 0 "${buf[@]}" >> "$script"
+      buf=()
+    else
+      buf+=("$arg")
+    fi
+  done
+  if [[ ${#buf[@]} -gt 0 ]]; then
+    append_elevated_command 1 "${buf[@]}" >> "$script"
+  fi
   chmod 700 "$script"
   cmd="$(printf '/bin/bash %q' "$script")"
   osascript -e 'on run argv
     do shell script (item 1 of argv) with administrator privileges
   end run' - "$cmd" || status=$?
   rm -f "$script"
+  return "$status"
+}
+
+# restore and apply share one password. Chown is the EXIT trap inside that script.
+run_privileged_cli() {
+  local app="$1"
+  shift
+  local node=""
+  local pack=""
+  local cli=""
+  local sub=""
+  local errfile=""
+  local out=""
+  local status=0
+  local stepfile=""
+  local -a chain=()
+  local first=1
+  if ! node="$(resolve_node)"; then
+    CLI_STDOUT=""
+    CLI_STDERR="找不到运行环境"
+    return 1
+  fi
+  pack="$(resolve_pack)"
+  cli="${pack}/bin/cursor-zh.js"
+  for sub in "$@"; do
+    if [[ "$first" -eq 0 ]]; then
+      chain+=("::")
+    fi
+    first=0
+    case "$sub" in
+      restore)
+        chain+=("$node" "$cli" restore --app-path "$app" --no-sudo)
+        ;;
+      apply)
+        chain+=("$node" "$cli" apply --update-checksums --app-path "$app" --no-sudo)
+        ;;
+      *)
+        CLI_STDOUT=""
+        CLI_STDERR="不认识的安装步骤"
+        return 1
+        ;;
+    esac
+  done
+  errfile="$(mktemp)"
+  stepfile="$(mktemp)"
+  CURSOR_ZH_STEP_FILE="$stepfile"
+  CLI_ELEVATED=1
+  out="$(run_elevated "${chain[@]}" 2>"$errfile")" || status=$?
+  CLI_ELEVATED=0
+  CLI_STEP=""
+  if [[ -s "$stepfile" ]]; then
+    CLI_STEP="$(cat "$stepfile")"
+  fi
+  unset CURSOR_ZH_STEP_FILE
+  rm -f "$stepfile"
+  CLI_STDOUT="$out"
+  CLI_STDERR=""
+  if [[ -s "$errfile" ]]; then
+    CLI_STDERR="$(cat "$errfile")"
+  fi
+  rm -f "$errfile"
+  cursor_zh_log "提权命令：$* --app-path ${app}"
+  cursor_zh_log "退出码：${status}"
+  if [[ -n "$CLI_STDERR" ]]; then
+    cursor_zh_log "$CLI_STDERR"
+  fi
+  cursor_zh_log "$CLI_STDOUT"
   return "$status"
 }
 
@@ -127,6 +249,7 @@ run_cli_capture() {
   local errfile=""
   local out=""
   local status=0
+  CLI_ELEVATED=0
   if ! node="$(resolve_node)"; then
     CLI_STDOUT=""
     CLI_STDERR="找不到运行环境"
@@ -137,6 +260,7 @@ run_cli_capture() {
   if [[ "$mode" == "auto" ]] && ! is_app_writable "$app"; then
     CLI_ELEVATED=1
     out="$(run_elevated "$node" "${pack}/bin/cursor-zh.js" "$@" --app-path "$app" --no-sudo 2>"$errfile")" || status=$?
+    CLI_ELEVATED=0
   else
     out="$("$node" "${pack}/bin/cursor-zh.js" "$@" --app-path "$app" --no-sudo 2>"$errfile")" || status=$?
   fi
@@ -152,9 +276,7 @@ run_cli_capture() {
     cursor_zh_log "$CLI_STDERR"
   fi
   cursor_zh_log "$CLI_STDOUT"
-  if [[ "${CLI_ELEVATED:-}" == 1 ]]; then
-    reclaim_user_files || cursor_zh_log "没能把文件所有者改回当前用户。"
-  fi
+  CLI_ELEVATED=0
   return "$status"
 }
 
@@ -353,10 +475,14 @@ cmd_install() {
     show_cli_error "没能读到 Cursor 的状态，所以没有安装。" "${CLI_STDOUT}"$'\n'"${CLI_STDERR}"
     return 1
   fi
-  if json_is_patched "$CLI_STDOUT"; then
-    cursor_zh_log "已经有汉化，先恢复再安装。"
+  if ! is_app_writable "$app"; then
     status=0
-    run_cli_capture "$app" auto restore || status=$?
+    if json_is_patched "$CLI_STDOUT"; then
+      cursor_zh_log "已经有汉化，先恢复再安装。"
+      run_privileged_cli "$app" restore apply || status=$?
+    else
+      run_privileged_cli "$app" apply || status=$?
+    fi
     if [[ "$status" -ne 0 ]]; then
       blob="${CLI_STDOUT}"$'\n'"${CLI_STDERR}"
       if output_says_admin_cancelled "$blob"; then
@@ -367,24 +493,47 @@ cmd_install() {
         ui_warn "$ENTITLEMENTS_USER_MESSAGE"
         return 1
       fi
-      show_cli_error "旧的汉化没能先去掉，所以没有继续安装。" "$blob"
+      if [[ "${CLI_STEP:-}" == "restore" ]]; then
+        show_cli_error "旧的汉化没能先去掉，所以没有继续安装。" "$blob"
+      else
+        show_cli_error "安装没有成功。" "$blob"
+      fi
       return 1
     fi
-  fi
-  status=0
-  run_cli_capture "$app" auto apply --update-checksums || status=$?
-  if [[ "$status" -ne 0 ]]; then
-    blob="${CLI_STDOUT}"$'\n'"${CLI_STDERR}"
-    if output_says_admin_cancelled "$blob"; then
-      ui_alert "$ADMIN_CANCEL_MESSAGE"
+  else
+    if json_is_patched "$CLI_STDOUT"; then
+      cursor_zh_log "已经有汉化，先恢复再安装。"
+      status=0
+      run_cli_capture "$app" auto restore || status=$?
+      if [[ "$status" -ne 0 ]]; then
+        blob="${CLI_STDOUT}"$'\n'"${CLI_STDERR}"
+        if output_says_admin_cancelled "$blob"; then
+          ui_alert "$ADMIN_CANCEL_MESSAGE"
+          return 1
+        fi
+        if output_says_empty_entitlements "$blob"; then
+          ui_warn "$ENTITLEMENTS_USER_MESSAGE"
+          return 1
+        fi
+        show_cli_error "旧的汉化没能先去掉，所以没有继续安装。" "$blob"
+        return 1
+      fi
+    fi
+    status=0
+    run_cli_capture "$app" auto apply --update-checksums || status=$?
+    if [[ "$status" -ne 0 ]]; then
+      blob="${CLI_STDOUT}"$'\n'"${CLI_STDERR}"
+      if output_says_admin_cancelled "$blob"; then
+        ui_alert "$ADMIN_CANCEL_MESSAGE"
+        return 1
+      fi
+      if output_says_empty_entitlements "$blob"; then
+        ui_warn "$ENTITLEMENTS_USER_MESSAGE"
+        return 1
+      fi
+      show_cli_error "安装没有成功。" "$blob"
       return 1
     fi
-    if output_says_empty_entitlements "$blob"; then
-      ui_warn "$ENTITLEMENTS_USER_MESSAGE"
-      return 1
-    fi
-    show_cli_error "安装没有成功。" "$blob"
-    return 1
   fi
   if ui_ask_watch; then
     if ! install_launch_agent "$app" "$(resolve_node)" "$(resolve_watch_script)" "$(resolve_pack)"; then
@@ -400,6 +549,33 @@ cmd_install() {
   ui_alert "$INSTALL_OK_MESSAGE"
 }
 
+remove_watch_runtime() {
+  local support=""
+  support="$(support_dir)"
+  rm -rf "${support}/runtime" || true
+  rm -rf "${support}/watch.lock" || true
+  rm -f "${support}/watch-notified" || true
+}
+
+remove_this_backup() {
+  local app="$1"
+  local support=""
+  local key=""
+  support="$(support_dir)"
+  if ! key="$(cursor_install_key "$app")"; then
+    cursor_zh_log "没能算出这份 Cursor 的备份编号，所以没有删除备份。"
+    return 0
+  fi
+  case "$key" in
+    [0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f]) ;;
+    *)
+      cursor_zh_log "备份编号不像预期，所以没有删除备份。"
+      return 0
+      ;;
+  esac
+  rm -rf "${support}/backups/${key}" || true
+}
+
 cmd_restore() {
   local app="$1"
   ensure_cursor_quit "$app" || return 1
@@ -411,6 +587,7 @@ cmd_restore() {
     return 1
   fi
   remove_launch_agent || true
+  remove_watch_runtime || true
   if [[ "$status" -ne 0 ]]; then
     if output_says_empty_entitlements "$blob"; then
       ui_warn "没有恢复成英文。自动重新安装已经关掉。
@@ -421,12 +598,7 @@ ${ENTITLEMENTS_USER_MESSAGE}"
     show_cli_error "没有恢复成英文。自动重新安装已经关掉，但界面没有恢复成英文。" "$blob"
     return 1
   fi
-  local support=""
-  support="$(support_dir)"
-  rm -rf "$support" || true
-  if [[ -e "$support" ]]; then
-    cursor_zh_log "没能删掉支持文件夹：${support}"
-  fi
+  remove_this_backup "$app" || true
   if ui_confirm "要删掉安装日志吗？留着的话，以后出问题还能看。" "删掉日志" "留着"; then
     rm -f "$(cursor_zh_log_file)"
   fi

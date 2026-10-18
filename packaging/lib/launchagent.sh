@@ -38,6 +38,8 @@ copy_dir_into() {
 
 # Copy the watcher off the .app. A translocated or deleted app must not be
 # the path launchd uses later. Only the node arch we resolved is copied.
+# The 15-minute poll does not copy anything. A repeat install recopies node
+# only when runtime/version changed, so the ~110 MB binary is not copied again.
 stage_support_runtime() {
   local node="$1"
   local watch="$2"
@@ -46,14 +48,34 @@ stage_support_runtime() {
   local scripts_src=""
   local name=""
   local version="unknown"
+  local existing=""
+  local reuse_node=0
   runtime="$(support_runtime_dir)"
   if [[ ! -e "$node" || ! -f "$watch" || ! -d "$pack" ]]; then
     cursor_zh_log "没能准备自动安装用的文件。"
     return 1
   fi
+  if [[ -n "${CURSOR_ZH_RESOURCES:-}" && -f "${CURSOR_ZH_RESOURCES}/version" ]]; then
+    version="$(tr -d '[:space:]' < "${CURSOR_ZH_RESOURCES}/version")"
+  elif [[ -f "${pack}/package.json" ]]; then
+    version="$("$node" -e 'const fs=require("fs"); try { const p=JSON.parse(fs.readFileSync(process.argv[1],"utf8")); process.stdout.write(String(p.version||"unknown")); } catch (e) { process.stdout.write("unknown"); }' "${pack}/package.json" 2>/dev/null || true)"
+  fi
+  if [[ -z "$version" ]]; then
+    version="unknown"
+  fi
+  if [[ "$version" != "unknown" && -x "${runtime}/node/node" && -f "${runtime}/version" ]]; then
+    existing="$(tr -d '[:space:]' < "${runtime}/version")"
+    if [[ "$existing" == "$version" ]]; then
+      reuse_node=1
+    fi
+  fi
   mkdir -p "${runtime}/node" "${runtime}/scripts"
-  copy_file_into "$node" "${runtime}/node/node"
-  chmod 755 "${runtime}/node/node"
+  if [[ "$reuse_node" -eq 1 ]]; then
+    chmod 755 "${runtime}/node/node" || true
+  else
+    copy_file_into "$node" "${runtime}/node/node"
+    chmod 755 "${runtime}/node/node"
+  fi
   scripts_src="$(cd "$(dirname "$watch")" && pwd)"
   for name in common.sh dialogs.sh watch.sh; do
     if [[ -f "${scripts_src}/${name}" ]]; then
@@ -66,15 +88,10 @@ stage_support_runtime() {
     return 1
   fi
   copy_dir_into "$pack" "${runtime}/pack"
-  if [[ -n "${CURSOR_ZH_RESOURCES:-}" && -f "${CURSOR_ZH_RESOURCES}/version" ]]; then
-    version="$(tr -d '[:space:]' < "${CURSOR_ZH_RESOURCES}/version")"
-  elif [[ -f "${pack}/package.json" ]]; then
-    version="$("$node" -e 'const fs=require("fs"); try { const p=JSON.parse(fs.readFileSync(process.argv[1],"utf8")); process.stdout.write(String(p.version||"unknown")); } catch (e) { process.stdout.write("unknown"); }' "${pack}/package.json" 2>/dev/null || true)"
-  fi
-  if [[ -z "$version" ]]; then
-    version="unknown"
-  fi
   printf '%s\n' "$version" > "${runtime}/version"
+  if command -v xattr >/dev/null 2>&1; then
+    xattr -dr com.apple.quarantine "$runtime" 2>/dev/null || true
+  fi
 }
 
 load_launch_agent() {

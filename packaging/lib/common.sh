@@ -136,9 +136,11 @@ installer_must_move() {
   if [[ ! -d "$app_root" ]]; then
     return 1
   fi
-  local probe="${app_root}/.cursor-zh-write-probe"
+  # Probe the folder next to the app. Touching inside the bundle is unnecessary.
+  local probe=""
   local errfile=""
   local err=""
+  probe="$(dirname "$app_root")/.cursor-zh-write-probe"
   errfile="$(mktemp)"
   if touch "$probe" 2>"$errfile"; then
     rm -f "$probe" "$errfile"
@@ -171,6 +173,35 @@ cursor_is_running() {
     esac
   done < <(ps -ax -o command= 2>/dev/null || true)
   return "$found"
+}
+
+# Same key the CLI uses for backups/<installKey>/: sha256 of the resolved
+# resources/app path, first 16 hex digits. See src/backup.js installKey.
+cursor_install_key() {
+  local app="$1"
+  local node=""
+  if ! node="$(resolve_node)"; then
+    return 1
+  fi
+  "$node" - "$app" <<'JS'
+const crypto = require("crypto");
+const fs = require("fs");
+const path = require("path");
+const resolved = path.resolve(process.argv[2]);
+const suffixes = [
+  path.join("Contents", "Resources", "app"),
+  path.join("resources", "app"),
+];
+let appPath = resolved;
+for (let i = 0; i < suffixes.length; i += 1) {
+  const candidate = path.join(resolved, suffixes[i]);
+  if (fs.existsSync(path.join(candidate, "product.json"))) {
+    appPath = candidate;
+    break;
+  }
+}
+process.stdout.write(crypto.createHash("sha256").update(path.resolve(appPath)).digest("hex").slice(0, 16));
+JS
 }
 
 file_mtime() {
