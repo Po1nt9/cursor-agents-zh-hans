@@ -232,6 +232,13 @@ output_says_no_backup() {
   esac
 }
 
+output_says_can_strip() {
+  case "$1" in
+    *"可以去掉界面注入"*) return 0 ;;
+    *) return 1 ;;
+  esac
+}
+
 truncate_text() {
   local text="$1"
   local max="$2"

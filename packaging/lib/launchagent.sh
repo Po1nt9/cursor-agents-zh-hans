@@ -167,6 +167,9 @@ install_launch_agent() {
 </dict>
 </plist>
 EOF
+  # A restore in progress leaves this file so the watcher will not apply.
+  # Turning auto-reapply back on means that restore is finished.
+  rm -f "$(support_dir)/suppress-watch"
   load_launch_agent "$plist"
 }
 

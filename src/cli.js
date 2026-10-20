@@ -15,7 +15,7 @@ const HELP = `cursor-zh ${TOOL_VERSION}
 
 用法
   cursor-zh apply    [--app-path PATH] [--static] [--update-checksums]
-  cursor-zh restore  [--app-path PATH]
+  cursor-zh restore  [--app-path PATH] [--rebuild-without-backup]
   cursor-zh status   [--app-path PATH]
   cursor-zh doctor   [--app-path PATH]
   cursor-zh scan     [--app-path PATH] [--out FILE] [--bundles glass|desktop|both]
@@ -29,6 +29,7 @@ const HELP = `cursor-zh ${TOOL_VERSION}
   --no-codesign            macOS 上跳过 ad-hoc 重签名
   --no-clear-quarantine    macOS 上跳过 xattr 清除隔离属性
   --no-sudo                安装目录不可写时也不要自动 sudo
+  --rebuild-without-backup 备份已丢失、且只有界面注入时，去掉注入并重算校验和
   --force                  Cursor 仍在运行时仍继续（不推荐）
   --bundles WHICH          scan 读取 glass、desktop 或 both（默认 both）
   --min-count N            scan 忽略出现次数低于 N 的字符串（默认 2）
@@ -52,6 +53,7 @@ export function parseArgs(argv) {
     codesign: true,
     clearQuarantine: true,
     sudo: true,
+    rebuildWithoutBackup: false,
     out: null,
     coverage: null,
     limit: 200,
@@ -85,6 +87,7 @@ export function parseArgs(argv) {
       case '--no-codesign': opts.codesign = false; break;
       case '--no-clear-quarantine': opts.clearQuarantine = false; break;
       case '--no-sudo': opts.sudo = false; break;
+      case '--rebuild-without-backup': opts.rebuildWithoutBackup = true; break;
       case '--json': opts.json = true; break;
       case '-h':
       case '--help': opts.help = true; break;
@@ -178,7 +181,11 @@ export async function main(argv) {
       const result = restore(opts);
       console.log(`已还原 Cursor ${result.product.version} (${result.product.commit})`);
       printResult(result);
-      console.log('界面文件已从备份写回。若还装了 VS Code 中文语言包，那是独立扩展，不受本次还原影响。');
+      if (result.rebuiltWithoutBackup) {
+        console.log('原始备份已经不在。已去掉界面注入，并按去掉之后的文件重算了校验和。');
+      } else {
+        console.log('界面文件已从备份写回。若还装了 VS Code 中文语言包，那是独立扩展，不受本次还原影响。');
+      }
       return 0;
     }
     if (opts.command === 'status' || opts.command === 'doctor') {

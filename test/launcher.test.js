@@ -527,7 +527,7 @@ test('other failures offer the log and the copied detail', () => {
   assert.match(fs.readFileSync(env.CURSOR_ZH_LOG_FILE, 'utf8'), /磁盘满了/);
 });
 
-test('restore removes the LaunchAgent unless the password dialog was cancelled', () => {
+test('restore removes the LaunchAgent before writing files back, including when the password dialog is cancelled', () => {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'cursor-zh-restore-'));
   const app = makeCursor(path.join(dir, 'apps'));
   const installed = sourceGui(dir, `cmd_install ${JSON.stringify(app)}`);
@@ -549,6 +549,12 @@ test('restore removes the LaunchAgent unless the password dialog was cancelled',
 
   fs.mkdirSync(path.dirname(plist), { recursive: true });
   fs.writeFileSync(plist, '<plist></plist>');
+  const support = path.join(installed.env.HOME, 'Library', 'Application Support', 'cursor-zh-hans');
+  const resources = path.resolve(app, 'Contents', 'Resources', 'app');
+  const key = crypto.createHash('sha256').update(resources).digest('hex').slice(0, 16);
+  const keptBackup = path.join(support, 'backups', key, 'keep.txt');
+  fs.mkdirSync(path.dirname(keptBackup), { recursive: true });
+  fs.writeFileSync(keptBackup, 'still here\n');
   const cancelled = sourceGui(path.join(dir, 'cancel'), `
 cmd_restore ${JSON.stringify(app)}
 `, {
@@ -557,8 +563,12 @@ cmd_restore ${JSON.stringify(app)}
     MOCK_RESTORE_OUTPUT: 'User canceled. (-128)',
   });
   assert.notEqual(cancelled.result.status, 0);
-  assert.equal(fs.existsSync(plist), true);
+  assert.equal(fs.existsSync(plist), false);
+  assert.equal(fs.readFileSync(keptBackup, 'utf8'), 'still here\n');
+  assert.equal(fs.existsSync(path.join(support, 'suppress-watch')), false);
   assert.match(readUi(cancelled.env), /管理员密码/);
+  assert.match(readUi(cancelled.env), /Cursor 本身没有改/);
+  assert.match(readUi(cancelled.env), /自动重新安装已经关掉/);
 });
 
 test('dialogs copy the detail and the menu uses the three Chinese actions', () => {
@@ -647,6 +657,11 @@ watch_decide ${JSON.stringify(app)}
 
   fs.writeFileSync(htmlPath, '<html></html>\n');
   assert.equal(decide('apply', () => {}), 'apply');
+  const suppressDir = path.join(home, 'Library', 'Application Support', 'cursor-zh-hans');
+  fs.mkdirSync(suppressDir, { recursive: true });
+  fs.writeFileSync(path.join(suppressDir, 'suppress-watch'), 'restore\n');
+  assert.equal(decide('apply', () => {}), 'skip');
+  fs.unlinkSync(path.join(suppressDir, 'suppress-watch'));
   assert.equal(decide('wait', () => {}), 'wait');
   assert.equal(decide('unwritable', () => {}), 'unwritable');
   fs.writeFileSync(htmlPath, '<html>cursor-zh-hans:start</html>\n');
@@ -663,6 +678,8 @@ watch_decide ${JSON.stringify(app)}
   assert.equal(decide('manual', () => {}), 'manual');
 
   fs.writeFileSync(htmlPath, '<html></html>\n');
+  fs.mkdirSync(path.join(home, 'Library', 'LaunchAgents'), { recursive: true });
+  fs.writeFileSync(path.join(home, 'Library', 'LaunchAgents', 'com.po1nt9.cursor-zh-hans.watch.plist'), '<plist></plist>\n');
   const mockLog = path.join(dir, 'watch-cli.log');
   fs.writeFileSync(mockLog, '');
   fs.writeFileSync(notify, '');
@@ -714,7 +731,8 @@ test('watcher notifications are once per version when it cannot write', () => {
   const notify = path.join(dir, 'notify.log');
   fs.writeFileSync(notify, '');
   const home = path.join(dir, 'home');
-  fs.mkdirSync(home, { recursive: true });
+  fs.mkdirSync(path.join(home, 'Library', 'LaunchAgents'), { recursive: true });
+  fs.writeFileSync(path.join(home, 'Library', 'LaunchAgents', 'com.po1nt9.cursor-zh-hans.watch.plist'), '<plist></plist>\n');
   const result = runBash(`
 source ${JSON.stringify(path.join(root, 'packaging/lib/watch.sh'))}
 cursor_is_running() { return 1; }
@@ -1247,4 +1265,307 @@ stage_support_runtime ${JSON.stringify(nodeSrc)} ${JSON.stringify(watch)} ${JSON
   const updated = stage();
   assert.equal(updated.status, 0, updated.stderr);
   assert.match(fs.readFileSync(staged, 'utf8'), /second/);
+});
+
+function plantBackup(app, home, htmlBytes) {
+  const resources = path.resolve(app, 'Contents', 'Resources', 'app');
+  const key = crypto.createHash('sha256').update(resources).digest('hex').slice(0, 16);
+  const mine = path.join(home, 'Library', 'Application Support', 'cursor-zh-hans', 'backups', key, '9.9.9+abc123');
+  const files = path.join(mine, 'files');
+  fs.mkdirSync(path.join(files, 'out', 'vs', 'code', 'electron-sandbox', 'workbench'), { recursive: true });
+  fs.writeFileSync(path.join(mine, 'manifest.json'), '{}\n');
+  fs.copyFileSync(path.join(resources, 'product.json'), path.join(files, 'product.json'));
+  fs.writeFileSync(path.join(files, 'out', 'vs', 'code', 'electron-sandbox', 'workbench', 'workbench.html'), htmlBytes);
+  const other = path.join(home, 'Library', 'Application Support', 'cursor-zh-hans', 'backups', 'aaaaaaaaaaaaaaaa');
+  fs.mkdirSync(other, { recursive: true });
+  fs.writeFileSync(path.join(other, 'keep.txt'), 'other\n');
+  return { mine, other, key };
+}
+
+test('restore holds the watcher off while product.json is rewritten', () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'cursor-zh-race-'));
+  const app = makeCursor(path.join(dir, 'apps'));
+  const resources = path.join(app, 'Contents', 'Resources', 'app');
+  const htmlPath = path.join(resources, 'out', 'vs', 'code', 'electron-sandbox', 'workbench', 'workbench.html');
+  fs.writeFileSync(htmlPath, '<html>cursor-zh-hans:start</html>\n');
+  const home = path.join(dir, 'home');
+  fs.mkdirSync(path.join(home, 'Library', 'LaunchAgents'), { recursive: true });
+  const plist = path.join(home, 'Library', 'LaunchAgents', 'com.po1nt9.cursor-zh-hans.watch.plist');
+  fs.writeFileSync(plist, '<plist></plist>\n');
+  const clean = '<html></html>\n';
+  const planted = plantBackup(app, home, clean);
+  const pack = path.join(dir, 'race-pack');
+  const watchOut = path.join(dir, 'watch-out.log');
+  fs.writeFileSync(watchOut, '');
+  writeExec(path.join(pack, 'bin', 'cursor-zh.js'), `'use strict';
+const fs = require('fs');
+const { spawnSync } = require('child_process');
+const args = process.argv.slice(2);
+fs.appendFileSync(process.env.MOCK_LOG, JSON.stringify(args) + '\\n');
+const cmd = args[0];
+const appPath = args[args.indexOf('--app-path') + 1];
+const html = appPath + '/Contents/Resources/app/out/vs/code/electron-sandbox/workbench/workbench.html';
+if (cmd === 'status') {
+  process.stdout.write('{}');
+  process.exit(0);
+}
+if (cmd === 'apply') {
+  fs.appendFileSync(process.env.MOCK_LOG, 'APPLY\\n');
+  fs.writeFileSync(html, '<html>cursor-zh-hans:start</html>\\n');
+  process.exit(0);
+}
+if (cmd === 'restore') {
+  const home = process.env.HOME;
+  const support = home + '/Library/Application Support/cursor-zh-hans';
+  const plist = home + '/Library/LaunchAgents/com.po1nt9.cursor-zh-hans.watch.plist';
+  fs.appendFileSync(process.env.MOCK_LOG, JSON.stringify({
+    suppress: fs.existsSync(support + '/suppress-watch'),
+    plist: fs.existsSync(plist),
+  }) + '\\n');
+  fs.writeFileSync(html, '<html></html>\\n');
+  const watch = spawnSync('bash', ['-c', 'source "$WATCH_SH"\\nwatch_main --cursor-app "$WATCH_APP" --node "$WATCH_NODE" --pack "$WATCH_PACK"'], {
+    env: process.env,
+  });
+  fs.appendFileSync(process.env.WATCH_OUT, String(watch.stdout || '') + String(watch.stderr || ''));
+  process.exit(watch.status === 0 ? 0 : watch.status || 1);
+}
+process.exit(0);
+`);
+  const { result, env } = sourceGui(dir, `
+ui_confirm() {
+  printf 'CONFIRM %s %s %s\\n' "$1" "$2" "$3" >> "$MOCK_UI"
+  return 1
+}
+cmd_restore ${JSON.stringify(app)}
+`, {
+    HOME: home,
+    CURSOR_ZH_PACK: pack,
+    WATCH_SH: path.join(root, 'packaging/lib/watch.sh'),
+    WATCH_APP: app,
+    WATCH_NODE: process.execPath,
+    WATCH_PACK: pack,
+    WATCH_OUT: watchOut,
+  });
+  assert.equal(result.status, 0, `${result.stdout}\n${result.stderr}\n${fs.readFileSync(watchOut, 'utf8')}`);
+  const log = fs.readFileSync(env.MOCK_LOG, 'utf8');
+  assert.equal(log.includes('APPLY'), false);
+  assert.match(log, /"suppress":true/);
+  assert.match(log, /"plist":false/);
+  assert.equal(fs.readFileSync(htmlPath, 'utf8'), clean);
+  assert.equal(fs.existsSync(plist), false);
+  assert.equal(fs.existsSync(planted.mine), false);
+  assert.equal(fs.readFileSync(path.join(planted.other, 'keep.txt'), 'utf8'), 'other\n');
+  assert.equal(fs.existsSync(path.join(home, 'Library', 'Application Support', 'cursor-zh-hans', 'suppress-watch')), false);
+  assert.match(fs.readFileSync(env.CURSOR_ZH_LOG_FILE, 'utf8'), /这一轮不安装/);
+  assert.match(readUi(env), /安装日志/);
+});
+
+test('a restore that leaves the patch retries once and keeps the backup', () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'cursor-zh-retry-'));
+  const app = makeCursor(path.join(dir, 'apps'));
+  const home = path.join(dir, 'home');
+  fs.mkdirSync(home, { recursive: true });
+  const clean = '<html></html>\n';
+  const planted = plantBackup(app, home, clean);
+  const htmlPath = path.join(app, 'Contents', 'Resources', 'app', 'out', 'vs', 'code', 'electron-sandbox', 'workbench', 'workbench.html');
+  const countFile = path.join(dir, 'count');
+  fs.writeFileSync(countFile, '0');
+  const pack = path.join(dir, 'retry-pack');
+  writeExec(path.join(pack, 'bin', 'cursor-zh.js'), `'use strict';
+const fs = require('fs');
+const args = process.argv.slice(2);
+fs.appendFileSync(process.env.MOCK_LOG, JSON.stringify(args) + '\\n');
+if (args[0] !== 'restore') process.exit(0);
+const n = Number(fs.readFileSync(process.env.COUNT_FILE, 'utf8')) + 1;
+fs.writeFileSync(process.env.COUNT_FILE, String(n));
+const appPath = args[args.indexOf('--app-path') + 1];
+const html = appPath + '/Contents/Resources/app/out/vs/code/electron-sandbox/workbench/workbench.html';
+const cleanOn = Number(process.env.CLEAN_ON || '0');
+if (cleanOn && n >= cleanOn) fs.writeFileSync(html, '<html></html>\\n');
+else fs.writeFileSync(html, '<html>cursor-zh-hans:start</html>\\n');
+process.exit(0);
+`);
+  const stuck = sourceGui(path.join(dir, 'stuck'), `cmd_restore ${JSON.stringify(app)}`, {
+    HOME: home,
+    CURSOR_ZH_PACK: pack,
+    COUNT_FILE: countFile,
+    CLEAN_ON: '0',
+  });
+  assert.notEqual(stuck.result.status, 0);
+  assert.equal(fs.readFileSync(countFile, 'utf8'), '2');
+  assert.match(fs.readFileSync(htmlPath, 'utf8'), /cursor-zh-hans:start/);
+  assert.equal(fs.existsSync(path.join(planted.mine, 'manifest.json')), true);
+  assert.equal(readUi(stuck.env).includes('删掉日志'), false);
+  assert.equal(readUi(stuck.env).includes('安装日志'), false);
+  assert.match(readUi(stuck.env), /原始备份还留着/);
+  assert.equal(fs.existsSync(path.join(home, 'Library', 'Application Support', 'cursor-zh-hans', 'suppress-watch')), false);
+
+  fs.writeFileSync(countFile, '0');
+  const recovered = sourceGui(path.join(dir, 'recovered'), `cmd_restore ${JSON.stringify(app)}`, {
+    HOME: home,
+    CURSOR_ZH_PACK: pack,
+    COUNT_FILE: countFile,
+    CLEAN_ON: '2',
+    MOCK_LOG: path.join(dir, 'recovered-cli.log'),
+  });
+  assert.equal(recovered.result.status, 0, recovered.result.stderr);
+  assert.equal(fs.readFileSync(countFile, 'utf8'), '2');
+  assert.equal(fs.readFileSync(htmlPath, 'utf8'), clean);
+  assert.equal(fs.existsSync(planted.mine), false);
+  assert.equal(fs.readFileSync(path.join(planted.other, 'keep.txt'), 'utf8'), 'other\n');
+  assert.match(readUi(recovered.env), /安装日志/);
+});
+
+test('a hash mismatch keeps the backup even when the injection marker is gone', () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'cursor-zh-hash-'));
+  const app = makeCursor(path.join(dir, 'apps'));
+  const home = path.join(dir, 'home');
+  fs.mkdirSync(home, { recursive: true });
+  const planted = plantBackup(app, home, '<html>original</html>\n');
+  const pack = path.join(dir, 'hash-pack');
+  writeExec(path.join(pack, 'bin', 'cursor-zh.js'), `'use strict';
+const fs = require('fs');
+const args = process.argv.slice(2);
+fs.appendFileSync(process.env.MOCK_LOG, JSON.stringify(args) + '\\n');
+if (args[0] !== 'restore') process.exit(0);
+const appPath = args[args.indexOf('--app-path') + 1];
+const html = appPath + '/Contents/Resources/app/out/vs/code/electron-sandbox/workbench/workbench.html';
+fs.writeFileSync(html, '<html></html>\\n');
+process.exit(0);
+`);
+  const { result, env } = sourceGui(dir, `cmd_restore ${JSON.stringify(app)}`, {
+    HOME: home,
+    CURSOR_ZH_PACK: pack,
+  });
+  assert.notEqual(result.status, 0);
+  const calls = fs.readFileSync(env.MOCK_LOG, 'utf8').trim().split('\n').filter((line) => line.includes('"restore"'));
+  assert.equal(calls.length, 2);
+  assert.equal(fs.existsSync(path.join(planted.mine, 'manifest.json')), true);
+  assert.equal(readUi(env).includes('删掉日志'), false);
+  assert.match(readUi(env), /原始备份还留着/);
+});
+
+test('restore offers to strip a live patch when the backup is already gone', () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'cursor-zh-strip-'));
+  const app = makeCursor(path.join(dir, 'apps'));
+  const home = path.join(dir, 'home');
+  fs.mkdirSync(home, { recursive: true });
+  const htmlPath = path.join(app, 'Contents', 'Resources', 'app', 'out', 'vs', 'code', 'electron-sandbox', 'workbench', 'workbench.html');
+  fs.writeFileSync(htmlPath, '<html>cursor-zh-hans:start</html>\n');
+  const pack = path.join(dir, 'strip-pack');
+  writeExec(path.join(pack, 'bin', 'cursor-zh.js'), `'use strict';
+const fs = require('fs');
+const args = process.argv.slice(2);
+fs.appendFileSync(process.env.MOCK_LOG, JSON.stringify(args) + '\\n');
+if (args[0] !== 'restore') process.exit(0);
+const appPath = args[args.indexOf('--app-path') + 1];
+const html = appPath + '/Contents/Resources/app/out/vs/code/electron-sandbox/workbench/workbench.html';
+if (args.indexOf('--rebuild-without-backup') >= 0) {
+  fs.writeFileSync(html, '<html></html>\\n');
+  process.stdout.write('已去掉界面注入\\n');
+  process.exit(0);
+}
+process.stderr.write('找不到原始备份。可以去掉界面注入。\\n');
+process.exit(1);
+`);
+  const declined = sourceGui(path.join(dir, 'no'), `
+ui_confirm() {
+  printf 'CONFIRM %s\\n' "$1" >> "$MOCK_UI"
+  return 1
+}
+cmd_restore ${JSON.stringify(app)}
+`, {
+    HOME: home,
+    CURSOR_ZH_PACK: pack,
+  });
+  assert.notEqual(declined.result.status, 0);
+  assert.match(readUi(declined.env), /去掉注入/);
+  assert.match(fs.readFileSync(htmlPath, 'utf8'), /cursor-zh-hans:start/);
+  assert.equal(readUi(declined.env).includes('删掉日志'), false);
+  assert.match(readUi(declined.env), /可以去掉界面注入/);
+
+  const accepted = sourceGui(path.join(dir, 'yes'), `cmd_restore ${JSON.stringify(app)}`, {
+    HOME: home,
+    CURSOR_ZH_PACK: pack,
+    MOCK_LOG: path.join(dir, 'yes-cli.log'),
+  });
+  assert.equal(accepted.result.status, 0, accepted.result.stderr);
+  assert.equal(fs.readFileSync(htmlPath, 'utf8'), '<html></html>\n');
+  assert.match(fs.readFileSync(accepted.env.MOCK_LOG, 'utf8'), /--rebuild-without-backup/);
+  assert.match(readUi(accepted.env), /安装日志/);
+  assert.equal(fs.existsSync(path.join(home, 'Library', 'Application Support', 'cursor-zh-hans', 'suppress-watch')), false);
+});
+
+test('the watcher does nothing without the LaunchAgent, and restore can stop one that is still running', () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'cursor-zh-stop-'));
+  const app = makeCursor(path.join(dir, 'apps'));
+  const resources = path.join(app, 'Contents', 'Resources', 'app');
+  fs.writeFileSync(path.join(resources, 'product.json'), '{"version":"2.0.0","commit":"fff"}\n');
+  const htmlPath = path.join(resources, 'out', 'vs', 'code', 'electron-sandbox', 'workbench', 'workbench.html');
+  fs.writeFileSync(htmlPath, '<html></html>\n');
+  const home = path.join(dir, 'home');
+  const mockLog = path.join(dir, 'watch-cli.log');
+  fs.writeFileSync(mockLog, '');
+  const pack = path.join(dir, 'pack');
+  writeExec(path.join(pack, 'bin', 'cursor-zh.js'), `'use strict';
+const fs = require('fs');
+fs.appendFileSync(process.env.MOCK_LOG, 'APPLY\\n');
+process.exit(0);
+`);
+  const quiet = runBash(`
+source ${JSON.stringify(path.join(root, 'packaging/lib/watch.sh'))}
+cursor_is_running() { return 1; }
+watch_main --cursor-app ${JSON.stringify(app)} --node ${JSON.stringify(process.execPath)} --pack ${JSON.stringify(pack)}
+`, {
+    HOME: home,
+    MOCK_LOG: mockLog,
+    CURSOR_ZH_LOG_FILE: path.join(dir, 'watch.log'),
+    CURSOR_ZH_LIB_ONLY: '1',
+  });
+  assert.equal(quiet.status, 0, quiet.stderr);
+  assert.equal(fs.readFileSync(mockLog, 'utf8'), '');
+  assert.match(fs.readFileSync(path.join(dir, 'watch.log'), 'utf8'), /已经关掉/);
+
+  const support = path.join(home, 'Library', 'Application Support', 'cursor-zh-hans');
+  fs.mkdirSync(path.join(home, 'Library', 'LaunchAgents'), { recursive: true });
+  fs.writeFileSync(path.join(home, 'Library', 'LaunchAgents', 'com.po1nt9.cursor-zh-hans.watch.plist'), '<plist></plist>\n');
+  fs.mkdirSync(support, { recursive: true });
+  fs.writeFileSync(path.join(support, 'suppress-watch'), 'restore\n');
+  const held = runBash(`
+source ${JSON.stringify(path.join(root, 'packaging/lib/watch.sh'))}
+cursor_is_running() { return 1; }
+watch_main --cursor-app ${JSON.stringify(app)} --node ${JSON.stringify(process.execPath)} --pack ${JSON.stringify(pack)}
+`, {
+    HOME: home,
+    MOCK_LOG: mockLog,
+    CURSOR_ZH_LOG_FILE: path.join(dir, 'watch.log'),
+    CURSOR_ZH_LIB_ONLY: '1',
+  });
+  assert.equal(held.status, 0, held.stderr);
+  assert.equal(fs.readFileSync(mockLog, 'utf8'), '');
+
+  fs.unlinkSync(path.join(support, 'suppress-watch'));
+  const sleeper = path.join(dir, 'watch.sh');
+  fs.writeFileSync(sleeper, '#!/bin/bash\nsleep 60\n');
+  fs.chmodSync(sleeper, 0o755);
+  const pidFile = path.join(dir, 'pid');
+  fs.mkdirSync(path.join(support, 'watch.lock'));
+  const stopped = runBash(`
+source ${JSON.stringify(path.join(root, 'packaging/lib/gui.sh'))}
+${JSON.stringify(sleeper)} ${JSON.stringify(app)} >/dev/null 2>&1 &
+printf '%s\\n' "$!" > ${JSON.stringify(pidFile)}
+sleep 0.2
+wait_or_stop_watcher ${JSON.stringify(app)}
+sleep 0.2
+`, {
+    HOME: home,
+    CURSOR_ZH_POLL_SECONDS: '0',
+    CURSOR_ZH_NODE: process.execPath,
+    CURSOR_ZH_LOG_FILE: path.join(dir, 'cursor-zh-hans.log'),
+  });
+  assert.equal(stopped.status, 0, stopped.stderr);
+  const pid = fs.readFileSync(pidFile, 'utf8').trim();
+  const alive = spawnSync('ps', ['-p', pid], { encoding: 'utf8' });
+  assert.notEqual(alive.status, 0);
+  assert.equal(fs.existsSync(path.join(support, 'watch.lock')), false);
 });

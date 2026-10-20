@@ -31,7 +31,7 @@ curl -fsSL https://raw.githubusercontent.com/Po1nt9/cursor-agents-zh-hans/main/i
 
 ## 怎么变回英文
 
-再打开「Cursor 汉化」，点「恢复英文」。自动重新安装也会一起关掉。
+再打开「Cursor 汉化」，点「恢复英文」。自动重新安装会先关掉，确认界面已经回到英文之后才删掉这份备份。如果备份已经没了、但汉化还在，按提示去掉界面注入即可。
 
 ## 说明
 

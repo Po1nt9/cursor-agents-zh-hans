@@ -272,3 +272,63 @@ test('a Cursor update without leftover markers is patched from the new files', (
   assert.match(fs.readFileSync(path.join(fixture.app, REL_HTML), 'utf8'), /cursor-zh-hans:start/);
   assert.ok(fs.existsSync(path.join(dir, 'data', 'backups')));
 });
+
+test('a missing backup can be rebuilt by stripping the injection', () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'cursor-zh-rebuild-'));
+  const fixture = writeApp(dir);
+  const opts = options(fixture.app, dir, { updateChecksums: true });
+  const htmlPath = path.join(fixture.app, REL_HTML);
+  const productPath = path.join(fixture.app, REL_PRODUCT);
+  const beforeHtml = fs.readFileSync(htmlPath);
+  const beforeProduct = fs.readFileSync(productPath);
+  apply(opts);
+  assert.match(fs.readFileSync(htmlPath, 'utf8'), /cursor-zh-hans:start/);
+  fs.rmSync(path.join(dir, 'data', 'backups'), { recursive: true, force: true });
+  assert.throws(() => restore({
+    appPath: fixture.app,
+    dataDir: path.join(dir, 'data'),
+    processCheck: quit,
+    platform: 'linux',
+  }), /可以去掉界面注入/);
+  assert.match(fs.readFileSync(htmlPath, 'utf8'), /cursor-zh-hans:start/);
+
+  const rebuilt = restore({
+    appPath: fixture.app,
+    dataDir: path.join(dir, 'data'),
+    processCheck: quit,
+    platform: 'linux',
+    rebuildWithoutBackup: true,
+  });
+  assert.equal(rebuilt.rebuiltWithoutBackup, true);
+  assert.ok(beforeHtml.equals(fs.readFileSync(htmlPath)));
+  assert.ok(beforeProduct.equals(fs.readFileSync(productPath)));
+  assert.equal(fs.existsSync(path.join(fixture.app, 'out/vs/code/electron-sandbox/workbench/cursor-zh-hans.js')), false);
+  assert.equal(fs.existsSync(path.join(fixture.app, '.cursor-zh-hans')), false);
+  const product = JSON.parse(fs.readFileSync(productPath, 'utf8'));
+  assert.equal(product.checksums['vs/code/electron-sandbox/workbench/workbench.html'], sha256Base64(beforeHtml));
+});
+
+test('a missing backup does not silently undo a static glass patch', () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'cursor-zh-rebuild-static-'));
+  const fixture = writeApp(dir);
+  const opts = options(fixture.app, dir, { static: true, updateChecksums: true });
+  apply(opts);
+  const glassPath = path.join(fixture.app, REL_GLASS);
+  const patched = fs.readFileSync(glassPath);
+  assert.match(patched.toString('utf8'), /给智能体一台电脑/);
+  fs.rmSync(path.join(dir, 'data', 'backups'), { recursive: true, force: true });
+  assert.throws(() => restore({
+    appPath: fixture.app,
+    dataDir: path.join(dir, 'data'),
+    dictionaryDir: path.join(dir, 'dictionary'),
+    processCheck: quit,
+    platform: 'linux',
+    rebuildWithoutBackup: true,
+  }), (error) => {
+    assert.match(error.message, /做过 Glass 静态替换/);
+    assert.equal(error.message.includes('可以去掉界面注入'), false);
+    return true;
+  });
+  assert.ok(patched.equals(fs.readFileSync(glassPath)));
+  assert.match(fs.readFileSync(path.join(fixture.app, REL_HTML), 'utf8'), /cursor-zh-hans:start/);
+});

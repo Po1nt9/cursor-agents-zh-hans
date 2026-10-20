@@ -89,7 +89,7 @@ bash packaging/macos/build-app.sh
 
 产物是 `dist/Cursor-zh-hans-macOS.zip`。里面是手写的 `Cursor 汉化.app`（`Info.plist` 加 shell 启动器），并带有官方 Node.js 的 arm64 与 x64。`bash packaging/macos/build-app.sh --stub` 不下载 Node，只用来检查压缩包结构。打 `v*` 标签或手动跑 `.github/workflows/release.yml` 时，会构建同一个 zip；只有标签会挂到 GitHub Release。
 
-启动器按 `uname -m` 选择 Node。找 Cursor 时用 Spotlight `mdfind kMDItemCFBundleIdentifier == 'com.todesktop.230313mzl4w4u92'`，再加上 `/Applications`、`~/Applications` 和下面一层子目录。找到 0 个或多于 1 个时弹出选择文件。只有 `.app` 不可写时，才用 `osascript … with administrator privileges` 提权，并带上原来的 `SUDO_USER`。安装结束时把当前架构的 Node、监视脚本和补丁复制到 `~/Library/Application Support/cursor-zh-hans/runtime/`，再写入用户 LaunchAgent `com.po1nt9.cursor-zh-hans.watch`。Agent 指向这些副本，不指向「Cursor 汉化.app」里面。它监视 Cursor 的 `product.json`，并每隔 15 分钟再看一次（整包替换时 WatchPaths 不一定响；这一轮不会再复制 Node）。Cursor 没在运行时静默再执行 `apply --update-checksums`。点「恢复英文」会删掉这个 Agent、`runtime/`、锁文件，以及这一份 Cursor 自己的备份。别的 Cursor 安装留下的备份还在。
+启动器按 `uname -m` 选择 Node。找 Cursor 时用 Spotlight `mdfind kMDItemCFBundleIdentifier == 'com.todesktop.230313mzl4w4u92'`，再加上 `/Applications`、`~/Applications` 和下面一层子目录。找到 0 个或多于 1 个时弹出选择文件。只有 `.app` 不可写时，才用 `osascript … with administrator privileges` 提权，并带上原来的 `SUDO_USER`。安装结束时把当前架构的 Node、监视脚本和补丁复制到 `~/Library/Application Support/cursor-zh-hans/runtime/`，再写入用户 LaunchAgent `com.po1nt9.cursor-zh-hans.watch`。Agent 指向这些副本，不指向「Cursor 汉化.app」里面。它监视 Cursor 的 `product.json`，并每隔 15 分钟再看一次（整包替换时 WatchPaths 不一定响；这一轮不会再复制 Node）。Cursor 没在运行时静默再执行 `apply --update-checksums`。点「恢复英文」会先关掉这个 Agent，并在整个写回过程里拦住监视脚本，确认 `product.json` 和 `workbench.html` 已经回到备份（或界面注入已经不在）之后，才删掉这一份 Cursor 自己的备份。别的 Cursor 安装留下的备份还在。备份已经没了、但界面注入还在时，会问要不要去掉注入并重算校验和。
 
 ## 它做什么
 

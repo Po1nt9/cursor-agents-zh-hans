@@ -59,9 +59,27 @@ watch_fact() {
   return 1
 }
 
+watch_plist_path() {
+  printf '%s\n' "${HOME}/Library/LaunchAgents/com.po1nt9.cursor-zh-hans.watch.plist"
+}
+
+watch_suppressed() {
+  [[ -f "$(support_dir)/suppress-watch" ]]
+}
+
+watch_auto_enabled() {
+  [[ -f "$(watch_plist_path)" ]]
+}
+
 # Prints one word: missing, skip, wait, manual, unwritable, apply.
 watch_decide() {
   local app="$1"
+  # Restore holds this file for the whole write-back. Do not apply over it,
+  # including when state.json is already gone.
+  if watch_suppressed; then
+    printf '%s\n' "skip"
+    return 0
+  fi
   local product="${app}/Contents/Resources/app/product.json"
   local html="${app}/Contents/Resources/app/out/vs/code/electron-sandbox/workbench/workbench.html"
   local state="${app}/Contents/Resources/app/.cursor-zh-hans/state.json"
@@ -162,6 +180,14 @@ watch_main() {
   fi
   export CURSOR_ZH_NODE="$node"
   export CURSOR_ZH_PACK="$pack"
+  if watch_suppressed; then
+    cursor_zh_log "正在恢复英文，这一轮不安装。"
+    return 0
+  fi
+  if ! watch_auto_enabled; then
+    cursor_zh_log "自动重新安装已经关掉，这一轮不安装。"
+    return 0
+  fi
   local support=""
   local lock=""
   support="$(support_dir)"
@@ -178,16 +204,20 @@ watch_main() {
   local status=0
   case "$decision" in
     apply)
-      local out=""
-      out="$(run_pack_cli "$cursor_app" apply --update-checksums 2>&1)" || status=$?
-      cursor_zh_log "$out"
-      if [[ "$status" -eq 0 ]]; then
-        rm -f "${support}/watch-notified"
-        notify_user "已为新版本的 Cursor 重新装上简体中文。"
-        status=0
+      if watch_suppressed || ! watch_auto_enabled; then
+        cursor_zh_log "自动重新安装这一轮不写入 Cursor。"
       else
-        notify_once "fail ${version_key}" "自动安装汉化没有成功。请打开「Cursor 汉化」再试一次。"
-        status=0
+        local out=""
+        out="$(run_pack_cli "$cursor_app" apply --update-checksums 2>&1)" || status=$?
+        cursor_zh_log "$out"
+        if [[ "$status" -eq 0 ]]; then
+          rm -f "${support}/watch-notified"
+          notify_user "已为新版本的 Cursor 重新装上简体中文。"
+          status=0
+        else
+          notify_once "fail ${version_key}" "自动安装汉化没有成功。请打开「Cursor 汉化」再试一次。"
+          status=0
+        fi
       fi
       ;;
     manual)

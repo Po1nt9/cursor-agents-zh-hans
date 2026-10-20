@@ -576,19 +576,172 @@ remove_this_backup() {
   rm -rf "${support}/backups/${key}" || true
 }
 
+file_sha256() {
+  "$(resolve_node)" - "$1" <<'JS'
+const crypto = require("crypto");
+const fs = require("fs");
+process.stdout.write(crypto.createHash("sha256").update(fs.readFileSync(process.argv[2])).digest("hex"));
+JS
+}
+
+product_field() {
+  "$(resolve_node)" - "$1" "$2" <<'JS'
+const fs = require("fs");
+const product = JSON.parse(fs.readFileSync(process.argv[2], "utf8"));
+const value = product[process.argv[3]];
+process.stdout.write(value == null ? "" : String(value));
+JS
+}
+
+# True when the injection marker is gone and, when the original backup
+# bytes are still on disk, the live files match those bytes.
+restore_is_clean() {
+  local app="$1"
+  local resources="${app}/Contents/Resources/app"
+  local html="${resources}/out/vs/code/electron-sandbox/workbench/workbench.html"
+  local product="${resources}/product.json"
+  if [[ -f "$html" ]] && grep -q 'cursor-zh-hans:start' "$html"; then
+    return 1
+  fi
+  local support=""
+  local key=""
+  local version=""
+  local commit=""
+  local backed=""
+  local live=""
+  local rel=""
+  local backed_hash=""
+  local live_hash=""
+  support="$(support_dir)"
+  if ! key="$(cursor_install_key "$app")"; then
+    return 0
+  fi
+  if [[ ! -f "$product" ]]; then
+    return 0
+  fi
+  version="$(product_field "$product" version 2>/dev/null || true)"
+  commit="$(product_field "$product" commit 2>/dev/null || true)"
+  if [[ -z "$version" || -z "$commit" ]]; then
+    return 0
+  fi
+  for rel in \
+    "product.json" \
+    "out/vs/code/electron-sandbox/workbench/workbench.html"
+  do
+    backed="${support}/backups/${key}/${version}+${commit}/files/${rel}"
+    live="${resources}/${rel}"
+    if [[ -f "$backed" && -f "$live" ]]; then
+      backed_hash="$(file_sha256 "$backed")"
+      live_hash="$(file_sha256 "$live")"
+      if [[ -z "$backed_hash" || "$backed_hash" != "$live_hash" ]]; then
+        return 1
+      fi
+    fi
+  done
+  return 0
+}
+
+clear_restore_suppress() {
+  rm -f "$(support_dir)/suppress-watch"
+}
+
+# A watcher that already decided to apply must notice this file before it
+# writes. Kill one that is still holding the lock so it cannot land after.
+stop_inflight_watcher() {
+  local app="$1"
+  local self="$$"
+  local parent="${PPID:-}"
+  local pid=""
+  local rest=""
+  if ! command -v ps >/dev/null 2>&1; then
+    return 0
+  fi
+  while read -r pid rest; do
+    [[ -n "$pid" ]] || continue
+    if [[ "$pid" == "$self" || "$pid" == "$parent" ]]; then
+      continue
+    fi
+    case "$rest" in
+      *watch.sh*"$app"*|*"$app"*watch.sh*)
+        kill "$pid" 2>/dev/null || true
+        ;;
+    esac
+  done < <(ps -ax -o pid=,command= 2>/dev/null || true)
+}
+
+wait_or_stop_watcher() {
+  local app="$1"
+  local support=""
+  local lock=""
+  local i=0
+  local polls=30
+  local now=""
+  local mtime=""
+  local age=0
+  support="$(support_dir)"
+  lock="${support}/watch.lock"
+  if [[ ! -d "$lock" ]]; then
+    return 0
+  fi
+  if [[ "${CURSOR_ZH_POLL_SECONDS:-1}" == 0 ]]; then
+    polls=0
+  fi
+  while [[ -d "$lock" && "$i" -lt "$polls" ]]; do
+    now="$(date +%s)"
+    mtime="$(file_mtime "$lock" 2>/dev/null || printf '%s\n' "0")"
+    age=$((now - mtime))
+    if [[ "$age" -gt 1800 ]]; then
+      break
+    fi
+    i=$((i + 1))
+    sleep "${CURSOR_ZH_POLL_SECONDS:-1}"
+  done
+  if [[ -d "$lock" ]]; then
+    stop_inflight_watcher "$app"
+    rm -rf "$lock" || true
+  fi
+}
+
+begin_restore_guard() {
+  local support=""
+  support="$(support_dir)"
+  mkdir -p "$support"
+  printf '%s\n' "restore" > "${support}/suppress-watch"
+  remove_launch_agent || true
+  wait_or_stop_watcher "$1" || true
+  remove_watch_runtime || true
+}
+
 cmd_restore() {
   local app="$1"
   ensure_cursor_quit "$app" || return 1
+  begin_restore_guard "$app"
   local status=0
+  local mode="restore"
+  local blob=""
   run_cli_capture "$app" auto restore || status=$?
-  local blob="${CLI_STDOUT}"$'\n'"${CLI_STDERR}"
+  blob="${CLI_STDOUT}"$'\n'"${CLI_STDERR}"
   if output_says_admin_cancelled "$blob"; then
-    ui_alert "$ADMIN_CANCEL_MESSAGE"
+    clear_restore_suppress
+    ui_alert "已取消。没有输入管理员密码，所以 Cursor 本身没有改。
+
+自动重新安装已经关掉。以后如果还要汉化，再点一次「安装汉化」。"
     return 1
   fi
-  remove_launch_agent || true
-  remove_watch_runtime || true
+  if [[ "$status" -ne 0 ]] && output_says_can_strip "$blob"; then
+    if ui_confirm "上次恢复英文时，自动重新安装把汉化又写了回去，原始备份已经被删掉了。
+
+界面上的注入可以去掉，并重新计算校验和。Glass 里如果做过静态替换，这一步没法还原。
+
+要试着去掉注入、恢复成英文吗？" "去掉注入" "取消"; then
+      status=0
+      mode="rebuild"
+      run_cli_capture "$app" auto restore --rebuild-without-backup || status=$?
+      blob="${CLI_STDOUT}"$'\n'"${CLI_STDERR}"
+    fi
+  fi
   if [[ "$status" -ne 0 ]]; then
+    clear_restore_suppress
     if output_says_empty_entitlements "$blob"; then
       ui_warn "没有恢复成英文。自动重新安装已经关掉。
 
@@ -598,7 +751,22 @@ ${ENTITLEMENTS_USER_MESSAGE}"
     show_cli_error "没有恢复成英文。自动重新安装已经关掉，但界面没有恢复成英文。" "$blob"
     return 1
   fi
+  if ! restore_is_clean "$app"; then
+    status=0
+    if [[ "$mode" == "rebuild" ]]; then
+      run_cli_capture "$app" auto restore --rebuild-without-backup || status=$?
+    else
+      run_cli_capture "$app" auto restore || status=$?
+    fi
+    blob="${CLI_STDOUT}"$'\n'"${CLI_STDERR}"
+    if [[ "$status" -ne 0 ]] || ! restore_is_clean "$app"; then
+      clear_restore_suppress
+      show_cli_error "没有恢复成英文。自动重新安装已经关掉，但界面没有恢复成英文。原始备份还留着。" "$blob"
+      return 1
+    fi
+  fi
   remove_this_backup "$app" || true
+  clear_restore_suppress
   if ui_confirm "要删掉安装日志吗？留着的话，以后出问题还能看。" "删掉日志" "留着"; then
     rm -f "$(cursor_zh_log_file)"
   fi
