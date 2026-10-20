@@ -1,0 +1,64 @@
+name: macOS 汉化包
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 安装 shellcheck
+        run: sudo apt-get update && sudo apt-get install -y shellcheck file
+
+      - name: 检查脚本
+        run: shellcheck -x -P SCRIPTDIR packaging/lib/*.sh packaging/macos/*.sh install.sh
+
+      - name: 测试
+        run: node --test
+
+      - name: 打包 Mac 应用
+        run: bash packaging/macos/build-app.sh
+
+      - name: 确认压缩包里的程序可以执行
+        run: |
+          python3 packaging/macos/zip_app.py --check --require-macho dist/Cursor-zh-hans-macOS.zip
+          tmp="$(mktemp -d)"
+          unzip -q dist/Cursor-zh-hans-macOS.zip -d "$tmp"
+          file "$tmp/Cursor 汉化.app/Contents/Resources/node/arm64/node" | grep -i Mach-O
+          file "$tmp/Cursor 汉化.app/Contents/Resources/node/x64/node" | grep -i Mach-O
+          test -x "$tmp/Cursor 汉化.app/Contents/MacOS/launcher"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Cursor-zh-hans-macOS
+          path: dist/Cursor-zh-hans-macOS.zip
+          if-no-files-found: error
+
+  release:
+    needs: verify
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: Cursor-zh-hans-macOS
+          path: dist
+
+      - name: 发布到 GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/Cursor-zh-hans-macOS.zip
+          body_path: packaging/macos/release-notes.md

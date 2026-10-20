@@ -8,7 +8,8 @@
   },
   "scripts": {
     "test": "node --test",
-    "cursor-zh": "node ./bin/cursor-zh.js"
+    "cursor-zh": "node ./bin/cursor-zh.js",
+    "build:macos": "bash packaging/macos/build-app.sh"
   },
   "engines": {
     "node": ">=18"
